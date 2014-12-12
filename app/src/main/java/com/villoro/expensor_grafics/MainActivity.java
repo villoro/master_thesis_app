@@ -28,25 +28,23 @@ public class MainActivity extends ActionBarActivity {
 
         final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
 
-        int height = (int) (10 *scale + 0.5f); //int pixels = (int) (dps * scale + 0.5f);
+        int height = (int) (16 *scale + 0.5f); //int pixels = (int) (dps * scale + 0.5f);
         int dp16 = (int) (16*scale + 0.5f);
         linearLayout.setPadding(dp16, dp16, dp16, dp16);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp16);
         layoutParams.setMargins(0, dp16 ,0 , dp16);
 
-        View line1 = new View(this);
-        line1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,dp16));
-        line1.setBackgroundColor(Color.YELLOW);
+        int n = 3;
+        View[] lines = new View[n];
 
-        View line2 = new View(this);
-        line2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp16));
-        line2.setBackgroundColor(Color.GREEN);
-
-
-
-        linearLayout.addView(line1, layoutParams);
-        linearLayout.addView(line2, layoutParams);
+        for(View line : lines)
+        {
+            line = new View(this);
+            line.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+            line.setBackgroundColor(Color.YELLOW);
+            linearLayout.addView(line, layoutParams);
+        }
 
         setContentView(linearLayout);
 
