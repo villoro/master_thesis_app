@@ -60,53 +60,133 @@ public class MainActivity extends ActionBarActivity {
         result.setText("");
     }
 
-    public void findResult(View v)
-    {
+    public void findResult(View v) {
         String originalText = result.getText().toString();
         String text = originalText;
 
-        String firstNumber = text.substring(0,1);
+        String firstNumber = text.substring(0, 1);
         String secondNumber = "";
+        int initialPoint = 0;
+
 
         int whichNumber = 1;
         String operation = "";
-        double valueResult;
 
-        for (int i = 1; i < text.length(); i++)
-        {
-            String letter = text.substring(i, i+1);
+        for (int i = 1; i < text.length(); i++) {
+            String letter = text.substring(i, i + 1);
 
-            if(letter.equals("x")){
-                whichNumber = 2;
-                operation = "x";
-            }
-            else if(letter.equals("%") || letter.equals("/")){
-                whichNumber = 2;
-                operation = "/";
-            }
-            else{
-                if(whichNumber == 1){
-                    firstNumber += letter;
+            if (letter.equals("x")) {
+                if(whichNumber == 1)
+                {
+                    whichNumber = 2;
+                    operation = "x";
+                } else {
+                    text = reduce(text, initialPoint, i, firstNumber, secondNumber, operation);
+                    firstNumber = calculate(firstNumber, secondNumber, operation);
+
+                    i = firstNumber.length() + initialPoint - 1;
+                    Log.e(LOG_TAG, "text= " + text);
+
+                    secondNumber = "";
+                    whichNumber = 1;
+                    operation = "";
                 }
-                else if (whichNumber == 2){
+
+            } else if (letter.equals("%") || letter.equals("/")) {
+                if(whichNumber == 1)
+                {
+                    whichNumber = 2;
+                    operation = "/";
+                } else {
+                    text = reduce(text, initialPoint, i, firstNumber, secondNumber, operation);
+                    firstNumber = calculate(firstNumber, secondNumber, operation);
+
+                    i = firstNumber.length() + initialPoint - 1;
+                    Log.e(LOG_TAG, "text= " + text);
+
+                    secondNumber = "";
+                    whichNumber = 1;
+                    operation = "";
+                }
+            } else if (letter.equals("+") || letter.equals("-")) {
+
+                if ( whichNumber == 2)
+                {
+                    text = reduce(text, initialPoint, i, firstNumber, secondNumber, operation);
+                    firstNumber = calculate(firstNumber, secondNumber, operation);
+
+                    i = firstNumber.length() + initialPoint - 1;
+
+                    Log.e(LOG_TAG, "result: " + text);
+                } else {
+                    firstNumber = "";
+                    secondNumber = "";
+                    operation = "";
+                    if (i < text.length()) {
+                        initialPoint = i + 1;
+                    }
+                }
+                whichNumber = 1;
+
+
+
+                Log.e(LOG_TAG, "TEMP= " + text);
+
+            } else {
+                if (whichNumber == 1) {
+                    firstNumber += letter;
+                } else if (whichNumber == 2) {
                     secondNumber += letter;
                 }
             }
         }
 
+        if(whichNumber == 2)
+        {
+            text = reduce(text, initialPoint, text.length(), firstNumber, secondNumber, operation);
+        }
+
+        Log.e(LOG_TAG, "text= " + text);
+
         Log.e(LOG_TAG, "first num: " + firstNumber + " second num: " + secondNumber);
         Log.d(LOG_TAG, "operation: " + operation);
 
-        if(operation.equals("x")) {
-            valueResult =Double.parseDouble(firstNumber)*Double.parseDouble(secondNumber);
-        }
-        else if(operation.equals("/")){
-            valueResult = Double.parseDouble(firstNumber)/Double.parseDouble(secondNumber);
-        }
-        else {valueResult = 0; }
-
-        text = Double.toString(round(valueResult));
+        //text = Double.toString(round( Double.parseDouble(calculate(firstNumber, secondNumber, operation))));
         result.setText(originalText + " = " + text);
+    }
+
+    public String reduce(String text, int initialPoint, int finalPoint, String firstNumber, String secondNumber, String operation){
+        String output;
+        if (initialPoint > 0) {
+            output = text.substring(0,initialPoint);
+        } else {
+            output = "";
+        }
+        output += calculate(firstNumber, secondNumber, operation);
+        if (finalPoint < text.length()){
+            output += text.substring(finalPoint, text.length());
+        }
+        Log.e(LOG_TAG, "text= " + text);
+        Log.e(LOG_TAG, "output= " + output);
+
+        return output;
+    }
+
+    public String calculate(String firstNumber, String secondNumber, String operation){
+
+        double output;
+        if (operation.equals("x")) {
+            output = Double.parseDouble(firstNumber) * Double.parseDouble(secondNumber);
+        } else if (operation.equals("/")) {
+            output = Double.parseDouble(firstNumber) / Double.parseDouble(secondNumber);
+        } else if (operation.equals("+")) {
+            output = Double.parseDouble(firstNumber) + Double.parseDouble(secondNumber);
+        } else if (operation.equals("-")) {
+            output = Double.parseDouble(firstNumber) - Double.parseDouble(secondNumber);
+        } else {
+            output = 0;
+        }
+        return Double.toString(output);
     }
 
     public static double round(double amount)
