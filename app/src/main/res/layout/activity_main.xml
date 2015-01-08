@@ -18,8 +18,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="resultat aqui"
-            android:id="@+id/xxxxx" />
+            android:text=""
+            android:id="@+id/result" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -35,24 +35,28 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="7"
                     android:id="@+id/b_7" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="4"
                     android:id="@+id/b_4" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="1"
                     android:id="@+id/b_1" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text=","
                     android:id="@+id/b_coma" />
@@ -67,24 +71,28 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="8"
                     android:id="@+id/b_8" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="5"
                     android:id="@+id/b_5" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="2"
                     android:id="@+id/b_2" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="0"
                     android:id="@+id/b_0" />
@@ -99,24 +107,28 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="9"
                     android:id="@+id/b_9" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="6"
                     android:id="@+id/b_6" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
-                    android:text="6"
+                    android:text="3"
                     android:id="@+id/b_3" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="findResult"
                     android:layout_weight="1"
                     android:text="="
                     android:id="@+id/b_equal" />
@@ -127,28 +139,33 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:onClick="click"
                 android:layout_weight="1">
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="%"
                     android:id="@+id/b_div" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="x"
                     android:id="@+id/b_mult" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="-"
                     android:id="@+id/b_min" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="+"
                     android:id="@+id/b_sum" />
@@ -163,24 +180,28 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="delete"
                     android:layout_weight="1"
                     android:text="CE"
                     android:id="@+id/b_CE" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="("
                     android:id="@+id/b_open_p" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text=")"
                     android:id="@+id/b_close_p" />
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:onClick="click"
                     android:layout_weight="1"
                     android:text="OK!"
                     android:id="@+id/b_ok" />
