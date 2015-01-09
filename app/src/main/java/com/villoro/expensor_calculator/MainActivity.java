@@ -180,8 +180,11 @@ public class MainActivity extends ActionBarActivity {
 
                                 if(insideParenthesis.substring(0,1).equals("-"))
                                 {
-                                    error = true;
-                                    Log.d("", "negative parenthesis");
+                                    Log.d("","neg parenthesis= " + output);
+                                    output = removeParenthesis(output, insideParenthesis, whereOpened, j);
+                                    Log.d("","neg parenthesis2= " + output);
+                                    opened = false;
+                                    stop = true;
                                 }
                                 else {
                                     String first = secondStep(insideParenthesis);
@@ -191,12 +194,9 @@ public class MainActivity extends ActionBarActivity {
                                     String second = thirdStep(first);
 
                                     Log.d(LOG_TAG, "text pas 3= " + second);
-                                    output = output.replace(output.substring(j, whereOpened + 1), second);
-                                    if (j > 0) {
-                                        if (equalsNumber(output.substring(j - 1, j))) {
-                                            output = output.substring(0, j) + "x" + output.substring(j, output.length());
-                                        }
-                                    }
+
+                                    output = removeParenthesis(output,second,whereOpened,j);
+
                                     opened = false;
                                     stop = true;
                                     Log.d("", "text2= " + output);
@@ -312,8 +312,19 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
+        private String removeParenthesis(String text, String insideParenthesis, int whereOpened, int j)
+        {
+            String output = text.replace(text.substring(j, whereOpened + 1), insideParenthesis);
+            if (j > 0) {
+                if (equalsNumber(output.substring(j - 1, j))) {
+                    output = output.substring(0, j) + "x" + output.substring(j, output.length());
+                }
+            }
+            return output;
+        }
+
         private boolean equalsNumber(String letter) {
-            return (letter.equals(".")
+            return (letter.equals(".") || letter.equals("-")
                     || letter.equals("0")
                     || letter.equals("1")
                     || letter.equals("2")
@@ -355,8 +366,8 @@ public class MainActivity extends ActionBarActivity {
             if (i < input.length()){
                 output += input.substring(i, input.length());
             }
-            Log.e(LOG_TAG, "input= " + input);
-            Log.e(LOG_TAG, "output= " + output);
+            Log.e(LOG_TAG, "input reduce= " + input);
+            Log.e(LOG_TAG, "output reduce= " + output);
 
             i = firstNumber.length() + initialPoint - 1;
             return output;
