@@ -95,6 +95,7 @@ public class MainActivity extends ActionBarActivity {
     public class Calculator {
         String originalText;
         boolean error;
+        boolean operationBefore;
 
         String firstNumber;
         String secondNumber;
@@ -125,6 +126,7 @@ public class MainActivity extends ActionBarActivity {
         public String calculate(){
 
             error = false;
+            operationBefore = false;
 
             Log.d("", "to do: " + originalText);
             int numberParenthesis = originalText.length() - originalText.replace("(", "").length();
@@ -176,22 +178,29 @@ public class MainActivity extends ActionBarActivity {
                             if (!insideParenthesis.equals("") && insideParenthesis != null) {
                                 Log.d(LOG_TAG, "inside parenthesis= " + insideParenthesis);
 
-                                String first = secondStep(insideParenthesis);
-
-                                Log.d(LOG_TAG, "text pas 2= " + first);
-
-                                String second = thirdStep(first);
-
-                                Log.d(LOG_TAG, "text pas 3= " + second);
-                                output = output.replace(output.substring(j, whereOpened + 1), second);
-                                if (j > 0) {
-                                    if (equalsNumber(output.substring(j - 1, j))) {
-                                        output = output.substring(0, j) + "x" + output.substring(j, output.length());
-                                    }
+                                if(insideParenthesis.substring(0,1).equals("-"))
+                                {
+                                    error = true;
+                                    Log.d("", "negative parenthesis");
                                 }
-                                opened = false;
-                                stop = true;
-                                Log.d("", "text2= " + output);
+                                else {
+                                    String first = secondStep(insideParenthesis);
+
+                                    Log.d(LOG_TAG, "text pas 2= " + first);
+
+                                    String second = thirdStep(first);
+
+                                    Log.d(LOG_TAG, "text pas 3= " + second);
+                                    output = output.replace(output.substring(j, whereOpened + 1), second);
+                                    if (j > 0) {
+                                        if (equalsNumber(output.substring(j - 1, j))) {
+                                            output = output.substring(0, j) + "x" + output.substring(j, output.length());
+                                        }
+                                    }
+                                    opened = false;
+                                    stop = true;
+                                    Log.d("", "text2= " + output);
+                                }
                             } else {
                                 error = true;
                             }
@@ -203,7 +212,6 @@ public class MainActivity extends ActionBarActivity {
             }
             return output;
         }
-
 
         private String secondStep(String input){
             initialize(input);
@@ -230,7 +238,12 @@ public class MainActivity extends ActionBarActivity {
                     } else if (letter.equals("+") || letter.equals("-")) {
 
                         if (whichNumber == 2) {
-                            output = reduce(output);
+                            if(secondNumber.equals("") || secondNumber == null)
+                            {
+                                secondNumber = letter;
+                            } else {
+                                output = reduce(output);
+                            }
                         } else {
                             firstNumber = "";
                             reset();
@@ -271,7 +284,13 @@ public class MainActivity extends ActionBarActivity {
                             whichNumber = 2;
                             operation = "-";
                         } else {
-                            output = reduce(output);
+                            if(secondNumber.equals("") || secondNumber == null)
+                            {
+                                operation = "+";
+                            }
+                            else {
+                                output = reduce(output);
+                            }
                         }
                     } else
                     {
@@ -346,26 +365,34 @@ public class MainActivity extends ActionBarActivity {
         private String operate(){
 
             double output;
-            if(!secondNumber.equals("") || secondNumber != null) {
-                if (operation.equals("x")) {
-                    output = Double.parseDouble(firstNumber) * Double.parseDouble(secondNumber);
-                } else if (operation.equals("/")) {
-                    if (Double.parseDouble(firstNumber) > EPSILON) {
-                        output = Double.parseDouble(firstNumber) / Double.parseDouble(secondNumber);
-                    } else {
-                        error = true;
-                        output = 0;
-                    }
-                } else if (operation.equals("+")) {
-                    output = Double.parseDouble(firstNumber) + Double.parseDouble(secondNumber);
-                } else if (operation.equals("-")) {
-                    output = Double.parseDouble(firstNumber) - Double.parseDouble(secondNumber);
+            Log.d("", "first=  " + firstNumber + " second= " + secondNumber);
+            if (secondNumber.equals("") || secondNumber == null) {
+                secondNumber = "0";
+            } else if (firstNumber.equals("") || firstNumber == null) {
+                firstNumber = "0";
+            }
+
+            if (operation.equals("x")) {
+                output = Double.parseDouble(firstNumber) * Double.parseDouble(secondNumber);
+            } else if (operation.equals("/")) {
+                if (Double.parseDouble(secondNumber) > EPSILON) {
+                    output = Double.parseDouble(firstNumber) / Double.parseDouble(secondNumber);
                 } else {
+                    error = true;
                     output = 0;
                 }
+            } else if (operation.equals("+")) {
+                output = Double.parseDouble(firstNumber) + Double.parseDouble(secondNumber);
+            } else if (operation.equals("-")) {
+                output = Double.parseDouble(firstNumber) - Double.parseDouble(secondNumber);
             } else {
-                error = true;
                 output = 0;
+            }
+
+            if (Double.toString(output).contains("E"))
+            {
+                Log.e("", "contains an E " + output);
+                error = true;
             }
 
             return Double.toString(output);

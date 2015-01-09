@@ -1,13 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/grey_blue_100">
 
 
     <LinearLayout
         android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
@@ -19,7 +22,8 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:text=""
-            android:id="@+id/result" />
+            android:id="@+id/result"
+            android:background="@color/grey_blue_100"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -38,28 +42,32 @@
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="7"
-                    android:id="@+id/b_7" />
+                    android:id="@+id/b_7"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="4"
-                    android:id="@+id/b_4" />
+                    android:id="@+id/b_4"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="1"
-                    android:id="@+id/b_1" />
+                    android:id="@+id/b_1"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text=","
-                    android:id="@+id/b_coma" />
+                    android:id="@+id/b_coma"
+                    android:background="@color/grey_blue_100"/>
                 </LinearLayout>
 
 
@@ -74,28 +82,32 @@
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="8"
-                    android:id="@+id/b_8" />
+                    android:id="@+id/b_8"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="5"
-                    android:id="@+id/b_5" />
+                    android:id="@+id/b_5"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="2"
-                    android:id="@+id/b_2" />
+                    android:id="@+id/b_2"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="0"
-                    android:id="@+id/b_0" />
+                    android:id="@+id/b_0"
+                    android:background="@color/grey_blue_100"/>
             </LinearLayout>
 
 
@@ -110,28 +122,32 @@
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="9"
-                    android:id="@+id/b_9" />
+                    android:id="@+id/b_9"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="6"
-                    android:id="@+id/b_6" />
+                    android:id="@+id/b_6"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="3"
-                    android:id="@+id/b_3" />
+                    android:id="@+id/b_3"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="findResult"
                     android:layout_weight="1"
                     android:text="="
-                    android:id="@+id/b_equal" />
+                    android:id="@+id/b_equal"
+                    android:background="@color/grey_blue_100"/>
             </LinearLayout>
 
 
@@ -147,28 +163,32 @@
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="/"
-                    android:id="@+id/b_div" />
+                    android:id="@+id/b_div"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="x"
-                    android:id="@+id/b_mult" />
+                    android:id="@+id/b_mult"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="-"
-                    android:id="@+id/b_min" />
+                    android:id="@+id/b_min"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="+"
-                    android:id="@+id/b_sum" />
+                    android:id="@+id/b_sum"
+                    android:background="@color/grey_blue_100"/>
             </LinearLayout>
 
 
@@ -180,31 +200,35 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:onClick="deleteOne"
+                    android:onClick="delete"
                     android:layout_weight="1"
-                    android:text="del"
-                    android:id="@+id/b_del" />
+                    android:text="C"
+                    android:id="@+id/b_CE"
+                    android:background="@color/red_500"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:onClick="delete"
+                    android:onClick="deleteOne"
                     android:layout_weight="1"
                     android:text="CE"
-                    android:id="@+id/b_CE" />
+                    android:id="@+id/b_del"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text="("
-                    android:id="@+id/b_open_p" />
+                    android:id="@+id/b_open_p"
+                    android:background="@color/grey_blue_100"/>
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:onClick="click"
                     android:layout_weight="1"
                     android:text=")"
-                    android:id="@+id/b_close_p" />
+                    android:id="@+id/b_close_p"
+                    android:background="@color/grey_blue_100"/>
 
             </LinearLayout>
 
