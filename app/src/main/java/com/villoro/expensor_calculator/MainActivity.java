@@ -67,8 +67,6 @@ public class MainActivity extends ActionBarActivity {
         String firstNumber = text.substring(0, 1);
         String secondNumber = "";
         int initialPoint = 0;
-
-
         int whichNumber = 1;
         String operation = "";
 
@@ -146,12 +144,66 @@ public class MainActivity extends ActionBarActivity {
             text = reduce(text, initialPoint, text.length(), firstNumber, secondNumber, operation);
         }
 
-        Log.e(LOG_TAG, "text= " + text);
+        Log.e(LOG_TAG, "text pas 1= " + text);
 
-        Log.e(LOG_TAG, "first num: " + firstNumber + " second num: " + secondNumber);
-        Log.d(LOG_TAG, "operation: " + operation);
+        firstNumber = text.substring(0, 1);
+        secondNumber = "";
+        initialPoint = 0;
+        whichNumber = 1;
+        operation = "";
 
-        //text = Double.toString(round( Double.parseDouble(calculate(firstNumber, secondNumber, operation))));
+        for (int i = 1; i < text.length(); i++) {
+            String letter = text.substring(i, i + 1);
+
+            if (letter.equals("+")) {
+                if(whichNumber == 1)
+                {
+                    whichNumber = 2;
+                    operation = "+";
+                } else {
+                    text = reduce(text, initialPoint, i, firstNumber, secondNumber, operation);
+                    firstNumber = calculate(firstNumber, secondNumber, operation);
+
+                    i = firstNumber.length() + initialPoint - 1;
+                    Log.e(LOG_TAG, "text= " + text);
+
+                    secondNumber = "";
+                    whichNumber = 1;
+                    operation = "";
+                }
+            } else if (letter.equals("-")) {
+                if(whichNumber == 1)
+                {
+                    whichNumber = 2;
+                    operation = "-";
+                } else {
+                    text = reduce(text, initialPoint, i, firstNumber, secondNumber, operation);
+                    firstNumber = calculate(firstNumber, secondNumber, operation);
+
+                    i = firstNumber.length() + initialPoint - 1;
+                    Log.e(LOG_TAG, "text= " + text);
+
+                    secondNumber = "";
+                    whichNumber = 1;
+                    operation = "";
+                }
+            } else {
+                if (whichNumber == 1) {
+                    firstNumber += letter;
+                } else if (whichNumber == 2) {
+                    secondNumber += letter;
+                }
+            }
+        }
+
+        if(whichNumber == 2)
+        {
+            text = reduce(text, initialPoint, text.length(), firstNumber, secondNumber, operation);
+        }
+
+        Log.e(LOG_TAG, "text pas 2= " + text);
+
+        text = Double.toString(round( Double.parseDouble(text)));
         result.setText(originalText + " = " + text);
     }
 
@@ -195,9 +247,11 @@ public class MainActivity extends ActionBarActivity {
     }
     public static double round(double amount, int decimals)
     {
+        Log.e("", "input round= " + amount);
         if (decimals < 0) throw new IllegalArgumentException();
         BigDecimal bd = new BigDecimal(amount);
         bd = bd.setScale(decimals, RoundingMode.HALF_UP);
+        Log.e("", "input round= " + bd.doubleValue());
         return bd.doubleValue();
     }
 }
