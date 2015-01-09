@@ -1,6 +1,5 @@
 package com.villoro.expensor_calculator;
 
-import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -74,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
 
         Calculator calculator = new Calculator(originalText);
 
-        result.setText(originalText + " = " + calculator.doIt());
+        result.setText(originalText + " = " + calculator.calculate());
     }
 
 
@@ -95,7 +94,6 @@ public class MainActivity extends ActionBarActivity {
 
     public class Calculator {
         String originalText;
-        String text;
         boolean error;
 
         String firstNumber;
@@ -107,15 +105,14 @@ public class MainActivity extends ActionBarActivity {
 
         private final double EPSILON = 0.00001;
 
-        public Calculator(String originalText){
-            this.originalText = originalText;
-            text = originalText;
+        public Calculator(String text){
+            this.originalText = text.replace(",", ".").replace(" ","");
         }
 
-        private void initialize(){
+        private void initialize(String input){
             reset();
             firstNumber = "";
-            readNumber(text.substring(0,1));
+            readNumber(input.substring(0,1));
             initialPoint = 0;
         }
 
@@ -125,38 +122,102 @@ public class MainActivity extends ActionBarActivity {
             operation = "";
         }
 
-        public String doIt(){
+        public String calculate(){
 
             error = false;
 
-            text = text.replace(",", ".");
+            Log.d("", "to do: " + originalText);
+            int numberParenthesis = originalText.length() - originalText.replace("(", "").length();
 
-            secondStep();
-            Log.e(LOG_TAG, "text pas 2= " + text);
+            if (numberParenthesis != originalText.length() - originalText.replace(")", "").length())
+            {
+                error = true;
+            }
+            if(originalText.contains(".(") || originalText.contains(".)") || originalText.contains("(.")|| originalText.contains(")."))
+            {
+                error = true;
+            }
 
-            thirdStep();
-            Log.e(LOG_TAG, "text pas 3= " + text);
+            String text = originalText;
+
+
+            if(!error) {
+                while (text.contains("(") && !error) {
+                    Log.d("", "next it: " + text);
+                    text = firstStep(text);
+                }
+            }
+
+            text = thirdStep(secondStep(text));
+
 
             if (!error) {
-                text = Double.toString(round( Double.parseDouble(text)));
-                return text.replace(".", ",");
+                return Double.toString(round( Double.parseDouble(text))).replace(".", ",");
             } else {
                 return "Math error";
             }
         }
 
-        private void secondStep(){
-            initialize();
-            for (i = 1; i < text.length(); i++) {
+        private String firstStep(String input)
+        {
+            String output = input;
+            boolean opened = false;
+            boolean stop = false;
+            int whereOpened = -1;
+            for (int j = input.length() - 1; j >= 0 && !stop; j--) {
                 if (!error) {
-                    String letter = text.substring(i, i + 1);
+                    String letter = output.substring(j, j + 1);
+                    if (letter.equals(")")) {
+                        opened = true;
+                        whereOpened = j;
+                    } else if (letter.equals("(")) {
+                        if (opened) {
+                            String insideParenthesis = output.substring(j + 1, whereOpened);
+                            if (!insideParenthesis.equals("") && insideParenthesis != null) {
+                                Log.d(LOG_TAG, "inside parenthesis= " + insideParenthesis);
+
+                                String first = secondStep(insideParenthesis);
+
+                                Log.d(LOG_TAG, "text pas 2= " + first);
+
+                                String second = thirdStep(first);
+
+                                Log.d(LOG_TAG, "text pas 3= " + second);
+                                output = output.replace(output.substring(j, whereOpened + 1), second);
+                                if (j > 0) {
+                                    if (equalsNumber(output.substring(j - 1, j))) {
+                                        output = output.substring(0, j) + "x" + output.substring(j, output.length());
+                                    }
+                                }
+                                opened = false;
+                                stop = true;
+                                Log.d("", "text2= " + output);
+                            } else {
+                                error = true;
+                            }
+                        } else {
+                            error = true;
+                        }
+                    }
+                }
+            }
+            return output;
+        }
+
+
+        private String secondStep(String input){
+            initialize(input);
+            String output = input;
+            for (i = 1; i < output.length(); i++) {
+                if (!error) {
+                    String letter = output.substring(i, i + 1);
 
                     if (letter.equals("x")) {
                         if (whichNumber == 1) {
                             whichNumber = 2;
                             operation = "x";
                         } else {
-                            reduce();
+                            output = reduce(output);
                             Log.e("", "firstNum= " + firstNumber);
                         }
                     } else if (letter.equals("%") || letter.equals("/")) {
@@ -164,16 +225,16 @@ public class MainActivity extends ActionBarActivity {
                             whichNumber = 2;
                             operation = "/";
                         } else {
-                            reduce();
+                            output = reduce(output);
                         }
                     } else if (letter.equals("+") || letter.equals("-")) {
 
                         if (whichNumber == 2) {
-                            reduce();
+                            output = reduce(output);
                         } else {
                             firstNumber = "";
                             reset();
-                            if (i < text.length()) {
+                            if (i < output.length()) {
                                 initialPoint = i + 1;
                             }
                         }
@@ -185,31 +246,32 @@ public class MainActivity extends ActionBarActivity {
                 }
                 else
                 {
-                    i = text.length();
+                    i = output.length();
                 }
             }
-            finalizeStep();
+            return finalizeStep(output);
         }
 
-        private void thirdStep(){
-            initialize();
-            for (i = 1; i < text.length(); i++) {
+        private String thirdStep(String input){
+            initialize(input);
+            String output = input;
+            for (i = 1; i < output.length(); i++) {
                 if(!error) {
-                    String letter = text.substring(i, i + 1);
+                    String letter = output.substring(i, i + 1);
 
                     if (letter.equals("+")) {
                         if (whichNumber == 1) {
                             whichNumber = 2;
                             operation = "+";
                         } else {
-                            reduce();
+                            output = reduce(output);
                         }
                     } else if (letter.equals("-")) {
                         if (whichNumber == 1) {
                             whichNumber = 2;
                             operation = "-";
                         } else {
-                            reduce();
+                            output = reduce(output);
                         }
                     } else
                     {
@@ -217,13 +279,17 @@ public class MainActivity extends ActionBarActivity {
                     }
                 }
             }
-            finalizeStep();
+            return finalizeStep(output);
         }
 
-        private void finalizeStep(){
+        private String finalizeStep(String input){
             if(whichNumber == 2)
             {
-                reduce();
+                return reduce(input);
+            }
+            else
+            {
+                return input;
             }
         }
 
@@ -242,7 +308,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         private void readNumber(String letter){
-            Log.e("", "letter= " + letter + " ,first initial= " + firstNumber);
             if (equalsNumber(letter)) {
                 if (whichNumber == 1) {
                     firstNumber += letter;
@@ -252,65 +317,54 @@ public class MainActivity extends ActionBarActivity {
             } else {
                 error = true;
             }
-            Log.e("", "letter= " + letter + " ,first final= " + firstNumber);
         }
 
-        private void reduce(){
+        private String reduce(String input){
             String output;
 
             if (initialPoint > 0) {
-                output = text.substring(0,initialPoint);
+                output = input.substring(0,initialPoint);
             } else {
                 output = "";
             }
 
-            firstNumber = calculate();
+            firstNumber = operate();
             Log.e("", "inside reduce= " + firstNumber);
             reset();
             output += firstNumber;
 
-            if (i < text.length()){
-                output += text.substring(i, text.length());
+            if (i < input.length()){
+                output += input.substring(i, input.length());
             }
-            Log.e(LOG_TAG, "text= " + text);
+            Log.e(LOG_TAG, "input= " + input);
             Log.e(LOG_TAG, "output= " + output);
 
             i = firstNumber.length() + initialPoint - 1;
-            text = output;
+            return output;
         }
 
-        private String calculate(){
+        private String operate(){
 
             double output;
-            if (operation.equals("x"))
-            {
-                output = Double.parseDouble(firstNumber) * Double.parseDouble(secondNumber);
-            }
-            else if (operation.equals("/"))
-            {
-                Log.e("", "firstNum= " + firstNumber);
-                if ( Double.parseDouble(firstNumber) > EPSILON )
-                {
-                    Log.d("", "argh");
-                    output = Double.parseDouble(firstNumber) / Double.parseDouble(secondNumber);
-                }
-                else
-                {
-                    Log.d("", "ok");
-                    error = true;
+            if(!secondNumber.equals("") || secondNumber != null) {
+                if (operation.equals("x")) {
+                    output = Double.parseDouble(firstNumber) * Double.parseDouble(secondNumber);
+                } else if (operation.equals("/")) {
+                    if (Double.parseDouble(firstNumber) > EPSILON) {
+                        output = Double.parseDouble(firstNumber) / Double.parseDouble(secondNumber);
+                    } else {
+                        error = true;
+                        output = 0;
+                    }
+                } else if (operation.equals("+")) {
+                    output = Double.parseDouble(firstNumber) + Double.parseDouble(secondNumber);
+                } else if (operation.equals("-")) {
+                    output = Double.parseDouble(firstNumber) - Double.parseDouble(secondNumber);
+                } else {
                     output = 0;
                 }
-            }
-            else if (operation.equals("+"))
-            {
-                output = Double.parseDouble(firstNumber) + Double.parseDouble(secondNumber);
-            }
-            else if (operation.equals("-"))
-            {
-                output = Double.parseDouble(firstNumber) - Double.parseDouble(secondNumber);
-            }
-            else
-            {
+            } else {
+                error = true;
                 output = 0;
             }
 
