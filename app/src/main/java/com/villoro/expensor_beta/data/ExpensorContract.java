@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class ExpensorContract {
 
-    public static final String CONTENT_AUTHORITY = "com.villoro.expensor";
+    public static final String CONTENT_AUTHORITY = "com.villoro.expensor_beta";
 
     private static final String DIRECTORY = "vnd.android.cursor.dir/";
     private static final String ITEM = "vnd.android.cursor.item/";
@@ -98,7 +98,7 @@ public class ExpensorContract {
         public static final String CONTENT_ITEM_TYPE =
                 ITEM + CONTENT_AUTHORITY + "/" + tableName;
 
-        public static Uri buildExpenseUri(long id) {
+        public static Uri buildCategoriesUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }

@@ -1,6 +1,7 @@
 package com.villoro.expensor_beta.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by Arnau on 19/01/2015.
@@ -43,7 +45,7 @@ public class ExpensorProvider extends ContentProvider{
     private static final int WHO_PAID = 801;
     private static final int WHO_SPENT = 901;
 
-    private static UriMatcher buildUriMatcher() {
+    public static UriMatcher buildUriMatcher() {
         // All paths added to the UriMatcher have a corresponding code to return when a match is
         // found.  The code passed into the constructor represents the code to return for the root
         // URI.  It's common to use NO_MATCH as the code for this case.
@@ -83,7 +85,7 @@ public class ExpensorProvider extends ContentProvider{
     @Override
     public boolean onCreate() {
         mOpenHelper = new ExpensorDbHelper(getContext());
-        return false;
+        return true;
     }
 
     @Override
@@ -95,10 +97,46 @@ public class ExpensorProvider extends ContentProvider{
             // "expense"
             case EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                       Tables.TABLENAME_EXPENSE,
+                        Tables.TABLENAME_EXPENSE,
                         projection,
                         selection,
                         selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case EXPENSE_WITH_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_EXPENSE,
+                        projection,
+                        Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
+                        null,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case CATEGORIES: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_CATEGORIES,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case CATEGORIES_WITH_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_CATEGORIES,
+                        projection,
+                        Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
+                        null,
                         null,
                         null,
                         sortOrder
@@ -120,8 +158,12 @@ public class ExpensorProvider extends ContentProvider{
         switch (match) {
             case EXPENSE:
                 return ExpensorContract.ExpenseEntry.CONTENT_TYPE;
+            case EXPENSE_WITH_ID:
+                return ExpensorContract.ExpenseEntry.CONTENT_ITEM_TYPE;
             case CATEGORIES:
-                return ExpensorContract.ExpenseEntry.CONTENT_TYPE;
+                return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
+            case CATEGORIES_WITH_ID:
+                return ExpensorContract.CategoriesEntry.CONTENT_ITEM_TYPE;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -146,7 +188,7 @@ public class ExpensorProvider extends ContentProvider{
             case CATEGORIES: {
                 long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
                 if(_id > 0)
-                    returnUri = ExpensorContract.CategoriesEntry.buildExpenseUri(_id);
+                    returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
                 else
                     throw new SQLException("Failed to insert to row into " + uri);
                 break;

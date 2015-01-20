@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="com.villoro.expensor_beta"
+            android:name=".data.ExpensorProvider" />
     </application>
 
 </manifest>
