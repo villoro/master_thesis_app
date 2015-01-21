@@ -32,7 +32,8 @@ public class ExpensorProvider extends ContentProvider{
 
     private static final int PEOPLE = 400;
     private static final int PEOPLE_WITH_ID = 401;
-    private static final int PEOPLE_IN_GROUP = 402;
+
+    private static final int PEOPLE_IN_GROUP = 450;
 
     private static final int GROUPS = 500;
     private static final int GROUPS_WITH_ID = 501;
@@ -174,30 +175,56 @@ public class ExpensorProvider extends ContentProvider{
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        Uri returnUri;
+
+        String tableName;
 
         switch (match){
-            case EXPENSE: {
-                long _id = db.insert(Tables.TABLENAME_EXPENSE, null, values);
-                if(_id > 0)
-                    returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
-                else
-                    throw new SQLException("Failed to insert to row into " + uri);
+            case EXPENSE:{
+                tableName = Tables.TABLENAME_EXPENSE;
+                break;
+            }
+            case INCOME: {
+                tableName = Tables.TABLENAME_INCOME;
                 break;
             }
             case CATEGORIES: {
-                long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
-                if(_id > 0)
-                    returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
-                else
-                    throw new SQLException("Failed to insert to row into " + uri);
+                tableName = Tables.TABLENAME_CATEGORIES;
+                break;
+            }
+            case PEOPLE: {
+                tableName = Tables.TABLENAME_CATEGORIES;
+                break;
+            }
+            case PEOPLE_IN_GROUP: {
+                tableName = Tables.TABLENAME_PEOPLE_IN_GROUP;
+                break;
+            }
+            case GROUPS: {
+                tableName = Tables.TABLENAME_GROUPS;
+                break;
+            }
+            case TRANSACTIONS_GROUP: {
+                tableName = Tables.TABLENAME_TRANSACTIONS_GROUP;
+                break;
+            }
+            case TRANSACTIONS_PEOPLE: {
+                tableName = Tables.TABLENAME_TRANSACTIONS_PEOPLE;
+                break;
+            }
+            case WHO_PAID: {
+                tableName = Tables.TABLENAME_WHO_PAID;
+                break;
+            }
+            case WHO_SPENT: {
+                tableName = Tables.TABLENAME_WHO_SPENT;
                 break;
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
         getContext().getContentResolver().notifyChange(uri, null);
-        return returnUri;
+        return insert(uri, tableName, db, values);
     }
 
     @Override
@@ -246,4 +273,16 @@ public class ExpensorProvider extends ContentProvider{
 
         return rowsUpdated;
     }
+
+    private static Uri insert(Uri uri, String tableName, SQLiteDatabase database, ContentValues values){
+        Uri returnUri;
+        long _id = database.insert(tableName, null, values);
+        if(_id > 0)
+            returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
+        else
+            throw new SQLException("Failed to insert to row into " + uri);
+        return returnUri;
+    }
+
+
 }
