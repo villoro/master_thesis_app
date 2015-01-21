@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.util.Log;
 
+import com.villoro.expensor_beta.Utility;
+
 /**
  * Created by Arnau on 19/01/2015.
  */
@@ -175,56 +177,30 @@ public class ExpensorProvider extends ContentProvider{
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-
-        String tableName;
+        Uri returnUri;
 
         switch (match){
-            case EXPENSE:{
-                tableName = Tables.TABLENAME_EXPENSE;
-                break;
-            }
-            case INCOME: {
-                tableName = Tables.TABLENAME_INCOME;
+            case EXPENSE: {
+                long _id = db.insert(Tables.TABLENAME_EXPENSE, null, values);
+                if(_id > 0)
+                    returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
             case CATEGORIES: {
-                tableName = Tables.TABLENAME_CATEGORIES;
-                break;
-            }
-            case PEOPLE: {
-                tableName = Tables.TABLENAME_CATEGORIES;
-                break;
-            }
-            case PEOPLE_IN_GROUP: {
-                tableName = Tables.TABLENAME_PEOPLE_IN_GROUP;
-                break;
-            }
-            case GROUPS: {
-                tableName = Tables.TABLENAME_GROUPS;
-                break;
-            }
-            case TRANSACTIONS_GROUP: {
-                tableName = Tables.TABLENAME_TRANSACTIONS_GROUP;
-                break;
-            }
-            case TRANSACTIONS_PEOPLE: {
-                tableName = Tables.TABLENAME_TRANSACTIONS_PEOPLE;
-                break;
-            }
-            case WHO_PAID: {
-                tableName = Tables.TABLENAME_WHO_PAID;
-                break;
-            }
-            case WHO_SPENT: {
-                tableName = Tables.TABLENAME_WHO_SPENT;
+                long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
+                if(_id > 0)
+                    returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-
         getContext().getContentResolver().notifyChange(uri, null);
-        return insert(uri, tableName, db, values);
+        return returnUri;
     }
 
     @Override
@@ -273,16 +249,4 @@ public class ExpensorProvider extends ContentProvider{
 
         return rowsUpdated;
     }
-
-    private static Uri insert(Uri uri, String tableName, SQLiteDatabase database, ContentValues values){
-        Uri returnUri;
-        long _id = database.insert(tableName, null, values);
-        if(_id > 0)
-            returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
-        else
-            throw new SQLException("Failed to insert to row into " + uri);
-        return returnUri;
-    }
-
-
 }

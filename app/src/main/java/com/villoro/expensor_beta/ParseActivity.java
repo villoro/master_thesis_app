@@ -63,7 +63,7 @@ public class ParseActivity extends ActionBarActivity {
 
     public void insert(){
 
-        /*ContentValues testValues = new ContentValues();
+        ContentValues testValues = new ContentValues();
         testValues.put(Tables.LETTER, "P");
         testValues.put(Tables.NAME, "Food");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
@@ -71,8 +71,9 @@ public class ParseActivity extends ActionBarActivity {
 
         Log.e("", "Insertant cv= " + testValues.toString());
 
-        Uri uri = this.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, testValues); */
+        Uri uri = this.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, testValues);
 
+        Log.e("", ExpensorContract.CategoriesEntry.CONTENT_URI.toString());
         Cursor cursor = this.getContentResolver().query(
                 ExpensorContract.CategoriesEntry.CONTENT_URI,
                 null, // leaving "columns" null just returns all the columns.
@@ -81,6 +82,7 @@ public class ParseActivity extends ActionBarActivity {
                 null  // sort order
         );
 
-        Log.e("", "Cursor= " + cursor.toString());
+        cursor.moveToFirst();
+        Log.e("", "Cursor= " + cursor.getString(cursor.getColumnIndex(Tables.NAME)));
     }
 }
