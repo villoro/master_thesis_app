@@ -34,6 +34,9 @@ public class Tables {
     public static final String TRANSACTION_ID = "transactionID";
     public static final String PEOPLE_ID = "peopleID";
 
+    //Parse sync
+    public static final String LAST_UPDATE = "updated";
+
     //main tables
     public static final String TABLENAME_EXPENSE = "expense";
     public static final String TABLENAME_INCOME = "income";
@@ -209,6 +212,9 @@ public class Tables {
                 }
             }
         }
+        //Add last_update
+        sb.append(", " + LAST_UPDATE + " " + TYPE_DATE);
+
         sb.append(");");
 
         return sb.toString();

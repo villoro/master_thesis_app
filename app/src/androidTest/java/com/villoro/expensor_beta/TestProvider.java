@@ -73,7 +73,6 @@ public class TestProvider extends AndroidTestCase {
 
         Uri categoriesUri = mContext.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, testValues);
 
-        //Log.d("", categoriesUri.toString());
         long categoriesRowId = ContentUris.parseId(categoriesUri);
 
         // Verify we got a row back.
@@ -192,41 +191,5 @@ public class TestProvider extends AndroidTestCase {
         deleteAllRecords();
     }
 
-    // Helper Methods
 
-    // The target api annotation is needed for the call to keySet -- we wouldn't want
-    // to use this in our app, but in a test it's fine to assume a higher target.
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    void addAllContentValues(ContentValues destination, ContentValues source) {
-        for (String key : source.keySet()) {
-            destination.put(key, source.getAsString(key));
-        }
-    }
-
-    //static final String KALAMAZOO_LOCATION_SETTING = "kalamazoo";
-    //static final String KALAMAZOO_WEATHER_START_DATE = "20140625";
-
-
-    long locationRowId;
-    static ContentValues createAnotherExpenseValues(long categoryId) {
-        ContentValues expenseValues = new ContentValues();
-        expenseValues.put(Tables.DATE, "20150119");
-        expenseValues.put(Tables.CATEGORY_ID, categoryId);
-        expenseValues.put(Tables.AMOUNT, 256);
-        expenseValues.put(Tables.COMMENTS, "hot dog");
-        expenseValues.put(Tables.FROM, "nidea");
-
-        return expenseValues;
-    }
-
-    static ContentValues createAnotherCategoryValues() {
-        // Create a new map of values, where column names are the keys
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "F");
-        testValues.put(Tables.NAME, "Food");
-        testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-        testValues.put(Tables.COLOR, 22);
-
-        return testValues;
-    }
 }

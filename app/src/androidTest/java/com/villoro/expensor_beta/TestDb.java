@@ -89,7 +89,6 @@ public class TestDb extends AndroidTestCase {
         expenseValues.put(Tables.COMMENTS, "hot dog");
         expenseValues.put(Tables.FROM, "nidea");
 
-
         return expenseValues;
     }
 
