@@ -148,7 +148,7 @@ public class ExpensorProvider extends ContentProvider{
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
+        }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
@@ -179,6 +179,9 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
+        values.put(Tables.LAST_UPDATE, Utility.getDateUTC());
+        Log.e("", "insertant= " + values.toString());
+
         switch (match){
             case EXPENSE: {
                 long _id = db.insert(Tables.TABLENAME_EXPENSE, null, values);
@@ -189,11 +192,23 @@ public class ExpensorProvider extends ContentProvider{
                 break;
             }
             case CATEGORIES: {
-                long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
-                if(_id > 0)
-                    returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
+                if(db.query(
+                        Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
+                        Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
+                        null, null, null, null).getCount() == 0)
+                {
+                    long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
+                    if(_id > 0)
+                        returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
+                    else
+                        throw new SQLException("Failed to insert to row into " + uri);
+                }
                 else
-                    throw new SQLException("Failed to insert to row into " + uri);
+                {
+                    Log.e("", "ja hi ha un amb aquest nom");
+                    returnUri = uri;
+                }
+
                 break;
             }
             default:
@@ -231,6 +246,8 @@ public class ExpensorProvider extends ContentProvider{
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
+
+        values.put(Tables.LAST_UPDATE, Utility.getDateUTC());
 
         switch (match) {
             case EXPENSE:

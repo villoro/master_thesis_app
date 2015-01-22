@@ -36,6 +36,7 @@ public class Tables {
 
     //Parse sync
     public static final String LAST_UPDATE = "updated";
+    public static final String PARSE_ID_NAME = "parse_id";
 
     //main tables
     public static final String TABLENAME_EXPENSE = "expense";
