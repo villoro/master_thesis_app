@@ -7,7 +7,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.util.Log;
 
@@ -179,7 +178,7 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
-        values.put(Tables.LAST_UPDATE, Utility.getDateUTC());
+        values.put(Tables.LAST_UPDATE, Utility.getStringFromActualDateUTC());
         Log.e("", "insertant= " + values.toString());
 
         switch (match){
@@ -247,7 +246,7 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
 
-        values.put(Tables.LAST_UPDATE, Utility.getDateUTC());
+        values.put(Tables.LAST_UPDATE, Utility.getStringFromActualDateUTC());
 
         switch (match) {
             case EXPENSE:

@@ -1,5 +1,8 @@
 package com.villoro.expensor_beta;
 
+import com.parse.ParseObject;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -11,16 +14,33 @@ public class Utility {
 
     public final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static String getDateUTC() {
+    public static String getStringFromActualDateUTC() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
 
         return dateFormat.format(new Date());
     }
 
-    public static String getDate() {
+    public static String getStringFromActualDate() {
         SimpleDateFormat dateFormatLocal = new SimpleDateFormat(DATE_FORMAT);
 
         return dateFormatLocal.format(new Date());
+    }
+
+    public static String getStringFromDateUTC(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
+        return dateFormat.format(date);
+    }
+
+    public static Date getDateFromString(String dateString){
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 }

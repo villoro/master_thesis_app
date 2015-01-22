@@ -1,6 +1,8 @@
 package com.villoro.expensor_beta;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
@@ -19,10 +21,14 @@ import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 
+import java.util.Date;
 import java.util.List;
 
 
 public class ParseActivity extends ActionBarActivity {
+
+    private static String LAST_UPDATE_EXPENSOR = "last_update_expensor";
+    private static String DEFAULT_DATE = "1989-04-29 14:10:00";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,23 +60,50 @@ public class ParseActivity extends ActionBarActivity {
     }
 
     public void click(View view){
-        parseUpload(Tables.TABLENAME_CATEGORIES);
+        //parseUpload(Tables.TABLENAME_CATEGORIES);
         //readParse(Tables.TABLENAME_CATEGORIES);
         //insertExampleParse();
+
+        //readLastUpdateDate();
+
+        Log.e("", "dated read= " + readLastUpdateDate().toString());
+    }
+
+    private Date readLastUpdateDate(){
+        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
+        String date = sharedPreferences.getString(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
+        Log.e("", "date load= " + date);
+        return Utility.getDateFromString(date);
+    }
+
+    private void saveLastUpdateDate(Date date){
+
+        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =  sharedPreferences.edit();
+        editor.putString(LAST_UPDATE_EXPENSOR, Utility.getStringFromDateUTC(date) );
+        editor.commit();
+        Log.e("", "date saved= " + date.toString());
     }
 
     public void readParse(String tableName){
         ParseQuery<ParseObject> query = ParseQuery.getQuery(tableName);
-        //query.whereEqualTo(Tables.)
+        query.whereGreaterThan("updatedAt", readLastUpdateDate() );
+
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if(e == null)
                 {
-                    Log.e("", "shit, doesn't work");
+                    Log.e("", "it's working, size= " + parseObjects.size() );
+                    Log.e("", "size " + parseObjects.size());
+                    for(ParseObject parseObject : parseObjects){
+                        Date updatedAt = parseObject.getUpdatedAt();
+                        Log.e("", "read upadated at= " + updatedAt.toString() );
+
+                    }
                 }
                 else {
-                    Log.e("", "it's working ^^");
+                    Log.e("", "shit, doesn't work");
                 }
             }
         });
@@ -78,7 +111,7 @@ public class ParseActivity extends ActionBarActivity {
 
     public void parseUpload(String tableName){
 
-        Cursor cursor = this.getContentResolver().query(
+        final Cursor cursor = this.getContentResolver().query(
                 ExpensorContract.CategoriesEntry.CONTENT_URI,
                 null, null, null, null);
 
@@ -115,6 +148,9 @@ public class ParseActivity extends ActionBarActivity {
                     @Override
                     public void done(ParseException e) {
                         Log.e("", "parseID= " + parseObject.getObjectId());
+                        Log.e("", "updatedAt= " + parseObject.getUpdatedAt().toString());
+                        Log.e("", "date= " + Utility.getStringFromActualDateUTC());
+                        //saveLastUpdateDate(parseObject.getUpdatedAt());
                     }
                 });
 
@@ -123,6 +159,7 @@ public class ParseActivity extends ActionBarActivity {
 
             } while (cursor.moveToNext());
         }
+
     }
 
     public void insertExampleParse(){
