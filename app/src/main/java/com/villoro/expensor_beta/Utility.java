@@ -27,14 +27,22 @@ public class Utility {
         return dateFormatLocal.format(new Date());
     }
 
+    //Used to show a read date
+    public static String getStringFromDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        return dateFormat.format(date);
+    }
+
+    //Used when saving a data
     public static String getStringFromDateUTC(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
         return dateFormat.format(date);
     }
 
-    public static Date getDateFromString(String dateString){
+    public static Date getDateUTCFromString(String dateString){
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
         Date date = null;
         try {
             date = dateFormat.parse(dateString);

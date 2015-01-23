@@ -60,20 +60,20 @@ public class ParseActivity extends ActionBarActivity {
     }
 
     public void click(View view){
-        //parseUpload(Tables.TABLENAME_CATEGORIES);
+
+        parseUpload(Tables.TABLENAME_CATEGORIES);
         //readParse(Tables.TABLENAME_CATEGORIES);
-        //insertExampleParse();
 
-        //readLastUpdateDate();
+        readLastUpdateDate();
 
-        Log.e("", "dated read= " + readLastUpdateDate().toString());
+
     }
 
     private Date readLastUpdateDate(){
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
         String date = sharedPreferences.getString(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
-        Log.e("", "date load= " + date);
-        return Utility.getDateFromString(date);
+        Log.e("", "date load= " + date + " (long)= " + Utility.getDateUTCFromString(date).getTime());
+        return Utility.getDateUTCFromString(date);
     }
 
     private void saveLastUpdateDate(Date date){
@@ -82,7 +82,7 @@ public class ParseActivity extends ActionBarActivity {
         SharedPreferences.Editor editor =  sharedPreferences.edit();
         editor.putString(LAST_UPDATE_EXPENSOR, Utility.getStringFromDateUTC(date) );
         editor.commit();
-        Log.e("", "date saved= " + date.toString());
+        Log.e("", "date saved= " + Utility.getStringFromDateUTC(date) + " (long)= " + date.getTime());
     }
 
     public void readParse(String tableName){
@@ -98,7 +98,12 @@ public class ParseActivity extends ActionBarActivity {
                     Log.e("", "size " + parseObjects.size());
                     for(ParseObject parseObject : parseObjects){
                         Date updatedAt = parseObject.getUpdatedAt();
-                        Log.e("", "read upadated at= " + updatedAt.toString() );
+                        Date lastUpdate = readLastUpdateDate();
+                        Log.e("", "upadated at= " + Utility.getStringFromDateUTC(updatedAt) + " > last update = "
+                                + Utility.getStringFromDateUTC(lastUpdate) );
+
+                        Log.e("", "updated at (long)= "+ updatedAt.getTime()
+                        + "> last update (long)= " + lastUpdate.getTime());
 
                     }
                 }
@@ -147,10 +152,21 @@ public class ParseActivity extends ActionBarActivity {
                 parseObject.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
+                        Date updatedAt = parseObject.getUpdatedAt();
+                        Date lastUpdate = readLastUpdateDate();
                         Log.e("", "parseID= " + parseObject.getObjectId());
-                        Log.e("", "updatedAt= " + parseObject.getUpdatedAt().toString());
+                        Log.e("", "updatedAt= "+ Utility.getStringFromDateUTC(updatedAt) + " (long)= " + updatedAt.getTime());
                         Log.e("", "date= " + Utility.getStringFromActualDateUTC());
-                        //saveLastUpdateDate(parseObject.getUpdatedAt());
+                        if(updatedAt.after(lastUpdate))
+                        {
+                            Log.d("", "updated at= " + updatedAt.getTime() + " > last update= " + lastUpdate.getTime());
+                            Log.d("", "saving last update= " + updatedAt.getTime());
+                            saveLastUpdateDate(updatedAt);
+                        } else {
+                            Log.d("", "updated at= " + updatedAt.getTime() + " < last update= " + lastUpdate.getTime());
+                            Log.d("", "no need to save last update");
+                        }
+
                     }
                 });
 
