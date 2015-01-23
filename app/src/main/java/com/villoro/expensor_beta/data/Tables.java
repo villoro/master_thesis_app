@@ -213,8 +213,10 @@ public class Tables {
                 }
             }
         }
-        //Add last_update
+
+        //Add parse columns
         sb.append(", " + LAST_UPDATE + " " + TYPE_LONG);
+        sb.append(", " + PARSE_ID_NAME + " " + TYPE_TEXT);
 
         sb.append(");");
 

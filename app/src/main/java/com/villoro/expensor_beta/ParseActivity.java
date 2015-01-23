@@ -100,13 +100,19 @@ public class ParseActivity extends ActionBarActivity {
                 {
                     Log.e("", "it's working, size= " + parseObjects.size() );
                     Log.e("", "size " + parseObjects.size());
+                    Date lastUpdate = readLastUpdateDate();
+
                     for(ParseObject parseObject : parseObjects){
                         Date updatedAt = parseObject.getUpdatedAt();
-                        Date lastUpdate = readLastUpdateDate();
 
                         Log.e("", "upadated at= " + Utility.getStringFromDateUTC(updatedAt) + " > last update = "  + Utility.getStringFromDateUTC(lastUpdate) );
                         Log.e("", "updated at (long)= "+ updatedAt.getTime() + "> last update (long)= " + lastUpdate.getTime());
+                        if(updatedAt.after(lastUpdate)) {
+                            lastUpdate = updatedAt;
+                        }
+                        insertParseObject(parseObject);
                     }
+                    saveLastUpdateDate(lastUpdate);
                 }
                 else {
 
@@ -114,6 +120,31 @@ public class ParseActivity extends ActionBarActivity {
                 }
             }
         });
+    }
+
+    private void insertParseObject(ParseObject parseObject){
+        Log.d("", "inserting parseObject to SQLite");
+
+        ContentValues contentValues = new ContentValues();
+
+        String tableName = parseObject.getClassName();
+        Tables table = new Tables(tableName);
+        String[] columns = table.getColumns();
+        String[] types = table.getTypes();
+        for(int i = 0; i < columns.length; i++) {
+            if (types[i] == Tables.TYPE_DOUBLE) {
+                contentValues.put(columns[i], parseObject.getDouble(columns[i]));
+            } else if (types[i] == Tables.TYPE_INT) {
+                contentValues.put(columns[i], parseObject.getInt(columns[i]));
+            } else {
+                contentValues.put(columns[i], parseObject.getString(columns[i]));
+            }
+        }
+        contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime());
+        contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
+
+        Log.e("", "values to insert= " + contentValues.toString() );
+        Uri uri = this.getContentResolver().insert(ExpensorContract.contentUri(tableName), contentValues);
     }
 
     public void parseUpload(){
