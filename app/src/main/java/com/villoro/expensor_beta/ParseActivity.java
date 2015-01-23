@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +22,8 @@ import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 
 public class ParseActivity extends ActionBarActivity {
@@ -70,8 +66,10 @@ public class ParseActivity extends ActionBarActivity {
 
     public void download(View view){
 
-        readParse(Tables.TABLENAME_CATEGORIES);
+        parseDownload(Tables.TABLENAME_CATEGORIES);
     }
+
+    //--------------DATES LOGIC-------------------------
 
     private Date readLastUpdateDate(){
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
@@ -89,7 +87,10 @@ public class ParseActivity extends ActionBarActivity {
         Log.e("", "date saved= " + Utility.getStringFromDateUTC(date) + " (long)= " + date.getTime());
     }
 
-    public void readParse(String tableName){
+    //--------------PARSE DOWNLOAD-------------------------
+    //TODO buscar si ja existeix
+
+    public void parseDownload(String tableName){
         ParseQuery<ParseObject> query = ParseQuery.getQuery(tableName);
         query.whereGreaterThan("updatedAt", readLastUpdateDate() );
 
@@ -110,7 +111,7 @@ public class ParseActivity extends ActionBarActivity {
                         if(updatedAt.after(lastUpdate)) {
                             lastUpdate = updatedAt;
                         }
-                        insertParseObject(parseObject);
+                        insertParseObjectInSQL(parseObject);
                     }
                     saveLastUpdateDate(lastUpdate);
                 }
@@ -122,7 +123,7 @@ public class ParseActivity extends ActionBarActivity {
         });
     }
 
-    private void insertParseObject(ParseObject parseObject){
+    private void insertParseObjectInSQL(ParseObject parseObject){
         Log.d("", "inserting parseObject to SQLite");
 
         ContentValues contentValues = new ContentValues();
@@ -147,26 +148,34 @@ public class ParseActivity extends ActionBarActivity {
         Uri uri = this.getContentResolver().insert(ExpensorContract.contentUri(tableName), contentValues);
     }
 
+
+    //--------------PARSE UPLOAD-------------------------
+    //TODO update quan sigui necessari
+
     public void parseUpload(){
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
-        List<ParseObject> auxParseObjects = new ArrayList<>();
+        ListParseObjectsWithId auxParseObjects = new ListParseObjectsWithId();
 
         for (String tableName : Tables.TABLES )
         {
             auxParseObjects = parseTable(auxParseObjects, tableName);
         }
 
-        final List<ParseObject> parseObjects = auxParseObjects;
+        final List<ParseObject> parseObjects = auxParseObjects.parseObjects;
+        final List<Long> _ids = auxParseObjects._ids;
 
         ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
             @Override
             public void done(ParseException e) {
 
+                Log.e("","done: ");
                 //update date of last sync
                 Date lastUpdate = readLastUpdateDate();
-                for(ParseObject parseObject : parseObjects){
-                    Date updatedAt = parseObject.getUpdatedAt();
+                for(int i = 0; i < parseObjects.size(); i++){
+                    Date updatedAt = parseObjects.get(i).getUpdatedAt();
+
+                    updateEntrySQL(parseObjects.get(i), _ids.get(i));
 
                     if(updatedAt.after(lastUpdate)) {
                         lastUpdate = updatedAt;
@@ -177,9 +186,23 @@ public class ParseActivity extends ActionBarActivity {
         });
     }
 
+    public void updateEntrySQL(ParseObject parseObject, long _id){
+
+        Log.e("", "id= " + _id);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime() );
+        contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
+
+        String tableName = parseObject.getClassName();
+        getContentResolver().update(
+                ExpensorContract.contentUri(tableName), contentValues, Tables.ID + "= ?",
+                new String[] {Long.toString(_id)});
+        Log.e("", "updated! ");
+    }
+
     //TODO tractar les dades que s'afegeixen mentre s'esta pujant info a parse.
 
-    private List<ParseObject> parseTable(List<ParseObject> parseObjects, String tableName){
+    private ListParseObjectsWithId parseTable(ListParseObjectsWithId parseObjects, String tableName){
 
         final Cursor cursor = this.getContentResolver().query(
                 ExpensorContract.contentUri(tableName), null, null, null, null);
@@ -192,6 +215,9 @@ public class ParseActivity extends ActionBarActivity {
                 Tables table = new Tables(tableName);
                 String[] columns = table.getColumns();
                 String[] types = table.getTypes();
+
+                //add _id
+                parseObjects._ids.add(cursor.getLong(cursor.getColumnIndex(Tables.ID)));
 
                 //add values
                 for(int i = 0; i < columns.length; i++)
@@ -216,7 +242,7 @@ public class ParseActivity extends ActionBarActivity {
 
                 }
 
-                parseObjects.add(parseObject);
+                parseObjects.parseObjects.add(parseObject);
 
             } while (cursor.moveToNext());
         }
@@ -224,6 +250,16 @@ public class ParseActivity extends ActionBarActivity {
         cursor.close();
 
         return parseObjects;
+    }
+
+    class ListParseObjectsWithId {
+        public List<ParseObject> parseObjects;
+        public List<Long> _ids;
+
+        public ListParseObjectsWithId(){
+            parseObjects = new ArrayList<>();
+            _ids = new ArrayList<>();
+        }
     }
 
     /*public void insertExampleParse(){
@@ -319,6 +355,4 @@ public class ParseActivity extends ActionBarActivity {
                 new String[] {Integer.toString(0)});
         Log.d("", "update " + testValues.toString());
     }
-
-
 }
