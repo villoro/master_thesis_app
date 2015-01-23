@@ -65,7 +65,7 @@ public class ParseActivity extends ActionBarActivity {
     }
 
     public void upload(View view){
-        parseUpload(Tables.TABLENAME_CATEGORIES);
+        parseUpload();
     }
 
     public void download(View view){
@@ -84,7 +84,7 @@ public class ParseActivity extends ActionBarActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor =  sharedPreferences.edit();
-        editor.putLong(LAST_UPDATE_EXPENSOR, date.getTime() );
+        editor.putLong(LAST_UPDATE_EXPENSOR, date.getTime());
         editor.commit();
         Log.e("", "date saved= " + Utility.getStringFromDateUTC(date) + " (long)= " + date.getTime());
     }
@@ -116,17 +116,45 @@ public class ParseActivity extends ActionBarActivity {
         });
     }
 
-    public void parseUpload(String tableName){
+    public void parseUpload(){
+
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+        List<ParseObject> auxParseObjects = new ArrayList<>();
+
+        for (String tableName : Tables.TABLES )
+        {
+            auxParseObjects = parseTable(auxParseObjects, tableName);
+        }
+
+        final List<ParseObject> parseObjects = auxParseObjects;
+
+        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+
+                //update date of last sync
+                Date lastUpdate = readLastUpdateDate();
+                for(ParseObject parseObject : parseObjects){
+                    Date updatedAt = parseObject.getUpdatedAt();
+
+                    if(updatedAt.after(lastUpdate)) {
+                        lastUpdate = updatedAt;
+                    }
+                }
+                saveLastUpdateDate(lastUpdate);
+            }
+        });
+    }
+
+    //TODO tractar les dades que s'afegeixen mentre s'esta pujant info a parse.
+
+    private List<ParseObject> parseTable(List<ParseObject> parseObjects, String tableName){
 
         final Cursor cursor = this.getContentResolver().query(
-                ExpensorContract.CategoriesEntry.CONTENT_URI,
-                null, null, null, null);
+                ExpensorContract.contentUri(tableName), null, null, null, null);
 
-        Log.e("", "count= " + cursor.getCount() + ", columns= " + cursor.getColumnCount());
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
-
-
-        final List<ParseObject> parseObjects = new ArrayList<ParseObject>();
+        Log.e("", "Curor " + tableName + " count= " + cursor.getCount() + ", columns= " + cursor.getColumnCount());
 
         if (cursor.moveToFirst()){
             do{
@@ -138,18 +166,24 @@ public class ParseActivity extends ActionBarActivity {
                 //add values
                 for(int i = 0; i < columns.length; i++)
                 {
-                    if( types[i] == Tables.TYPE_DOUBLE)
-                    {
-                        parseObject.put(columns[i], String.valueOf(cursor.getDouble(cursor.getColumnIndex(columns[i]))));
+                    int index = cursor.getColumnIndex(columns[i]);
+                    if (index >= 0){
+                        if( types[i] == Tables.TYPE_DOUBLE)
+                        {
+                            parseObject.put(columns[i], cursor.getDouble(index));
+                        }
+                        else if (types[i] == Tables.TYPE_INT)
+                        {
+                            parseObject.put(columns[i], cursor.getInt(index));
+                        }
+                        else
+                        {
+                            parseObject.put(columns[i], cursor.getString(index));
+                        }
+                    } else {
+                        Log.d("", "no existeix la columna");
                     }
-                    else if (types[i] == Tables.TYPE_INT)
-                    {
-                        parseObject.put(columns[i], String.valueOf(cursor.getInt(cursor.getColumnIndex(columns[i]))));
-                    }
-                    else
-                    {
-                        parseObject.put(columns[i], cursor.getString(cursor.getColumnIndex(columns[i])));
-                    }
+
                 }
 
                 parseObjects.add(parseObject);
@@ -157,29 +191,12 @@ public class ParseActivity extends ActionBarActivity {
             } while (cursor.moveToNext());
         }
 
-        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                Date lastUpdate = readLastUpdateDate();
-                for(ParseObject parseObject : parseObjects){
-                    Date updatedAt = parseObject.getUpdatedAt();
-                    if(updatedAt.after(lastUpdate))
-                    {
-                        Log.d("", "updated at= " + updatedAt.getTime() + " > last update= " + lastUpdate.getTime());
-                        Log.d("", "saving last update= " + updatedAt.getTime());
-                        lastUpdate = updatedAt;
-                    } else {
-                        Log.d("", "updated at= " + updatedAt.getTime() + " < last update= " + lastUpdate.getTime());
-                        Log.d("", "no need to save last update");
-                    }
-                }
-                Log.d("", "greater date= " + lastUpdate.getTime());
-                //saveLastUpdateDate(lastUpdate);
-            }
-        });
+        cursor.close();
+
+        return parseObjects;
     }
 
-    public void insertExampleParse(){
+    /*public void insertExampleParse(){
         Log.e("","starting to add info");
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
@@ -197,15 +214,26 @@ public class ParseActivity extends ActionBarActivity {
         });
 
         Log.e("", "it works :)");
+    } */
+
+
+
+
+
+
+    public void insertSQL(View v) {
+
+        insertCategory();
+        //insertExpense();
     }
 
-    public void insertSQL(){
+    public void insertCategory(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "R");
-        testValues.put(Tables.NAME, "Regals");
+        testValues.put(Tables.LETTER, "T");
+        testValues.put(Tables.NAME, "Transport");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-        testValues.put(Tables.COLOR, 301);
+        testValues.put(Tables.COLOR, 1213);
 
         Log.e("", "Insertant cv= " + testValues.toString());
 
@@ -225,18 +253,30 @@ public class ParseActivity extends ActionBarActivity {
         Log.e("", "last_update= " + cursor.getString(cursor.getColumnIndex(Tables.LAST_UPDATE)));
     }
 
+    public void insertExpense(){
 
-    /*
-    EXPENSOR_LAST_UPDATE = moment de l'ultima actualitzacio
-    PARSE_ID = id a sqlite de parse
-    LAST_CHANGE = ultim canvi local
+        ContentValues testValues = new ContentValues();
+        testValues.put(Tables.DATE, "2015-01-23");
+        testValues.put(Tables.CATEGORY_ID, "1");
+        testValues.put(Tables.AMOUNT, 21);
+        testValues.put(Tables.COMMENTS, "hola");
 
-    if(LAST_CHANGE > EXPENSOR_LAST_UPDATE){
-        uploads
+
+        Log.e("", "Insertant cv= " + testValues.toString());
+
+        Uri uri = this.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, testValues);
+
+        Cursor cursor = this.getContentResolver().query(
+                ExpensorContract.ExpenseEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+
+        cursor.moveToFirst();
+        Log.e("", "count cursor= " + cursor.getCount());
+        Log.e("", "count columns= " + cursor.getColumnCount());
+        Log.e("", "last_update= " + cursor.getString(cursor.getColumnIndex(Tables.LAST_UPDATE)));
     }
-    if(updatedAt > EXPENSOR_LAST_UPDATE) {
-        download
-    }
-
-     */
 }

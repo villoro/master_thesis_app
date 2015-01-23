@@ -66,7 +66,8 @@ public class ExpensorProvider extends ContentProvider{
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/*", PEOPLE_WITH_ID);
-        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/*/*", PEOPLE_IN_GROUP); //peopleID/groupID
+
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
         matcher.addURI(authority, Tables.TABLENAME_GROUPS + "/*", GROUPS_WITH_ID);
@@ -77,8 +78,8 @@ public class ExpensorProvider extends ContentProvider{
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE, TRANSACTIONS_PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/*", TRANSACTIONS_PEOPLE_WITH_ID);
 
-        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID + "/*/*", WHO_PAID);
-        matcher.addURI(authority, Tables.TABLENAME_WHO_SPENT + "/*/*", WHO_SPENT);
+        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID, WHO_PAID);
+        matcher.addURI(authority, Tables.TABLENAME_WHO_SPENT, WHO_SPENT);
 
         return matcher;
     }
@@ -121,6 +122,18 @@ public class ExpensorProvider extends ContentProvider{
                 );
                 break;
             }
+            case INCOME: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_INCOME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
             case CATEGORIES: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
@@ -139,6 +152,90 @@ public class ExpensorProvider extends ContentProvider{
                         projection,
                         Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
                         null,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case PEOPLE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_PEOPLE,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case PEOPLE_IN_GROUP: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_PEOPLE_IN_GROUP,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case GROUPS: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_GROUPS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case TRANSACTIONS_GROUP: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_TRANSACTIONS_GROUP,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case TRANSACTIONS_PEOPLE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_TRANSACTIONS_PEOPLE,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case WHO_PAID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_WHO_PAID,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case WHO_SPENT: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_WHO_SPENT,
+                        projection,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
                         sortOrder
@@ -178,7 +275,7 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
-        values.put(Tables.LAST_UPDATE, Utility.getStringFromActualDateUTC());
+        values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
         Log.e("", "insertant= " + values.toString());
 
         switch (match){
@@ -246,7 +343,7 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
 
-        values.put(Tables.LAST_UPDATE, Utility.getStringFromActualDateUTC());
+        values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
 
         switch (match) {
             case EXPENSE:

@@ -55,6 +55,7 @@ public class Tables {
     public static final String TYPE_INT = "integer";
     public static final String TYPE_DATE = "text";
     public static final String TYPE_DOUBLE = "double";
+    public static final String TYPE_LONG = "long";
     public static final String TYPE_BOOLEAN = "boolean";
 
     //types used in expensor
@@ -84,10 +85,9 @@ public class Tables {
 
         switch(tableName){
             case TABLENAME_EXPENSE:
-                columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS, FROM};
-                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT,
-                        TYPE_TEXT};
-                unique = new boolean[]{false, false, false, false, false, false};
+                columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS};
+                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
+                unique = new boolean[]{false, false, false, false, false};
                 break;
 
             case TABLENAME_INCOME:
@@ -214,7 +214,7 @@ public class Tables {
             }
         }
         //Add last_update
-        sb.append(", " + LAST_UPDATE + " " + TYPE_DATE);
+        sb.append(", " + LAST_UPDATE + " " + TYPE_LONG);
 
         sb.append(");");
 

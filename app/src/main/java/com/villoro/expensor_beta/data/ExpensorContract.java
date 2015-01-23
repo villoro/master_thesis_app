@@ -21,38 +21,12 @@ public class ExpensorContract {
     // the content provider.
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-
-    // Format used for storing dates in the database.  ALso used for converting those strings
-    // back into date objects for comparison/processing.
-    public static final String DATE_FORMAT = "yyyyMMdd";
-
-
-    /**
-     * Converts Date class to a string representation, used for easy comparison and database lookup.
-     * @param date The input date
-     * @return a DB-friendly representation of the date, using the format defined in DATE_FORMAT.
-     */
-    public static String getDbDateString(Date date){
-        // Because the API returns a unix timestamp (measured in seconds),
-        // it must be converted to milliseconds in order to be converted to valid date.
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        return sdf.format(date);
+    public static Date getDateUTC(){
+        return new Date();
     }
 
-
-    /**
-     * Converts a dateText to a long Unix time representation
-     * @param dateText the input date string
-     * @return the Date object
-     */
-    public static Date getDateFromDb(String dateText) {
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat(DATE_FORMAT);
-        try {
-            return dbDateFormat.parse(dateText);
-        } catch ( ParseException e ) {
-            e.printStackTrace();
-            return null;
-        }
+    public static final Uri contentUri(String tableName){
+        return BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
     }
 
     public static final class ExpenseEntry {

@@ -21,17 +21,11 @@ public class Utility {
         return dateFormat.format(new Date());
     }
 
-    public static String getStringFromActualDate() {
+    /*public static String getStringFromActualDate() {
         SimpleDateFormat dateFormatLocal = new SimpleDateFormat(DATE_FORMAT);
 
         return dateFormatLocal.format(new Date());
-    }
-
-    //Used to show a read date
-    public static String getStringFromDate(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        return dateFormat.format(date);
-    }
+    }*/
 
     //Used when saving a data
     public static String getStringFromDateUTC(Date date) {
@@ -40,7 +34,7 @@ public class Utility {
         return dateFormat.format(date);
     }
 
-    public static Date getDateUTCFromString(String dateString){
+    /*public static Date getDateUTC(String dateString){
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
         Date date = null;
@@ -50,5 +44,5 @@ public class Utility {
             e.printStackTrace();
         }
         return date;
-    }
+    }*/
 }
