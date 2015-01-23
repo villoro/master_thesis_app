@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,14 +22,18 @@ import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 
 public class ParseActivity extends ActionBarActivity {
 
     private static String LAST_UPDATE_EXPENSOR = "last_update_expensor";
-    private static String DEFAULT_DATE = "1989-04-29 14:10:00";
+    private static long DEFAULT_DATE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,28 +64,27 @@ public class ParseActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void click(View view){
-
+    public void upload(View view){
         parseUpload(Tables.TABLENAME_CATEGORIES);
-        //readParse(Tables.TABLENAME_CATEGORIES);
+    }
 
-        readLastUpdateDate();
+    public void download(View view){
 
-
+        readParse(Tables.TABLENAME_CATEGORIES);
     }
 
     private Date readLastUpdateDate(){
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
-        String date = sharedPreferences.getString(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
-        Log.e("", "date load= " + date + " (long)= " + Utility.getDateUTCFromString(date).getTime());
-        return Utility.getDateUTCFromString(date);
+        Long time = sharedPreferences.getLong(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
+        Log.e("", "date load (long)= " + time);
+        return new Date(time);
     }
 
     private void saveLastUpdateDate(Date date){
 
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor =  sharedPreferences.edit();
-        editor.putString(LAST_UPDATE_EXPENSOR, Utility.getStringFromDateUTC(date) );
+        editor.putLong(LAST_UPDATE_EXPENSOR, date.getTime() );
         editor.commit();
         Log.e("", "date saved= " + Utility.getStringFromDateUTC(date) + " (long)= " + date.getTime());
     }
@@ -99,15 +103,13 @@ public class ParseActivity extends ActionBarActivity {
                     for(ParseObject parseObject : parseObjects){
                         Date updatedAt = parseObject.getUpdatedAt();
                         Date lastUpdate = readLastUpdateDate();
-                        Log.e("", "upadated at= " + Utility.getStringFromDateUTC(updatedAt) + " > last update = "
-                                + Utility.getStringFromDateUTC(lastUpdate) );
 
-                        Log.e("", "updated at (long)= "+ updatedAt.getTime()
-                        + "> last update (long)= " + lastUpdate.getTime());
-
+                        Log.e("", "upadated at= " + Utility.getStringFromDateUTC(updatedAt) + " > last update = "  + Utility.getStringFromDateUTC(lastUpdate) );
+                        Log.e("", "updated at (long)= "+ updatedAt.getTime() + "> last update (long)= " + lastUpdate.getTime());
                     }
                 }
                 else {
+
                     Log.e("", "shit, doesn't work");
                 }
             }
@@ -123,6 +125,9 @@ public class ParseActivity extends ActionBarActivity {
         Log.e("", "count= " + cursor.getCount() + ", columns= " + cursor.getColumnCount());
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
+
+        final List<ParseObject> parseObjects = new ArrayList<ParseObject>();
+
         if (cursor.moveToFirst()){
             do{
                 final ParseObject parseObject = new ParseObject(tableName);
@@ -130,9 +135,7 @@ public class ParseActivity extends ActionBarActivity {
                 String[] columns = table.getColumns();
                 String[] types = table.getTypes();
 
-                //add _id
-
-                //add concrete values
+                //add values
                 for(int i = 0; i < columns.length; i++)
                 {
                     if( types[i] == Tables.TYPE_DOUBLE)
@@ -149,33 +152,31 @@ public class ParseActivity extends ActionBarActivity {
                     }
                 }
 
-                parseObject.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        Date updatedAt = parseObject.getUpdatedAt();
-                        Date lastUpdate = readLastUpdateDate();
-                        Log.e("", "parseID= " + parseObject.getObjectId());
-                        Log.e("", "updatedAt= "+ Utility.getStringFromDateUTC(updatedAt) + " (long)= " + updatedAt.getTime());
-                        Log.e("", "date= " + Utility.getStringFromActualDateUTC());
-                        if(updatedAt.after(lastUpdate))
-                        {
-                            Log.d("", "updated at= " + updatedAt.getTime() + " > last update= " + lastUpdate.getTime());
-                            Log.d("", "saving last update= " + updatedAt.getTime());
-                            saveLastUpdateDate(updatedAt);
-                        } else {
-                            Log.d("", "updated at= " + updatedAt.getTime() + " < last update= " + lastUpdate.getTime());
-                            Log.d("", "no need to save last update");
-                        }
-
-                    }
-                });
-
-                Log.e("", "it works :)");
-                Log.e("", "uploading 1 object to parse");
+                parseObjects.add(parseObject);
 
             } while (cursor.moveToNext());
         }
 
+        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Date lastUpdate = readLastUpdateDate();
+                for(ParseObject parseObject : parseObjects){
+                    Date updatedAt = parseObject.getUpdatedAt();
+                    if(updatedAt.after(lastUpdate))
+                    {
+                        Log.d("", "updated at= " + updatedAt.getTime() + " > last update= " + lastUpdate.getTime());
+                        Log.d("", "saving last update= " + updatedAt.getTime());
+                        lastUpdate = updatedAt;
+                    } else {
+                        Log.d("", "updated at= " + updatedAt.getTime() + " < last update= " + lastUpdate.getTime());
+                        Log.d("", "no need to save last update");
+                    }
+                }
+                Log.d("", "greater date= " + lastUpdate.getTime());
+                //saveLastUpdateDate(lastUpdate);
+            }
+        });
     }
 
     public void insertExampleParse(){
@@ -201,10 +202,10 @@ public class ParseActivity extends ActionBarActivity {
     public void insertSQL(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "P");
-        testValues.put(Tables.NAME, "Food");
+        testValues.put(Tables.LETTER, "R");
+        testValues.put(Tables.NAME, "Regals");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-        testValues.put(Tables.COLOR, 22);
+        testValues.put(Tables.COLOR, 301);
 
         Log.e("", "Insertant cv= " + testValues.toString());
 
