@@ -56,27 +56,27 @@ public class ExpensorProvider extends ContentProvider{
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, Tables.TABLENAME_EXPENSE, EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_EXPENSE + "/*", EXPENSE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_EXPENSE + "/#", EXPENSE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_INCOME, INCOME);
-        matcher.addURI(authority, Tables.TABLENAME_INCOME + "/*", INCOME_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_INCOME + "/#", INCOME_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES);
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/*", CATEGORIES_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
-        matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/*", PEOPLE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/#", PEOPLE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
-        matcher.addURI(authority, Tables.TABLENAME_GROUPS + "/*", GROUPS_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_GROUPS + "/#", GROUPS_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP, TRANSACTIONS_GROUP);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP + "/*", TRANSACTIONS_GROUP_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP + "/#", TRANSACTIONS_GROUP_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE, TRANSACTIONS_PEOPLE);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/*", TRANSACTIONS_PEOPLE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/#", TRANSACTIONS_PEOPLE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_WHO_PAID, WHO_PAID);
         matcher.addURI(authority, Tables.TABLENAME_WHO_SPENT, WHO_SPENT);
@@ -275,7 +275,9 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
-        values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        if(values.get(Tables.LAST_UPDATE) == null){
+            values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        }
         Log.e("", "insertant= " + values.toString());
 
         switch (match){
@@ -343,14 +345,40 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
 
-        values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        if(values.get(Tables.LAST_UPDATE) == null){
+            values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        }
 
         switch (match) {
             case EXPENSE:
                 rowsUpdated = db.update(Tables.TABLENAME_EXPENSE, values, selection, selectionArgs);
                 break;
+            case INCOME:
+                rowsUpdated = db.update(Tables.TABLENAME_INCOME, values, selection, selectionArgs);
+                break;
             case CATEGORIES:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
+                break;
+            case PEOPLE:
+                rowsUpdated = db.update(Tables.TABLENAME_PEOPLE, values, selection, selectionArgs);
+                break;
+            case PEOPLE_IN_GROUP:
+                rowsUpdated = db.update(Tables.TABLENAME_PEOPLE_IN_GROUP, values, selection, selectionArgs);
+                break;
+            case GROUPS:
+                rowsUpdated = db.update(Tables.TABLENAME_GROUPS, values, selection, selectionArgs);
+                break;
+            case TRANSACTIONS_GROUP:
+                rowsUpdated = db.update(Tables.TABLENAME_TRANSACTIONS_GROUP, values, selection, selectionArgs);
+                break;
+            case TRANSACTIONS_PEOPLE:
+                rowsUpdated = db.update(Tables.TABLENAME_TRANSACTIONS_PEOPLE, values, selection, selectionArgs);
+                break;
+            case WHO_PAID:
+                rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID, values, selection, selectionArgs);
+                break;
+            case WHO_SPENT:
+                rowsUpdated = db.update(Tables.TABLENAME_WHO_SPENT, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

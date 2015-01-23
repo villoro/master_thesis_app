@@ -163,7 +163,6 @@ public class ParseActivity extends ActionBarActivity {
             @Override
             public void done(ParseException e) {
 
-
                 //update date of last sync
                 Date lastUpdate = readLastUpdateDate();
                 for(ParseObject parseObject : parseObjects){
@@ -254,8 +253,9 @@ public class ParseActivity extends ActionBarActivity {
 
     public void insertSQL(View v) {
 
-        insertCategory();
+        //insertCategory();
         //insertExpense();
+        updateCategory();
     }
 
     public void insertCategory(){
@@ -310,4 +310,15 @@ public class ParseActivity extends ActionBarActivity {
         Log.e("", "count columns= " + cursor.getColumnCount());
         Log.e("", "last_update= " + cursor.getString(cursor.getColumnIndex(Tables.LAST_UPDATE)));
     }
+
+    public void updateCategory(){
+        ContentValues testValues = new ContentValues();
+        testValues.put(Tables.COLOR, 999999);
+        this.getContentResolver().update(ExpensorContract.CategoriesEntry.CONTENT_URI,
+                testValues, Tables.ID + "= ?",
+                new String[] {Integer.toString(0)});
+        Log.d("", "update " + testValues.toString());
+    }
+
+
 }
