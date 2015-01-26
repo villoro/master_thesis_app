@@ -10,12 +10,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.villoro.expensor_beta.Utility;
-
 /**
  * Created by Arnau on 19/01/2015.
  */
-public class ExpensorProvider extends ContentProvider{
+public class ExpensorProvider extends ContentProvider {
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -52,7 +50,7 @@ public class ExpensorProvider extends ContentProvider{
         // found.  The code passed into the constructor represents the code to return for the root
         // URI.  It's common to use NO_MATCH as the code for this case.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = ExpensorContract.CONTENT_AUTHORITY;
+        final String authority = ExpensorContract.CONTENT_AUTHORITY_EXPENSOR;
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, Tables.TABLENAME_EXPENSE, EXPENSE);
@@ -275,34 +273,31 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
-        if(values.get(Tables.LAST_UPDATE) == null){
+        if (values.get(Tables.LAST_UPDATE) == null) {
             values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
         }
         Log.e("", "insertant= " + values.toString());
 
-        switch (match){
+        switch (match) {
             case EXPENSE: {
                 long _id = db.insert(Tables.TABLENAME_EXPENSE, null, values);
-                if(_id > 0)
+                if (_id > 0)
                     returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
                 else
                     throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
             case CATEGORIES: {
-                if(db.query(
+                if (db.query(
                         Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
                         Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
-                        null, null, null, null).getCount() == 0)
-                {
+                        null, null, null, null).getCount() == 0) {
                     long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
-                    if(_id > 0)
+                    if (_id > 0)
                         returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
                     else
                         throw new SQLException("Failed to insert to row into " + uri);
-                }
-                else
-                {
+                } else {
                     Log.e("", "ja hi ha un amb aquest nom");
                     returnUri = uri;
                 }
@@ -345,7 +340,7 @@ public class ExpensorProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
 
-        if(values.get(Tables.LAST_UPDATE) == null){
+        if (values.get(Tables.LAST_UPDATE) == null) {
             values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
         }
 
@@ -390,4 +385,5 @@ public class ExpensorProvider extends ContentProvider{
 
         return rowsUpdated;
     }
+
 }

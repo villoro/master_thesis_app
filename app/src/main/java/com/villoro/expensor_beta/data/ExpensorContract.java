@@ -3,8 +3,6 @@ package com.villoro.expensor_beta.data;
 import android.content.ContentUris;
 import android.net.Uri;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -12,14 +10,15 @@ import java.util.Date;
  */
 public class ExpensorContract {
 
-    public static final String CONTENT_AUTHORITY = "com.villoro.expensor_beta";
+    public static final String CONTENT_AUTHORITY_EXPENSOR = "com.villoro.expensor_beta";
+
 
     private static final String DIRECTORY = "vnd.android.cursor.dir/";
     private static final String ITEM = "vnd.android.cursor.item/";
 
-    // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
+    // Use CONTENT_AUTHORITY_EXPENSOR to create the base of all URI's which apps will use to contact
     // the content provider.
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY_EXPENSOR);
 
     public static Date getDateUTC(){
         return new Date();
@@ -36,9 +35,9 @@ public class ExpensorContract {
         BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY + "/" + tableName;
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
         public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY + "/" + tableName;
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildExpenseUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -52,9 +51,9 @@ public class ExpensorContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY + "/" + tableName;
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
         public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY + "/" + tableName;
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildExpenseUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -68,9 +67,9 @@ public class ExpensorContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY + "/" + tableName;
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
         public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY + "/" + tableName;
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildCategoriesUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -84,9 +83,9 @@ public class ExpensorContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY + "/" + tableName;
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
         public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY + "/" + tableName;
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildExpenseUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
