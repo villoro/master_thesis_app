@@ -58,12 +58,13 @@ public class ParseActivity extends ActionBarActivity {
         if (cursor.moveToFirst()){
             do{
                 StringBuilder sb = new StringBuilder();
-                sb.append(cursor.getString(cursor.getColumnIndex(Tables.NAME)) + " ");
-                sb.append(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)) + " ");
+                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + ", ");
+                sb.append("name= " + cursor.getString(cursor.getColumnIndex(Tables.NAME)) + ", ");
+                sb.append("color= " + cursor.getInt(cursor.getColumnIndex(Tables.COLOR)) + ", ");
                 if(cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) !=  null){
-                    sb.append(cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + " ");
+                    sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + ", ");
                 }
-                sb.append(cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)));
+                sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)));
 
                 aux[i] = sb.toString();
                 i++;
@@ -196,7 +197,6 @@ public class ParseActivity extends ActionBarActivity {
 
 
     //--------------PARSE UPLOAD-------------------------
-    //TODO update quan sigui necessari
 
     public void parseUpload(){
 
@@ -260,7 +260,16 @@ public class ParseActivity extends ActionBarActivity {
 
         if (cursor.moveToFirst()){
             do{
-                final ParseObject parseObject = new ParseObject(tableName);
+                String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                ParseObject parseObject;
+                if(parseID != null){
+                    parseObject = ParseObject.createWithoutData(tableName, parseID);
+                    Log.e("", "intentant update parseID= " + parseID);
+                } else {
+                    Log.e("", "no hi ha pareID");
+                    parseObject = new ParseObject(tableName);
+                }
+
                 Tables table = new Tables(tableName);
                 String[] columns = table.getColumns();
                 String[] types = table.getTypes();
@@ -347,8 +356,8 @@ public class ParseActivity extends ActionBarActivity {
     public void insertCategory(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "F");
-        testValues.put(Tables.NAME, "Food");
+        testValues.put(Tables.LETTER, "M");
+        testValues.put(Tables.NAME, "Menjar");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         testValues.put(Tables.COLOR, 7);
 
@@ -373,10 +382,10 @@ public class ParseActivity extends ActionBarActivity {
 
     public void updateCategory(){
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.COLOR, 999999);
-        this.getContentResolver().update(ExpensorContract.CategoriesEntry.CONTENT_URI,
-                testValues, Tables.ID + "= ?",
-                new String[] {Integer.toString(0)});
+        testValues.put(Tables.COLOR, 99999);
+        this.getContentResolver().update(
+                ExpensorContract.CategoriesEntry.CONTENT_URI, testValues, Tables.ID + " = 1",
+                null);
         Log.d("", "update " + testValues.toString());
     }
 }
