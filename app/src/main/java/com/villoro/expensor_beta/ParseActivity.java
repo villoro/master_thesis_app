@@ -26,6 +26,7 @@ import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
+import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,11 +59,11 @@ public class ParseActivity extends ActionBarActivity {
         if (cursor.moveToFirst()){
             do{
                 StringBuilder sb = new StringBuilder();
-                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + ", ");
-                sb.append("name= " + cursor.getString(cursor.getColumnIndex(Tables.NAME)) + ", ");
-                sb.append("color= " + cursor.getInt(cursor.getColumnIndex(Tables.COLOR)) + ", ");
+                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + " ");
+                sb.append("name= " + cursor.getString(cursor.getColumnIndex(Tables.NAME)) + " ");
+                sb.append("color= " + cursor.getInt(cursor.getColumnIndex(Tables.COLOR)) + " ");
                 if(cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) !=  null){
-                    sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + ", ");
+                    sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + " ");
                 }
                 sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)));
 
@@ -197,6 +198,7 @@ public class ParseActivity extends ActionBarActivity {
 
 
     //--------------PARSE UPLOAD-------------------------
+    //TODO update quan sigui necessari
 
     public void parseUpload(){
 
@@ -347,17 +349,18 @@ public class ParseActivity extends ActionBarActivity {
 
     public void insertSQL(View v) {
 
-        insertCategory();
+        //insertCategory();
         //insertExpense();
+        ExpensorSyncAdapter.syncImmediately(this);
         //updateCategory();
-        setList();
+        //setList();
     }
 
     public void insertCategory(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "M");
-        testValues.put(Tables.NAME, "Menjar");
+        testValues.put(Tables.LETTER, "F");
+        testValues.put(Tables.NAME, "Food");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         testValues.put(Tables.COLOR, 7);
 

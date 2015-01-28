@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Account type (for sync-adapter authenticator) -->
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">expensor_beta.villoro.com</string>
+    <string name="content_authority">com.villoro.expensor_beta</string>
+
     <string name="app_name">Expensor_beta</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
