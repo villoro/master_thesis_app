@@ -8,9 +8,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload"
+        android:text="Parse sync"
         android:id="@+id/button"
-        android:onClick="upload"
+        android:onClick="sync"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
@@ -18,9 +18,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Download"
+        android:text="Update SQL"
         android:id="@+id/button2"
-        android:onClick="download"
+        android:onClick="updateSQL"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/button"
         android:layout_toEndOf="@+id/button" />

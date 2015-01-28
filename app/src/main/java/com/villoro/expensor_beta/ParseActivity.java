@@ -73,7 +73,7 @@ public class ParseActivity extends ActionBarActivity {
         }
 
         for (String a : aux) {
-            Log.d("", a);
+            Log.d("ParseActivity", a);
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, aux);
@@ -106,36 +106,88 @@ public class ParseActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void upload(View view){
-        parseUpload();
+    public void sync(View view){
+        Log.e("", "calling ExpensorSyncAdapter.syncImmediately");
+        ExpensorSyncAdapter.syncImmediately(this);
         setList();
     }
 
-    public void download(View view){
-
-        for (String tableName : Tables.TABLES)
-        {
-            parseDownload(tableName);
-        }
+    public void updateSQL(View view){
+        updateCategory();
         setList();
     }
+
+
+    public void insertSQL(View v) {
+
+        insertCategory();
+        //insertExpense();
+        setList();
+    }
+
+    public void insertCategory(){
+
+        ContentValues testValues = new ContentValues();
+        testValues.put(Tables.LETTER, "M");
+        testValues.put(Tables.NAME, "Metro");
+        testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
+        testValues.put(Tables.COLOR, 3);
+
+        Log.e("", "Insertant cv= " + testValues.toString());
+
+        Uri uri = this.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, testValues);
+    }
+
+    public void insertExpense(){
+
+        ContentValues testValues = new ContentValues();
+        testValues.put(Tables.DATE, "2015-01-23");
+        testValues.put(Tables.CATEGORY_ID, "1");
+        testValues.put(Tables.AMOUNT, 21);
+        testValues.put(Tables.COMMENTS, "hola");
+
+
+        Log.e("", "Insertant cv= " + testValues.toString());
+
+        Uri uri = this.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, testValues);
+    }
+
+    public void updateCategory(){
+        ContentValues testValues = new ContentValues();
+        testValues.put(Tables.COLOR, 100);
+        this.getContentResolver().update(
+                ExpensorContract.CategoriesEntry.CONTENT_URI, testValues, Tables.ID + " = 1",
+                null);
+        Log.d("", "update " + testValues.toString());
+    }
+
+
+
+
+
+
+
 
     //--------------DATES LOGIC-------------------------
 
-    private Date readLastUpdateDate(){
+    public Date readLastUpdateDate(){
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
         Long time = sharedPreferences.getLong(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
         return new Date(time);
     }
-
-    private void saveLastUpdateDate(Date date){
+/*
+    public void saveLastUpdateDate(Date date){
 
         SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor =  sharedPreferences.edit();
         editor.putLong(LAST_UPDATE_EXPENSOR, date.getTime());
         editor.commit();
-    }
+    } */
 
+
+
+
+/*
     //--------------PARSE DOWNLOAD-------------------------
 
     public void parseDownload(String tableName){
@@ -195,6 +247,12 @@ public class ParseActivity extends ActionBarActivity {
 
         ParseAdapter.tryToInsertSQLite(this, contentValues, tableName);
     }
+
+
+
+
+
+
 
 
     //--------------PARSE UPLOAD-------------------------
@@ -320,75 +378,10 @@ public class ParseActivity extends ActionBarActivity {
             parseObjects = new ArrayList<>();
             _ids = new ArrayList<>();
         }
-    }
-
-    /*public void insertExampleParse(){
-        Log.e("","starting to add info");
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
-
-        final ParseObject testObject = new ParseObject("prova");
-        testObject.put("amount",300);
-        testObject.put("comment","patates");
-        testObject.put("categoryID",1);
-        testObject.put("date", "201501151306");
-
-        testObject.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            Log.e("", "parseID= " + testObject.getObjectId());
-                                        }
-        });
-
-        Log.e("", "it works :)");
     } */
 
 
 
 
 
-
-    public void insertSQL(View v) {
-
-        //insertCategory();
-        //insertExpense();
-        ExpensorSyncAdapter.syncImmediately(this);
-        //updateCategory();
-        //setList();
-    }
-
-    public void insertCategory(){
-
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "F");
-        testValues.put(Tables.NAME, "Food");
-        testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-        testValues.put(Tables.COLOR, 7);
-
-        Log.e("", "Insertant cv= " + testValues.toString());
-
-        Uri uri = this.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, testValues);
-    }
-
-    public void insertExpense(){
-
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.DATE, "2015-01-23");
-        testValues.put(Tables.CATEGORY_ID, "1");
-        testValues.put(Tables.AMOUNT, 21);
-        testValues.put(Tables.COMMENTS, "hola");
-
-
-        Log.e("", "Insertant cv= " + testValues.toString());
-
-        Uri uri = this.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, testValues);
-    }
-
-    public void updateCategory(){
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.COLOR, 99999);
-        this.getContentResolver().update(
-                ExpensorContract.CategoriesEntry.CONTENT_URI, testValues, Tables.ID + " = 1",
-                null);
-        Log.d("", "update " + testValues.toString());
-    }
 }
