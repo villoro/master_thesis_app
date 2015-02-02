@@ -27,8 +27,12 @@ public class ParseSync {
 
     Context mContext;
     Date startSync;
-    Date dateLastUpload;
-    Date dateLastDownload;
+
+    DateWithBoolean dateDownload;
+    DateWithBoolean dateUpload;
+
+    ListParseObjectsWithId objectsToUpload;
+
 
     //--------------PUBLIC PART-------------------------
 
@@ -38,16 +42,14 @@ public class ParseSync {
     }
 
     public void sync(){
-        dateLastUpload = readLastUpdateDate();
-        dateLastDownload = dateLastUpload;
 
-        DateWithBoolean dateDownload = new DateWithBoolean(readLastUpdateDate());
-        DateWithBoolean dateUpload = new DateWithBoolean(dateDownload.date);
+        dateDownload = new DateWithBoolean(readLastUpdateDate());
+        dateUpload = new DateWithBoolean(dateDownload.date);
 
         int i = 0;
         do {
-            dateDownload = parseDownloadAll(dateDownload.date);
-            dateUpload = parseUpload(dateUpload.date);
+            parseDownloadAll();
+            parseUpload();
 
             Log.d(LOG_TAG, "finish download= " + dateDownload.finish + ", finish upload= " + dateUpload.finish);
             Log.e(LOG_TAG, "ITERACIO = " + i);
@@ -111,20 +113,20 @@ public class ParseSync {
     //--------------PARSE DOWNLOAD-------------------------
 
     //TODO download all objects in one step
-    private DateWithBoolean parseDownloadAll(Date lastDownload){
-        DateWithBoolean output = new DateWithBoolean(lastDownload);
-        output.finish = true;
+    private void parseDownloadAll(){
+
+        dateDownload.finish = true;
+        Date tempDate = dateDownload.date;
 
         for (String tableName : Tables.TABLES) {
-            Date auxDate = parseDownload(tableName, lastDownload);
-            if (auxDate.after(output.date)){
-                output.date = auxDate;
-                output.finish = false;
-                Log.d(LOG_TAG, "new max date output= " + output.date.getTime());
+            Date auxDate = parseDownload(tableName, tempDate);
+            if (auxDate.after(dateDownload.date)){
+                dateDownload.date = auxDate;
+                dateDownload.finish = false;
+                Log.d(LOG_TAG, "new max date output= " + dateDownload.date.getTime());
             }
         }
-        Log.d(LOG_TAG, "down date= " + output.date.getTime() + ", finish= " + output.finish);
-        return output;
+        Log.d(LOG_TAG, "down date= " + dateDownload.date.getTime() + ", finish= " + dateDownload.finish);
     }
 
     private Date parseDownload(String tableName, Date lastDownload){
@@ -193,41 +195,39 @@ public class ParseSync {
     //--------------PARSE UPLOAD-------------------------
     //TODO don't reupload objects downloaded
 
-    private DateWithBoolean parseUpload(Date lastUpload){
+    private void parseUpload(){
 
-        DateWithBoolean output = new DateWithBoolean(lastUpload);
+        Date tempDate = dateUpload.date;
         //TODO ParseAnalytics.trackAppOpenedInBackground(getIntent());
-        ListParseObjectsWithId auxCustomParseObjects = new ListParseObjectsWithId();
+        objectsToUpload = new ListParseObjectsWithId();
 
         for (String tableName : Tables.TABLES )
         {
-            auxCustomParseObjects = parseTable(auxCustomParseObjects, tableName, lastUpload);
+            parseTable(tableName, tempDate);
         }
 
-        final List<ParseObject> parseObjects = auxCustomParseObjects.parseObjects;
-        final List<Long> _ids = auxCustomParseObjects._ids;
+        final List<ParseObject> parseObjects = objectsToUpload.parseObjects;
+        final List<Long> _ids = objectsToUpload._ids;
 
         try {
             Log.e(LOG_TAG, "SAVIIIIIIIIIIIIIIIIING");
             ParseObject.saveAll(parseObjects);
             Log.e(LOG_TAG,"objects saved= " + parseObjects.size());
             //update date of last sync
-            output.finish = true;
+            dateUpload.finish = true;
             for(int i = 0; i < parseObjects.size(); i++) {
                 Date updatedAt = parseObjects.get(i).getUpdatedAt();
 
                 updateEntrySQL(parseObjects.get(i), _ids.get(i));
 
-                if (updatedAt.after(output.date)) {
-                    output.date = updatedAt;
-                    output.finish = false;
+                if (updatedAt.after(dateUpload.date)) {
+                    dateUpload.date = updatedAt;
+                    dateUpload.finish = false;
                 }
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        return output;
     }
 
     private void updateEntrySQL(ParseObject parseObject, long _id){
@@ -244,7 +244,7 @@ public class ParseSync {
         Log.e(LOG_TAG, "updated in SQL after upladint to parse");
     }
 
-    private ListParseObjectsWithId parseTable(ListParseObjectsWithId customParseObjects, String tableName, Date lastUpdate){
+    private void parseTable(String tableName, Date lastUpdate){
 
         final Cursor cursor = ParseAdapter.getParseCursor(mContext, tableName, lastUpdate.getTime());
 
@@ -290,16 +290,16 @@ public class ParseSync {
                     }
                 }
 
+                //TODO
+                //objectsDownloaded.ids.contains..
+
                 //add _id and parseObject to the customParseObjects list
-                customParseObjects._ids.add(cursor.getLong(cursor.getColumnIndex(Tables.ID)));
-                customParseObjects.parseObjects.add(parseObject);
+                objectsToUpload._ids.add(cursor.getLong(cursor.getColumnIndex(Tables.ID)));
+                objectsToUpload.parseObjects.add(parseObject);
 
             } while (cursor.moveToNext());
         }
-
         cursor.close();
-
-        return customParseObjects;
     }
 
     private class ListParseObjectsWithId {

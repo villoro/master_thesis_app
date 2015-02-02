@@ -26,6 +26,7 @@ import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
+import com.villoro.expensor_beta.parse.ParseSync;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class ParseActivity extends ActionBarActivity {
         listView.setAdapter(arrayAdapter);
 
         lastUpdated.setText(Utility.getStringFromDateUTC(readLastUpdateDate()) +
-                " " +readLastUpdateDate().getTime());
+                " " + readLastUpdateDate().getTime());
     }
 
 
@@ -128,8 +129,8 @@ public class ParseActivity extends ActionBarActivity {
     public void insertCategory(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "V");
-        testValues.put(Tables.NAME, "Vi");
+        testValues.put(Tables.LETTER, "O");
+        testValues.put(Tables.NAME, "Obli");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         testValues.put(Tables.COLOR, 2);
 
@@ -161,227 +162,11 @@ public class ParseActivity extends ActionBarActivity {
         Log.d("", "update " + testValues.toString());
     }
 
-
-
-
-
-
-
-
-    //--------------DATES LOGIC-------------------------
-
     public Date readLastUpdateDate(){
-        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR,
+                Context.MODE_PRIVATE);
         Long time = sharedPreferences.getLong(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
         return new Date(time);
     }
-/*
-    public void saveLastUpdateDate(Date date){
-
-        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  sharedPreferences.edit();
-        editor.putLong(LAST_UPDATE_EXPENSOR, date.getTime());
-        editor.commit();
-    } */
-
-
-
-
-/*
-    //--------------PARSE DOWNLOAD-------------------------
-
-    public void parseDownload(String tableName){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(tableName);
-        query.whereGreaterThan("updatedAt", readLastUpdateDate() );
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if(e == null)
-                {
-                    Log.e("", "it's working, size= " + parseObjects.size() );
-                    Log.e("", "size " + parseObjects.size());
-                    Date lastUpdate = readLastUpdateDate();
-
-                    for(ParseObject parseObject : parseObjects){
-                        Date updatedAt = parseObject.getUpdatedAt();
-
-                        Log.e("", "upadated at= " + Utility.getStringFromDateUTC(updatedAt) + " > last update = "  + Utility.getStringFromDateUTC(lastUpdate) );
-                        Log.e("", "updated at (long)= "+ updatedAt.getTime() + "> last update (long)= " + lastUpdate.getTime());
-                        if(updatedAt.after(lastUpdate)) {
-                            lastUpdate = updatedAt;
-                        }
-                        insertParseObjectInSQL(parseObject);
-                    }
-                    saveLastUpdateDate(lastUpdate);
-                }
-                else {
-
-                    Log.e("", "shit, doesn't work");
-                }
-
-                setList();
-            }
-        });
-    }
-
-    private void insertParseObjectInSQL(ParseObject parseObject){
-
-        ContentValues contentValues = new ContentValues();
-
-        String tableName = parseObject.getClassName();
-        Tables table = new Tables(tableName);
-        String[] columns = table.getColumns();
-        String[] types = table.getTypes();
-        for(int i = 0; i < columns.length; i++) {
-            if (types[i] == Tables.TYPE_DOUBLE) {
-                contentValues.put(columns[i], parseObject.getDouble(columns[i]));
-            } else if (types[i] == Tables.TYPE_INT) {
-                contentValues.put(columns[i], parseObject.getInt(columns[i]));
-            } else {
-                contentValues.put(columns[i], parseObject.getString(columns[i]));
-            }
-        }
-        contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime());
-        contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
-
-        ParseAdapter.tryToInsertSQLite(this, contentValues, tableName);
-    }
-
-
-
-
-
-
-
-
-    //--------------PARSE UPLOAD-------------------------
-    //TODO update quan sigui necessari
-
-    public void parseUpload(){
-
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
-        ListParseObjectsWithId auxParseObjects = new ListParseObjectsWithId();
-
-        for (String tableName : Tables.TABLES )
-        {
-            auxParseObjects = parseTable(auxParseObjects, tableName);
-        }
-
-        final List<ParseObject> parseObjects = auxParseObjects.parseObjects;
-        final List<Long> _ids = auxParseObjects._ids;
-
-        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-
-                Log.e("","done: ");
-                //update date of last sync
-                Date lastUpdate = readLastUpdateDate();
-                for(int i = 0; i < parseObjects.size(); i++){
-                    Date updatedAt = parseObjects.get(i).getUpdatedAt();
-
-                    updateEntrySQL(parseObjects.get(i), _ids.get(i));
-
-                    if(updatedAt.after(lastUpdate)) {
-                        lastUpdate = updatedAt;
-                    }
-                }
-                saveLastUpdateDate(lastUpdate);
-
-                setList();
-            }
-        });
-    }
-
-    public void updateEntrySQL(ParseObject parseObject, long _id){
-
-        Log.e("", "id= " + _id);
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime() );
-        contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
-
-        Log.d("", "UPDATING: " + contentValues.toString());
-
-        String tableName = parseObject.getClassName();
-        ParseAdapter.updateWithId(this, contentValues, tableName, _id);
-        Log.e("", "updated! ");
-    }
-
-    //TODO tractar les dades que s'afegeixen mentre s'esta pujant info a parse.
-
-    private ListParseObjectsWithId parseTable(ListParseObjectsWithId parseObjects, String tableName){
-
-        final Cursor cursor = ParseAdapter.getParseCursor(this, tableName, readLastUpdateDate().getTime());
-
-        if(cursor.getCount() > 0){
-            Log.e("", "Curor (no null) " + tableName + " count= " + cursor.getCount() + ", columns= " + cursor.getColumnCount());
-        }
-
-        if (cursor.moveToFirst()){
-            do{
-                String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
-                ParseObject parseObject;
-                if(parseID != null){
-                    parseObject = ParseObject.createWithoutData(tableName, parseID);
-                    Log.e("", "intentant update parseID= " + parseID);
-                } else {
-                    Log.e("", "no hi ha pareID");
-                    parseObject = new ParseObject(tableName);
-                }
-
-                Tables table = new Tables(tableName);
-                String[] columns = table.getColumns();
-                String[] types = table.getTypes();
-
-                //add _id
-                parseObjects._ids.add(cursor.getLong(cursor.getColumnIndex(Tables.ID)));
-
-                //add values
-                for(int i = 0; i < columns.length; i++)
-                {
-                    int index = cursor.getColumnIndex(columns[i]);
-                    if (index >= 0){
-                        if( types[i] == Tables.TYPE_DOUBLE)
-                        {
-                            parseObject.put(columns[i], cursor.getDouble(index));
-                        }
-                        else if (types[i] == Tables.TYPE_INT)
-                        {
-                            parseObject.put(columns[i], cursor.getInt(index));
-                        }
-                        else
-                        {
-                            parseObject.put(columns[i], cursor.getString(index));
-                        }
-                    } else {
-                        Log.d("", "no existeix la columna");
-                    }
-
-                }
-
-                parseObjects.parseObjects.add(parseObject);
-
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-
-        return parseObjects;
-    }
-
-    class ListParseObjectsWithId {
-        public List<ParseObject> parseObjects;
-        public List<Long> _ids;
-
-        public ListParseObjectsWithId(){
-            parseObjects = new ArrayList<>();
-            _ids = new ArrayList<>();
-        }
-    } */
-
-
-
-
 
 }
