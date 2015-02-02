@@ -155,7 +155,7 @@ public class ParseActivity extends ActionBarActivity {
 
     public void updateCategory(){
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.COLOR, 100);
+        testValues.put(Tables.COLOR, 2000);
         this.getContentResolver().update(
                 ExpensorContract.CategoriesEntry.CONTENT_URI, testValues, Tables.ID + " = 1",
                 null);

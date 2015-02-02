@@ -14,7 +14,7 @@ import com.villoro.expensor_beta.data.Tables;
  */
 public class ParseAdapter {
 
-    public static long tryToInsertSQLite(Context context, ContentValues contentValues, String tableName) {
+    public static boolean tryToInsertSQLite(Context context, ContentValues contentValues, String tableName) {
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase database = mOpenHelper. getWritableDatabase();
 
@@ -38,14 +38,16 @@ public class ParseAdapter {
         if (_id >= 0) {
             if (updatedAtParse > updatedAtSQL){
                 Log.d("", "updating " + contentValues.toString());
-                return database.update(tableName, contentValues, whereClause, null);
+                database.update(tableName, contentValues, whereClause, null);
+                return true;
             } else {
                 Log.d("", "updatedAtParse < updatedAtSQL");
-                return -1;
+                return false;
             }
         } else {
             Log.d("", "inserting " + contentValues.toString());
-            return database.insert(tableName, null, contentValues);
+            database.insert(tableName, null, contentValues);
+            return true;
         }
     }
 
