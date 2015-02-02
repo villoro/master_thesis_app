@@ -128,10 +128,10 @@ public class ParseActivity extends ActionBarActivity {
     public void insertCategory(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "M");
-        testValues.put(Tables.NAME, "Metro");
+        testValues.put(Tables.LETTER, "V");
+        testValues.put(Tables.NAME, "Vi");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-        testValues.put(Tables.COLOR, 3);
+        testValues.put(Tables.COLOR, 2);
 
         Log.e("", "Insertant cv= " + testValues.toString());
 
