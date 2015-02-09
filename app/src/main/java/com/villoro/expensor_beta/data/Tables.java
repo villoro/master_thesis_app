@@ -8,25 +8,28 @@ import android.provider.BaseColumns;
 
 public class Tables {
 
-    private String tableName;
-    private String[] columns;
+    public String tableName;
+    public String[] columns;
+    public String[] origin;
+
     private String[] types;
     private boolean[] unique;
+
 
     //main columns
     public static final String ID = BaseColumns._ID;
     public static final String DATE = "date";
     public static final String AMOUNT = "amount";
     public static final String COMMENTS = "comments";
-    //public static final String TAGS = "tags";
     public static final String FROM = "from_group";
     public static final String NAME = "name";
     public static final String COLOR = "color";
     public static final String TYPE = "type";
     public static final String EMAIL = "email";
     public static final String PAID = "paid";
-    public static final String SPEND = "spend";
-    public static final String LETTER = "letter";
+    public static final String SPENT = "spend";
+    public static final String WHO_PAID_ID = "whoPaid";
+    public static final String WHO_SPENT_ID = "whoSpent";
 
     //foreign keys columns
     public static final String CATEGORY_ID = "categoryID";
@@ -39,16 +42,14 @@ public class Tables {
     public static final String PARSE_ID_NAME = "parse_id";
 
     //main tables
-    public static final String TABLENAME_EXPENSE = "expense";
-    public static final String TABLENAME_INCOME = "income";
+    public static final String TABLENAME_EXPENSE_INCOME = "expense_income";
     public static final String TABLENAME_CATEGORIES = "categories";
     public static final String TABLENAME_PEOPLE = "people";
     public static final String TABLENAME_PEOPLE_IN_GROUP = "peopleInGroup";
     public static final String TABLENAME_GROUPS = "groups";
     public static final String TABLENAME_TRANSACTIONS_GROUP = "transactionsGroups";
     public static final String TABLENAME_TRANSACTIONS_PEOPLE = "transactionsPeople";
-    public static final String TABLENAME_WHO_PAID = "whoPaid";
-    public static final String TABLENAME_WHO_SPENT = "whoSpent";
+    public static final String TABLENAME_WHO_PAID_SPENT = "whoPaidSpent";
 
     //types in SQLite
     public static final String TYPE_TEXT = "text";
@@ -67,16 +68,14 @@ public class Tables {
 
 
     public static final String[] TABLES = {
-            TABLENAME_EXPENSE,
-            TABLENAME_INCOME,
+            TABLENAME_EXPENSE_INCOME,
             TABLENAME_CATEGORIES,
             TABLENAME_PEOPLE,
             TABLENAME_GROUPS,
             TABLENAME_PEOPLE_IN_GROUP,
             TABLENAME_TRANSACTIONS_GROUP,
             TABLENAME_TRANSACTIONS_PEOPLE,
-            TABLENAME_WHO_PAID,
-            TABLENAME_WHO_SPENT};
+            TABLENAME_WHO_PAID_SPENT};
 
 
     public Tables(String tableName)
@@ -84,32 +83,30 @@ public class Tables {
         this.tableName = tableName;
 
         switch(tableName){
-            case TABLENAME_EXPENSE:
+            case TABLENAME_EXPENSE_INCOME:
                 columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS};
-                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
-                unique = new boolean[]{false, false, false, false, false};
-                break;
-
-            case TABLENAME_INCOME:
-                columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS};
+                origin = new String[]{null, TABLENAME_CATEGORIES, null, null};
                 types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
                 unique = new boolean[]{false, false, false, false, false};
                 break;
 
             case TABLENAME_CATEGORIES:
-                columns = new String[]{LETTER, NAME, TYPE, COLOR};
-                types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT};
-                unique = new boolean[]{false, true, false, false};
+                columns = new String[]{NAME, TYPE, COLOR};
+                origin = new String[]{null, null, null};
+                types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_INT};
+                unique = new boolean[]{true, false, false};
                 break;
 
             case TABLENAME_PEOPLE:
                 columns = new String[]{NAME, EMAIL};
+                origin = new String[]{null, null};
                 types = new String[]{TYPE_TEXT, TYPE_TEXT};
                 unique = new boolean[]{true, false};
                 break;
 
             case TABLENAME_PEOPLE_IN_GROUP:
                 columns = new String[]{PEOPLE_ID, GROUP_ID};
+                origin = new String[]{TABLENAME_PEOPLE, TABLENAME_GROUPS};
                 types = new String[]{TYPE_INT, TYPE_INT};
                 unique = new boolean[]{false, false};
                 break;
@@ -121,27 +118,24 @@ public class Tables {
                 break;
 
             case TABLENAME_TRANSACTIONS_GROUP:
-                columns = new String[]{DATE, GROUP_ID, CATEGORY_ID, AMOUNT, COMMENTS};
-                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
-                unique = new boolean[]{false, false, false, false, false};
-                break;
-
-            case TABLENAME_TRANSACTIONS_PEOPLE:
-                columns = new String[]{DATE, AMOUNT, COMMENTS, PEOPLE_ID};
-                types = new String[]{TYPE_DATE, TYPE_DOUBLE, TYPE_TEXT, TYPE_INT};
+                columns = new String[]{DATE, GROUP_ID, AMOUNT, COMMENTS};
+                origin = new String[]{null, TABLENAME_GROUPS, null, null};
+                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
                 unique = new boolean[]{false, false, false, false};
                 break;
 
-            case TABLENAME_WHO_PAID:
-                columns = new String[]{TRANSACTION_ID, PEOPLE_ID, PAID};
-                types = new String[]{TYPE_INT, TYPE_INT, TYPE_DOUBLE};
-                unique = new boolean[]{false, false, false};
+            case TABLENAME_TRANSACTIONS_PEOPLE:
+                columns = new String[]{DATE, AMOUNT, COMMENTS, WHO_PAID_ID, WHO_SPENT_ID};
+                origin = new String[]{null, null, null, TABLENAME_PEOPLE, TABLENAME_PEOPLE};
+                types = new String[]{TYPE_DATE, TYPE_DOUBLE, TYPE_TEXT, TYPE_INT, TYPE_INT};
+                unique = new boolean[]{false, false, false, false, false};
                 break;
 
-            case TABLENAME_WHO_SPENT:
-                columns = new String[]{TRANSACTION_ID, PEOPLE_ID, SPEND};
-                types = new String[]{TYPE_INT, TYPE_INT, TYPE_DOUBLE};
-                unique = new boolean[]{false, false, false};
+            case TABLENAME_WHO_PAID_SPENT:
+                columns = new String[]{TRANSACTION_ID, PEOPLE_ID, PAID, SPENT};
+                origin = new String[]{TABLENAME_TRANSACTIONS_GROUP, TABLENAME_PEOPLE, null, null};
+                types = new String[]{TYPE_INT, TYPE_INT, TYPE_DOUBLE, TYPE_DOUBLE};
+                unique = new boolean[]{false, false, false, false};
                 break;
 
             default:
@@ -153,16 +147,6 @@ public class Tables {
     public String createTable()
     {
         return createGenericTable(tableName, columns, types, unique);
-    }
-
-    public String getTableName()
-    {
-        return tableName;
-    }
-
-    public String[] getColumns()
-    {
-        return columns;
     }
 
     public String[] getColumnsWithID()
@@ -192,7 +176,8 @@ public class Tables {
 	*/
 
     private static final String DROP_TEXT = "DROP TABLE IF EXISTS ";
-    private static final String UNIQUE_TEXT = "NOT NULL UNIQUE";
+    //private static final String UNIQUE_TEXT = "NOT NULL UNIQUE";
+    private static final String UNIQUE_TEXT = "NOT NULL";
 
     private static String createGenericTable(String table, String[] columns, String[] types,
                                              boolean[] unique)

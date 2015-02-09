@@ -62,11 +62,11 @@ public class TestDb extends AndroidTestCase {
         // Fantastic.  Now that we have a location, add some weather!
         ContentValues expenseValues = createExpenseValues(categoryId);
 
-        long expenseId = db.insert(Tables.TABLENAME_EXPENSE, null, expenseValues);
+        long expenseId = db.insert(Tables.TABLENAME_EXPENSE_INCOME, null, expenseValues);
         assertTrue(expenseId != -1);
 
         Cursor expenseCursor = db.query(
-                Tables.TABLENAME_EXPENSE,
+                Tables.TABLENAME_EXPENSE_INCOME,
                 null, // leaving "columns" null just returns all the columns.
                 null, null, null, null, null
         );

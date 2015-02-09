@@ -29,7 +29,7 @@ public class ExpensorContract {
     }
 
     public static final class ExpenseEntry {
-        private static final String tableName = Tables.TABLENAME_EXPENSE;
+        private static final String tableName = Tables.TABLENAME_EXPENSE_INCOME;
 
         public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();

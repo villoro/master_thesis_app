@@ -163,7 +163,7 @@ public class ParseSync {
 
         String tableName = parseObject.getClassName();
         Tables table = new Tables(tableName);
-        String[] columns = table.getColumns();
+        String[] columns = table.columns;
         String[] types = table.getTypes();
         for(int i = 0; i < columns.length; i++) {
             if (types[i] == Tables.TYPE_DOUBLE) {
@@ -261,7 +261,7 @@ public class ParseSync {
                 }
 
                 Tables table = new Tables(tableName);
-                String[] columns = table.getColumns();
+                String[] columns = table.columns;
                 String[] types = table.getTypes();
 
                 //add values

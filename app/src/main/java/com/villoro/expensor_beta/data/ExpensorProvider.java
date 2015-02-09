@@ -23,6 +23,7 @@ public class ExpensorProvider extends ContentProvider {
     private static final int EXPENSE = 100;
     private static final int EXPENSE_WITH_ID = 101;
 
+    //TODO incomes
     private static final int INCOME = 200;
     private static final int INCOME_WITH_ID = 201;
 
@@ -53,11 +54,8 @@ public class ExpensorProvider extends ContentProvider {
         final String authority = ExpensorContract.CONTENT_AUTHORITY_EXPENSOR;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, Tables.TABLENAME_EXPENSE, EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_EXPENSE + "/#", EXPENSE_WITH_ID);
-
-        matcher.addURI(authority, Tables.TABLENAME_INCOME, INCOME);
-        matcher.addURI(authority, Tables.TABLENAME_INCOME + "/#", INCOME_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_EXPENSE_INCOME, EXPENSE);
+        matcher.addURI(authority, Tables.TABLENAME_EXPENSE_INCOME + "/#", EXPENSE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES);
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
@@ -76,8 +74,7 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE, TRANSACTIONS_PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/#", TRANSACTIONS_PEOPLE_WITH_ID);
 
-        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID, WHO_PAID);
-        matcher.addURI(authority, Tables.TABLENAME_WHO_SPENT, WHO_SPENT);
+        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT, WHO_PAID);
 
         return matcher;
     }
@@ -98,7 +95,7 @@ public class ExpensorProvider extends ContentProvider {
             // "expense"
             case EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_EXPENSE,
+                        Tables.TABLENAME_EXPENSE_INCOME,
                         projection,
                         selection,
                         selectionArgs,
@@ -110,22 +107,10 @@ public class ExpensorProvider extends ContentProvider {
             }
             case EXPENSE_WITH_ID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_EXPENSE,
+                        Tables.TABLENAME_EXPENSE_INCOME,
                         projection,
                         Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
                         null,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
-            case INCOME: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_INCOME,
-                        projection,
-                        selection,
-                        selectionArgs,
                         null,
                         null,
                         sortOrder
@@ -218,19 +203,7 @@ public class ExpensorProvider extends ContentProvider {
             }
             case WHO_PAID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_WHO_PAID,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
-            case WHO_SPENT: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_WHO_SPENT,
+                        Tables.TABLENAME_WHO_PAID_SPENT,
                         projection,
                         selection,
                         selectionArgs,
@@ -280,7 +253,7 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE: {
-                long _id = db.insert(Tables.TABLENAME_EXPENSE, null, values);
+                long _id = db.insert(Tables.TABLENAME_EXPENSE_INCOME, null, values);
                 if (_id > 0)
                     returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
                 else
@@ -319,7 +292,7 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE:
-                rowsDeleted = db.delete(Tables.TABLENAME_EXPENSE, selection, selectionArgs);
+                rowsDeleted = db.delete(Tables.TABLENAME_EXPENSE_INCOME, selection, selectionArgs);
                 break;
             case CATEGORIES:
                 rowsDeleted = db.delete(Tables.TABLENAME_CATEGORIES, selection, selectionArgs);
@@ -346,10 +319,7 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE:
-                rowsUpdated = db.update(Tables.TABLENAME_EXPENSE, values, selection, selectionArgs);
-                break;
-            case INCOME:
-                rowsUpdated = db.update(Tables.TABLENAME_INCOME, values, selection, selectionArgs);
+                rowsUpdated = db.update(Tables.TABLENAME_EXPENSE_INCOME, values, selection, selectionArgs);
                 break;
             case CATEGORIES:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
@@ -370,10 +340,7 @@ public class ExpensorProvider extends ContentProvider {
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTIONS_PEOPLE, values, selection, selectionArgs);
                 break;
             case WHO_PAID:
-                rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID, values, selection, selectionArgs);
-                break;
-            case WHO_SPENT:
-                rowsUpdated = db.update(Tables.TABLENAME_WHO_SPENT, values, selection, selectionArgs);
+                rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
