@@ -21,7 +21,8 @@ public class Tables {
     public static final String DATE = "date";
     public static final String AMOUNT = "amount";
     public static final String COMMENTS = "comments";
-    public static final String FROM = "from_group";
+    public static final String FROM = "from";
+    public static final String TO = "to";
     public static final String NAME = "name";
     public static final String COLOR = "color";
     public static final String TYPE = "type";
@@ -39,10 +40,10 @@ public class Tables {
 
     //Parse sync
     public static final String LAST_UPDATE = "updated";
-    public static final String PARSE_ID_NAME = "parse_id";
+    public static final String PARSE_ID_NAME = "parseID";
 
     //main tables
-    public static final String TABLENAME_EXPENSE_INCOME = "expense_income";
+    public static final String TABLENAME_TRANSACTION_SIMPLE = "transaction";
     public static final String TABLENAME_CATEGORIES = "categories";
     public static final String TABLENAME_PEOPLE = "people";
     public static final String TABLENAME_PEOPLE_IN_GROUP = "peopleInGroup";
@@ -50,6 +51,7 @@ public class Tables {
     public static final String TABLENAME_TRANSACTIONS_GROUP = "transactionsGroups";
     public static final String TABLENAME_TRANSACTIONS_PEOPLE = "transactionsPeople";
     public static final String TABLENAME_WHO_PAID_SPENT = "whoPaidSpent";
+    public static final String TABLENAME_HOW_TO_SETTLE = "howToSettle";
 
     //types in SQLite
     public static final String TYPE_TEXT = "text";
@@ -68,14 +70,15 @@ public class Tables {
 
 
     public static final String[] TABLES = {
-            TABLENAME_EXPENSE_INCOME,
+            TABLENAME_TRANSACTION_SIMPLE,
             TABLENAME_CATEGORIES,
             TABLENAME_PEOPLE,
             TABLENAME_GROUPS,
             TABLENAME_PEOPLE_IN_GROUP,
             TABLENAME_TRANSACTIONS_GROUP,
             TABLENAME_TRANSACTIONS_PEOPLE,
-            TABLENAME_WHO_PAID_SPENT};
+            TABLENAME_WHO_PAID_SPENT,
+            TABLENAME_HOW_TO_SETTLE};
 
 
     public Tables(String tableName)
@@ -83,11 +86,11 @@ public class Tables {
         this.tableName = tableName;
 
         switch(tableName){
-            case TABLENAME_EXPENSE_INCOME:
-                columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS};
-                origin = new String[]{null, TABLENAME_CATEGORIES, null, null};
-                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
-                unique = new boolean[]{false, false, false, false, false};
+            case TABLENAME_TRANSACTION_SIMPLE:
+                columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS, TYPE};
+                origin = new String[]{null, TABLENAME_CATEGORIES, null, null, null};
+                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT, TYPE_TEXT};
+                unique = new boolean[]{false, false, false, false, false, false};
                 break;
 
             case TABLENAME_CATEGORIES:
@@ -113,6 +116,7 @@ public class Tables {
 
             case TABLENAME_GROUPS:
                 columns = new String[]{NAME};
+                origin = new String[]{null};
                 types = new String[]{TYPE_TEXT};
                 unique = new boolean[]{true};
                 break;
@@ -138,8 +142,15 @@ public class Tables {
                 unique = new boolean[]{false, false, false, false};
                 break;
 
+            case TABLENAME_HOW_TO_SETTLE:
+                columns = new String[]{GROUP_ID, FROM, TO, AMOUNT};
+                origin = new String[]{TABLENAME_GROUPS, TABLENAME_PEOPLE, TABLENAME_PEOPLE, null};
+                types = new String[]{TYPE_INT, TYPE_INT, TYPE_INT, TYPE_DOUBLE};
+                unique = new boolean[]{false, false, false, false};
+                break;
+
             default:
-                columns = null; types = null; unique = null;
+                columns = null; types = null; origin = null; unique = null;
         }
     }
 

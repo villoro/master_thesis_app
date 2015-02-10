@@ -70,4 +70,12 @@ public class ParseAdapter {
         return mOpenHelper.getReadableDatabase().query(tableName, null,
                 Tables.LAST_UPDATE + " > " + updatedAt, null, null, null, Tables.LAST_UPDATE);
     }
+
+    public static Cursor getNEWCursor(Context context, String tableName, long updatedAt){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+
+        return mOpenHelper.getReadableDatabase().rawQuery(null, null);
+    }
+
+
 }

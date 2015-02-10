@@ -26,6 +26,7 @@ import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
+import com.villoro.expensor_beta.parse.ParseQueries;
 import com.villoro.expensor_beta.parse.ParseSync;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
@@ -48,7 +49,9 @@ public class ParseActivity extends ActionBarActivity {
 
         listView = (ListView) findViewById(R.id.tempListView);
         lastUpdated = (TextView) findViewById(R.id.lastUpdated);
-        setList();
+
+        //TODO uncomment
+        //setList();
     }
 
     public void setList() {
@@ -114,8 +117,13 @@ public class ParseActivity extends ActionBarActivity {
     }
 
     public void updateSQL(View view){
-        updateCategory();
-        setList();
+        //updateCategory();
+        //setList();
+        for(String tableName : Tables.TABLES){
+            Log.d("", "Table= " + tableName);
+            Log.d("", "Query= " + ParseQueries.queryParse(tableName));
+        }
+
     }
 
 
@@ -129,7 +137,6 @@ public class ParseActivity extends ActionBarActivity {
     public void insertCategory(){
 
         ContentValues testValues = new ContentValues();
-        testValues.put(Tables.LETTER, "O");
         testValues.put(Tables.NAME, "Obli");
         testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         testValues.put(Tables.COLOR, 2);

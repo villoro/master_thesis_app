@@ -29,26 +29,10 @@ public class ExpensorContract {
     }
 
     public static final class ExpenseEntry {
-        private static final String tableName = Tables.TABLENAME_EXPENSE_INCOME;
+        private static final String tableName = Tables.TABLENAME_TRANSACTION_SIMPLE;
 
         public static final Uri CONTENT_URI =
         BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
-
-        public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
-        public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
-
-        public static Uri buildExpenseUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-    }
-
-    public static final class IncomeEntry {
-        private static final String tableName = Tables.TABLENAME_INCOME;
-
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
                 DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;

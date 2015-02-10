@@ -54,8 +54,8 @@ public class ExpensorProvider extends ContentProvider {
         final String authority = ExpensorContract.CONTENT_AUTHORITY_EXPENSOR;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, Tables.TABLENAME_EXPENSE_INCOME, EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_EXPENSE_INCOME + "/#", EXPENSE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE, EXPENSE);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/#", EXPENSE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES);
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
@@ -95,7 +95,7 @@ public class ExpensorProvider extends ContentProvider {
             // "expense"
             case EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_EXPENSE_INCOME,
+                        Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
                         selection,
                         selectionArgs,
@@ -107,7 +107,7 @@ public class ExpensorProvider extends ContentProvider {
             }
             case EXPENSE_WITH_ID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_EXPENSE_INCOME,
+                        Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
                         Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
                         null,
@@ -253,7 +253,7 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE: {
-                long _id = db.insert(Tables.TABLENAME_EXPENSE_INCOME, null, values);
+                long _id = db.insert(Tables.TABLENAME_TRANSACTION_SIMPLE, null, values);
                 if (_id > 0)
                     returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
                 else
@@ -292,7 +292,7 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE:
-                rowsDeleted = db.delete(Tables.TABLENAME_EXPENSE_INCOME, selection, selectionArgs);
+                rowsDeleted = db.delete(Tables.TABLENAME_TRANSACTION_SIMPLE, selection, selectionArgs);
                 break;
             case CATEGORIES:
                 rowsDeleted = db.delete(Tables.TABLENAME_CATEGORIES, selection, selectionArgs);
@@ -319,7 +319,7 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE:
-                rowsUpdated = db.update(Tables.TABLENAME_EXPENSE_INCOME, values, selection, selectionArgs);
+                rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
             case CATEGORIES:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
