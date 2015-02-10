@@ -11,7 +11,7 @@ import android.util.Log;
  */
 public class ExpensorDbHelper extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "expensor.db";
 
     public ExpensorDbHelper(Context context) {
@@ -39,7 +39,6 @@ public class ExpensorDbHelper extends SQLiteOpenHelper{
                 createTable(tableName, db);
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -53,7 +52,6 @@ public class ExpensorDbHelper extends SQLiteOpenHelper{
                 createTable(tableName, db);
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

@@ -119,54 +119,42 @@ public class ParseActivity extends ActionBarActivity {
     public void updateSQL(View view){
         //updateCategory();
         //setList();
-        for(String tableName : Tables.TABLES){
-            Log.d("", "Table= " + tableName);
-            Log.d("", "Query= " + ParseQueries.queryParse(tableName));
-        }
 
+        Log.e("", "starting to do something");
+        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR,
+                Context.MODE_PRIVATE);
+        Long time = sharedPreferences.getLong(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
+/*
+        for(String tableName : Tables.TABLES){
+            Log.d("", "table= " + tableName);
+            Log.d("", "query= " + ParseQueries.queryParse(tableName, time));
+        } */
+
+        Cursor cursor = ParseAdapter.getSmartQuery(this, Tables.TABLENAME_TRANSACTION_SIMPLE, time);
+        Log.d("", "cursor size= " + cursor.getCount());
+        if (cursor.moveToFirst()) {
+            do {
+                StringBuilder sb = new StringBuilder();
+                sb.append(Tables.ID + "= ").append("" + cursor.getInt(cursor.getColumnIndex(Tables.ID))+ ", ");
+                sb.append(Tables.DATE + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.DATE))+ ", ");
+                sb.append(Tables.CATEGORY_ID + "= ").append("" + cursor.getInt(cursor.getColumnIndex(Tables.CATEGORY_ID))+ ", ");
+                sb.append(Tables.CATEGORY_ID + ParseQueries.PARSE + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.CATEGORY_ID + ParseQueries.PARSE))+ ", ");
+                sb.append(Tables.AMOUNT + "= ").append("" + cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT))+ ", ");
+                sb.append(Tables.COMMENTS + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS))+ ", ");
+                sb.append(Tables.TYPE + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.TYPE))+ ", ");
+                sb.append(Tables.LAST_UPDATE + "= ").append("" + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE))+ ", ");
+
+                Log.d("", "cursor 1= " + sb.toString());
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
     }
 
 
     public void insertSQL(View v) {
 
-        insertCategory();
-        //insertExpense();
-        setList();
-    }
-
-    public void insertCategory(){
-
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.NAME, "Obli");
-        testValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-        testValues.put(Tables.COLOR, 2);
-
-        Log.e("", "Insertant cv= " + testValues.toString());
-
-        Uri uri = this.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, testValues);
-    }
-
-    public void insertExpense(){
-
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.DATE, "2015-01-23");
-        testValues.put(Tables.CATEGORY_ID, "1");
-        testValues.put(Tables.AMOUNT, 21);
-        testValues.put(Tables.COMMENTS, "hola");
-
-
-        Log.e("", "Insertant cv= " + testValues.toString());
-
-        Uri uri = this.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, testValues);
-    }
-
-    public void updateCategory(){
-        ContentValues testValues = new ContentValues();
-        testValues.put(Tables.COLOR, 2000);
-        this.getContentResolver().update(
-                ExpensorContract.CategoriesEntry.CONTENT_URI, testValues, Tables.ID + " = 1",
-                null);
-        Log.d("", "update " + testValues.toString());
+        InsertExampleValues insertExampleValues = new InsertExampleValues(this);
+        insertExampleValues.insert();
     }
 
     public Date readLastUpdateDate(){

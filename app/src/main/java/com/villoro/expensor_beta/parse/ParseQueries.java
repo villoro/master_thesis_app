@@ -21,6 +21,7 @@ public class ParseQueries {
     private static final String EQUAL = " = ";
     private static final String WHERE = " WHERE ";
     private static final String WHERE_CLAUSE_NAME = Tables.NAME + " = ";
+    private static final String GREATER_THAN = " > ";
     private static final String APOSTROPHE = "'";
     private static final String COMA = ", ";
     private static final String SECOND_WHERE = " =? and ";
@@ -35,7 +36,7 @@ public class ParseQueries {
 
     public static final String PARSE = "_Parse";
 
-    public static String queryParse(String tableName){
+    public static String queryParse(String tableName, long updatedAt){
 
         Tables table = new Tables(tableName);
         String query = "";
@@ -54,14 +55,16 @@ public class ParseQueries {
                             arrayListToArray,
                             table.origin[i],
                             tableName,
-                            table.columns[i]);
+                            table.columns[i],
+                            updatedAt);
                 } else {
                     query = innerQuery(
                             AUX + count,
                             arrayListToArray,
                             table.origin[i],
                             PARENTHESIS_OPEN + query + PARENTHESIS_CLOSE + AS + AUX + count,
-                            table.columns[i]);
+                            table.columns[i],
+                            updatedAt);
                 }
                 columns.add(table.columns[i] + PARSE);
                 count++;
@@ -71,15 +74,25 @@ public class ParseQueries {
         return query;
     }
 
-    private static String innerQuery(String tableName, String[] columns, String secondTable, String from, String whichColumn){
+    private static String innerQuery(String tableName, String[] columns, String secondTable, String from, String whichColumn, long updatedAt){
      StringBuilder sb = new StringBuilder();
+        boolean firstInner = !from.contains(SELECT);
         sb.append(SELECT + tableName + "." + Tables.ID + COMA);
         for(String column : columns){
             sb.append(tableName + "." + column + COMA);
         }
+
+        if(firstInner){
+            sb.append(tableName + "." + Tables.LAST_UPDATE + COMA);
+        }
+
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
         sb.append(FROM + from + JOIN + secondTable);
         sb.append(ON + tableName + "." + whichColumn + EQUAL + secondTable + "." + Tables.ID);
+
+        if(firstInner){
+            sb.append(WHERE + tableName + "." +Tables.LAST_UPDATE + GREATER_THAN + updatedAt);
+        }
         return sb.toString();
     }
 

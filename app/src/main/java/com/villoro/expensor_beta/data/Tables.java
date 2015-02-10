@@ -21,8 +21,8 @@ public class Tables {
     public static final String DATE = "date";
     public static final String AMOUNT = "amount";
     public static final String COMMENTS = "comments";
-    public static final String FROM = "from";
-    public static final String TO = "to";
+    public static final String FROM = "fromX";
+    public static final String TO = "toX";
     public static final String NAME = "name";
     public static final String COLOR = "color";
     public static final String TYPE = "type";
@@ -43,7 +43,7 @@ public class Tables {
     public static final String PARSE_ID_NAME = "parseID";
 
     //main tables
-    public static final String TABLENAME_TRANSACTION_SIMPLE = "transaction";
+    public static final String TABLENAME_TRANSACTION_SIMPLE = "transactionSimple";
     public static final String TABLENAME_CATEGORIES = "categories";
     public static final String TABLENAME_PEOPLE = "people";
     public static final String TABLENAME_PEOPLE_IN_GROUP = "peopleInGroup";
@@ -187,8 +187,7 @@ public class Tables {
 	*/
 
     private static final String DROP_TEXT = "DROP TABLE IF EXISTS ";
-    //private static final String UNIQUE_TEXT = "NOT NULL UNIQUE";
-    private static final String UNIQUE_TEXT = "NOT NULL";
+    private static final String UNIQUE_TEXT = "NOT NULL UNIQUE";
 
     private static String createGenericTable(String table, String[] columns, String[] types,
                                              boolean[] unique)

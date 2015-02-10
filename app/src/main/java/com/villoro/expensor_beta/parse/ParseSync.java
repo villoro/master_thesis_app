@@ -21,7 +21,8 @@ import java.util.List;
 public class ParseSync {
 
     public final String LOG_TAG = ParseSync.class.getSimpleName();
-    private static String LAST_UPLOAD_EXPENSOR = "last_update_expensor";
+    //TODO make private
+    public static String LAST_UPLOAD_EXPENSOR = "last_update_expensor";
     private static String LAST_DOWNLOAD_EXPENSOR = "last_download_expensor";
     private static long DEFAULT_DATE = 0;
 
@@ -81,7 +82,8 @@ public class ParseSync {
 
     //--------------DATES LOGIC-------------------------
 
-    private Date readDate(String whichDate){
+    //TODO make private
+    public Date readDate(String whichDate){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(whichDate,
                 Context.MODE_PRIVATE);
         Long time = sharedPreferences.getLong(whichDate, DEFAULT_DATE);
