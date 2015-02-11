@@ -6,16 +6,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.villoro.expensor_beta.parse.ParseSync;
+
 /**
  * Created by Arnau on 19/01/2015.
  */
 public class ExpensorDbHelper extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "expensor.db";
+
+    private Context context;
 
     public ExpensorDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public void createTable(String tableName, SQLiteDatabase db)
@@ -51,6 +56,8 @@ public class ExpensorDbHelper extends SQLiteOpenHelper{
                 dropTable(tableName, db);
                 createTable(tableName, db);
             }
+            ParseSync.resetLastSync(context);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

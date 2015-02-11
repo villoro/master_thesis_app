@@ -24,9 +24,15 @@ public class InsertExampleValues {
         categoryValues.put(Tables.NAME, "Food");
         categoryValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         categoryValues.put(Tables.COLOR, 2);
-
         Log.e("", "Insertant cv= " + categoryValues.toString());
-        Uri uriCategories = mContext.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, categoryValues);
+        mContext.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, categoryValues);
+
+        ContentValues categoryValues2 = new ContentValues();
+        categoryValues2.put(Tables.NAME, "Transport");
+        categoryValues2.put(Tables.TYPE, Tables.TYPE_EXPENSE);
+        categoryValues2.put(Tables.COLOR, 37);
+        Log.e("", "Insertant cv= " + categoryValues2.toString());
+        mContext.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, categoryValues2);
 
         ContentValues expenseValues = new ContentValues();
         expenseValues.put(Tables.DATE, "2015_02_10");
@@ -34,8 +40,17 @@ public class InsertExampleValues {
         expenseValues.put(Tables.COMMENTS, "hola");
         expenseValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         expenseValues.put(Tables.CATEGORY_ID, 1);
-        Log.e("", "Insertant cv= " + categoryValues.toString());
-        Uri uriExpense = mContext.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, expenseValues);
+        Log.e("", "Insertant cv= " + expenseValues.toString());
+        mContext.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, expenseValues);
+
+        ContentValues expenseValues2 = new ContentValues();
+        expenseValues2.put(Tables.DATE, "2015_02_11");
+        expenseValues2.put(Tables.AMOUNT, 100);
+        expenseValues2.put(Tables.COMMENTS, "T10");
+        expenseValues2.put(Tables.TYPE, Tables.TYPE_EXPENSE);
+        expenseValues2.put(Tables.CATEGORY_ID, 2);
+        Log.e("", "Insertant cv= " + expenseValues2.toString());
+        mContext.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, expenseValues2);
     }
 
     public void query(){
