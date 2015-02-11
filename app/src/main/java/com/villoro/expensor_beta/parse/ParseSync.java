@@ -123,15 +123,27 @@ public class ParseSync {
 
         Log.d(LOG_TAG, "starting to download at " + startSync.getTime());
 
-        for (String tableName : Tables.TABLES) {
-            parseDownload(tableName);
-        }
+        //level 1
+        parseDownload(Tables.TABLENAME_GROUPS);
+        parseDownload(Tables.TABLENAME_CATEGORIES);
+        //level 2
+        parseDownload(Tables.TABLENAME_TRANSACTIONS_GROUP);
+        parseDownload(Tables.TABLENAME_TRANSACTION_SIMPLE);
+        //level 3
+        parseDownload(Tables.TABLENAME_PEOPLE);
+        //level 4
+        parseDownload(Tables.TABLENAME_WHO_PAID_SPENT);
+        parseDownload(Tables.TABLENAME_PEOPLE_IN_GROUP);
+        parseDownload(Tables.TABLENAME_HOW_TO_SETTLE);
+        parseDownload(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
     }
 
     private int parseDownload(String tableName){
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery(tableName);
         query.whereGreaterThan("updatedAt", dateSync);
+
+        //include related objects if needed
         Tables table = new Tables(tableName);
         for(int i = 0; i < table.columns.length; i++){
             if(table.origin[i] != null){
@@ -166,24 +178,38 @@ public class ParseSync {
 
     private void insertParseObjectInSQL(ParseObject parseObject){
 
+        //initialize
         ContentValues contentValues = new ContentValues();
-
         String tableName = parseObject.getClassName();
         Tables table = new Tables(tableName);
         String[] columns = table.columns;
         String[] types = table.getTypes();
+        String[] origin = table.origin;
+
+        //save every column
         for(int i = 0; i < columns.length; i++) {
-            if (types[i] == Tables.TYPE_DOUBLE) {
-                contentValues.put(columns[i], parseObject.getDouble(columns[i]));
-            } else if (types[i] == Tables.TYPE_INT) {
-                contentValues.put(columns[i], parseObject.getInt(columns[i]));
+            if(origin[i] != null){
+                //this is a foreign key, needs to be retrieved
+                ParseObject foreignObject = parseObject.getParseObject(columns[i]);
+                long foreignID = ParseAdapter.getIdFromParseId(mContext, origin[i], foreignObject.getObjectId());
+                contentValues.put(columns[i], foreignID);
             } else {
-                contentValues.put(columns[i], parseObject.getString(columns[i]));
+                //it is a normal value, not a foreign key
+                if (types[i] == Tables.TYPE_DOUBLE) {
+                    contentValues.put(columns[i], parseObject.getDouble(columns[i]));
+                } else if (types[i] == Tables.TYPE_INT) {
+                    contentValues.put(columns[i], parseObject.getInt(columns[i]));
+                } else {
+                    contentValues.put(columns[i], parseObject.getString(columns[i]));
+                }
             }
         }
+
+        //add parse values
         contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime());
         contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
 
+        //save id if it has been saved
         boolean hasBeenDownloaded = ParseAdapter.tryToInsertSQLite(mContext, contentValues, tableName);
         if(hasBeenDownloaded){
             idsDownloaded.add(parseObject.getObjectId());

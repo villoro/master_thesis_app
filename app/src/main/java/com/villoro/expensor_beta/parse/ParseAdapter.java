@@ -75,5 +75,16 @@ public class ParseAdapter {
         }
     }
 
+    public static long getIdFromParseId(Context context, String tableName, String parseID){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        Cursor cursor = mOpenHelper.getReadableDatabase().query(tableName, new String[]{Tables.ID},
+                Tables.PARSE_ID_NAME + " = '" + parseID + "'", null, null, null, null);
+
+        cursor.moveToFirst();
+        long output = cursor.getLong(cursor.getColumnIndex(Tables.ID));
+        cursor.close();
+        return output;
+    }
+
 
 }
