@@ -1,11 +1,8 @@
 package com.villoro.expensor_beta;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,26 +10,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.FindCallback;
-import com.parse.ParseAnalytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
 import com.villoro.expensor_beta.parse.ParseQueries;
-import com.villoro.expensor_beta.parse.ParseSync;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class ParseActivity extends ActionBarActivity {
@@ -130,7 +117,7 @@ public class ParseActivity extends ActionBarActivity {
             Log.d("", "query= " + ParseQueries.queryParse(tableName, time));
         } */
 
-        Cursor cursor = ParseAdapter.getSmartQuery(this, Tables.TABLENAME_TRANSACTION_SIMPLE, time);
+        Cursor cursor = ParseAdapter.getSmartCursor(this, Tables.TABLENAME_TRANSACTION_SIMPLE, time);
         Log.d("", "cursor size= " + cursor.getCount());
         if (cursor.moveToFirst()) {
             do {

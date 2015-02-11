@@ -63,17 +63,7 @@ public class ParseAdapter {
         return database.update(tableName, contentValues, whereClause, null);
     }
 
-
-    public static Cursor getParseCursor(Context context, String tableName, long updatedAt) {
-        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
-
-        return mOpenHelper.getReadableDatabase().query(tableName, null,
-                Tables.LAST_UPDATE + " > " + updatedAt, null, null, null, Tables.LAST_UPDATE);
-    }
-
-    //TODO infinite buckle
-
-    public static Cursor getSmartQuery(Context context, String tableName, long updatedAt){
+    public static Cursor getSmartCursor(Context context, String tableName, long updatedAt){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
 
         String query = ParseQueries.queryParse(tableName, updatedAt);

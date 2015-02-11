@@ -84,6 +84,7 @@ public class ParseQueries {
 
         if(firstInner){
             sb.append(tableName + "." + Tables.LAST_UPDATE + COMA);
+            sb.append(tableName + "." + Tables.PARSE_ID_NAME + COMA);
         }
 
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
