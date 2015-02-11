@@ -249,6 +249,9 @@ public class ExpensorProvider extends ContentProvider {
         if (values.get(Tables.LAST_UPDATE) == null) {
             values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
         }
+        if (values.get(Tables.DELETED) == null) {
+            values.put(Tables.DELETED, Tables.DELETED_FALSE);
+        }
         Log.e("", "insertant= " + values.toString());
 
         switch (match) {
@@ -290,12 +293,15 @@ public class ExpensorProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         int rowsDeleted;
 
+        ContentValues values = new ContentValues();
+        values.put(Tables.DELETED, Tables.DELETED_TRUE);
+
         switch (match) {
             case EXPENSE:
-                rowsDeleted = db.delete(Tables.TABLENAME_TRANSACTION_SIMPLE, selection, selectionArgs);
+                rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
             case CATEGORIES:
-                rowsDeleted = db.delete(Tables.TABLENAME_CATEGORIES, selection, selectionArgs);
+                rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -315,6 +321,9 @@ public class ExpensorProvider extends ContentProvider {
 
         if (values.get(Tables.LAST_UPDATE) == null) {
             values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        }
+        if (values.get(Tables.DELETED) == null) {
+            values.put(Tables.DELETED, Tables.DELETED_FALSE);
         }
 
         switch (match) {

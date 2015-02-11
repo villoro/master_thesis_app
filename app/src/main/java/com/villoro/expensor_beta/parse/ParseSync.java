@@ -22,7 +22,7 @@ public class ParseSync {
 
     public final String LOG_TAG = ParseSync.class.getSimpleName();
     //TODO make private
-    public static String LAST_SYNC_EXPENSOR = "last_sync_expensor";
+    private static String LAST_SYNC_EXPENSOR = "last_sync_expensor";
     private static long DEFAULT_DATE = 0;
 
     Context mContext;

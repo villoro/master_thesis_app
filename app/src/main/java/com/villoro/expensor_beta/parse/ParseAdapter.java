@@ -46,6 +46,7 @@ public class ParseAdapter {
             }
         } else {
             Log.d("", "inserting " + contentValues.toString());
+            contentValues.put(Tables.DELETED, Tables.DELETED_FALSE);
             database.insert(tableName, null, contentValues);
             return true;
         }

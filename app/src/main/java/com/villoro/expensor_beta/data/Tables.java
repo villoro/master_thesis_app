@@ -41,6 +41,10 @@ public class Tables {
     //Parse sync
     public static final String LAST_UPDATE = "updated";
     public static final String PARSE_ID_NAME = "parseID";
+    public static final String DELETED = "deleted";
+
+    public static final int DELETED_TRUE = 1;
+    public static final int DELETED_FALSE = 0;
 
     //main tables
     public static final String TABLENAME_TRANSACTION_SIMPLE = "transactionSimple";
@@ -59,7 +63,6 @@ public class Tables {
     public static final String TYPE_DATE = "text";
     public static final String TYPE_DOUBLE = "double";
     public static final String TYPE_LONG = "long";
-    public static final String TYPE_BOOLEAN = "boolean";
 
     //types used in expensor
     public static final String TYPE_EXPENSE = "expense";
@@ -212,6 +215,7 @@ public class Tables {
         //Add parse columns
         sb.append(", " + LAST_UPDATE + " " + TYPE_LONG);
         sb.append(", " + PARSE_ID_NAME + " " + TYPE_TEXT);
+        sb.append(", " + DELETED + " " + TYPE_INT);
 
         sb.append(");");
 
