@@ -51,6 +51,8 @@ public class InsertExampleValues {
         expenseValues2.put(Tables.CATEGORY_ID, 2);
         Log.e("", "Insertant cv= " + expenseValues2.toString());
         mContext.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, expenseValues2);
+
+        //TODO add people, group, peopleInGroup...
     }
 
     public void query(){

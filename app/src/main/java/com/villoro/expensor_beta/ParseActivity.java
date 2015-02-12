@@ -142,6 +142,9 @@ public class ParseActivity extends ActionBarActivity {
 
         InsertExampleValues insertExampleValues = new InsertExampleValues(this);
         insertExampleValues.insert();
+
+        String aux = "hola";
+        ParseAdapter.getPeopleInGroup(this, aux);
     }
 
     public Date readLastUpdateDate(){

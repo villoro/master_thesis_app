@@ -9,6 +9,8 @@ import android.util.Log;
 import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
 
+import java.util.ArrayList;
+
 /**
  * Created by Arnau on 26/01/2015.
  */
@@ -87,5 +89,18 @@ public class ParseAdapter {
         return output;
     }
 
+    public static ArrayList<String> getPeopleInGroup(Context context, String groupParseId) {
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        String query = ParseQueries.queryPeopleInGroup();
+        Cursor cursor = mOpenHelper.getReadableDatabase().rawQuery(query, null);
+
+        ArrayList<String> output = new ArrayList<String>();
+        if (cursor.moveToFirst()) {
+            do {
+                output.add(cursor.getString(cursor.getColumnIndex(Tables.POINTS)));
+            } while (cursor.moveToNext());
+        } cursor.close();
+        return output;
+    }
 
 }

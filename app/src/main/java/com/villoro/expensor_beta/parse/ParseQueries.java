@@ -1,5 +1,6 @@
 package com.villoro.expensor_beta.parse;
 
+import android.database.Cursor;
 import android.util.Log;
 
 import com.parse.Parse;
@@ -155,5 +156,20 @@ public class ParseQueries {
                 JOIN + tableACL +
                 ON + innerTable + "." + which + EQUAL + tableACL + "." + Tables.ID + PARENTHESIS_CLOSE + " ") +
                 AS + AUX0 + " ";
+    }
+
+    public static final String queryPeopleInGroup(){
+        String peopleInGroup = Tables.TABLENAME_PEOPLE_IN_GROUP;
+        String group = Tables.TABLENAME_GROUPS;
+        String people = Tables.TABLENAME_PEOPLE;
+
+        return SELECT + people + "." + Tables.POINTS +
+                FROM + PARENTHESIS_OPEN +
+                    SELECT + peopleInGroup + "." + Tables.PEOPLE_ID +
+                    FROM + peopleInGroup + JOIN + group +
+                    ON + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + group + "." + Tables.ID +
+                    PARENTHESIS_CLOSE + AS + AUX +
+                JOIN + people +
+                ON + AUX + "." + Tables.PEOPLE_ID + EQUAL + people + "." + Tables.ID;
     }
 }
