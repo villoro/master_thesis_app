@@ -229,7 +229,6 @@ public class ParseSync {
 
 
 
-
     //--------------PARSE UPLOAD-------------------------
 
     private void parseUpload(){
@@ -349,6 +348,11 @@ public class ParseSync {
             }
         }
 
+        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
+        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
+        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
+        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
+        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
         return parseObject;
     }
 

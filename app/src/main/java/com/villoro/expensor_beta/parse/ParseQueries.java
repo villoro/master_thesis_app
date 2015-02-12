@@ -1,5 +1,7 @@
 package com.villoro.expensor_beta.parse;
 
+import android.util.Log;
+
 import com.parse.Parse;
 import com.villoro.expensor_beta.data.Tables;
 
@@ -32,6 +34,7 @@ public class ParseQueries {
     private static final String SUM = "SUM";
     private static final String AS = " AS ";
     private static final String AUX = "aux";
+    private static final String AUX0 = "aux0";
     private static final String IS_NULL = " IS NULL ";
 
     public static final String PARSE = "_Parse";
@@ -41,13 +44,13 @@ public class ParseQueries {
         Tables table = new Tables(tableName);
         String query = "";
         int count = 0;
-        ArrayList<String> columns = new ArrayList<String>(Arrays.asList(table.columns));
+        ArrayList<String> columnsArrayList = new ArrayList<String>(Arrays.asList(table.columns));
 
         for(int i=0; i < table.columns.length ; i++){
             if(table.origin[i] != null){
                 String from;
-                String[] arrayListToArray = new String[columns.size()];
-                arrayListToArray = columns.toArray(arrayListToArray);
+                String[] arrayListToArray = new String[columnsArrayList.size()];
+                arrayListToArray = columnsArrayList.toArray(arrayListToArray);
 
                 if(count == 0){
                     query = innerQuery(
@@ -66,15 +69,43 @@ public class ParseQueries {
                             table.columns[i],
                             updatedAt);
                 }
-                columns.add(table.columns[i] + PARSE);
+                columnsArrayList.add(table.columns[i] + PARSE);
                 count++;
             }
+        }
+
+        switch (table.acl){
+            case Tables.ACL_ONE_PERSON:
+                if(! query.contains(Tables.PEOPLE_ID + PARSE) && query.length() > 0){
+                    for(int i = 0; i < table.columns.length ; i++){
+                        if(containsGroupOrPeople(table.origin[i], Tables.TABLENAME_PEOPLE)){
+                            String replacedText = forcedInnerACL
+                                    (table.origin[i], Tables.TABLENAME_PEOPLE, Tables.PEOPLE_ID);
+                            query = query.replace(table.origin[i], AUX0);
+                            query = query.replace(" " + AUX0 + " ", replacedText);
+                        } break;
+                    }
+                }
+                break;
+            case Tables.ACL_GROUP:
+                if(! query.contains(Tables.GROUP_ID + PARSE) && query.length() > 0){
+                    for(int i = 0; i < table.columns.length; i++){
+                        if(containsGroupOrPeople(table.origin[i], Tables.TABLENAME_GROUPS)){
+                            String replacedText = forcedInnerACL
+                                    (table.origin[i], Tables.TABLENAME_GROUPS, Tables.GROUP_ID);
+                            query = query.replace(table.origin[i], AUX0);
+                            query = query.replace(" " + AUX0 + " ", replacedText);
+                        } break;
+                    }
+                }
+                break;
+            //other cases no need to do nothing
         }
 
         return query;
     }
 
-    private static String innerQuery(String tableName, String[] columns, String secondTable, String from, String whichColumn, long updatedAt){
+    public static String innerQuery(String tableName, String[] columns, String secondTable, String from, String whichColumn, long updatedAt){
      StringBuilder sb = new StringBuilder();
         boolean firstInner = !from.contains(SELECT);
         sb.append(SELECT + tableName + "." + Tables.ID + COMA);
@@ -97,4 +128,32 @@ public class ParseQueries {
         return sb.toString();
     }
 
+    private static final String PEOPLE_PARSE = Tables.PEOPLE_ID + PARSE;
+    private static final String GROUP_PARSE = Tables.GROUP_ID + PARSE;
+
+    private static boolean containsGroupOrPeople(String innerTableName, String tableACL){
+        if(innerTableName == null){
+            return false;
+        } else {
+            Tables innerTable = new Tables(innerTableName);
+            for(String origin : innerTable.origin){
+                if(origin != null){
+                    if(origin.equals(tableACL)){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    private static final String forcedInnerACL(String innerTable, String tableACL, String which){
+        return (" " + PARENTHESIS_OPEN + SELECT + innerTable + "." + Tables.ID + COMA +
+                innerTable + "." + Tables.PARSE_ID_NAME + COMA +
+                tableACL + "." + Tables.PARSE_ID_NAME + AS + which + PARSE +
+                FROM + innerTable +
+                JOIN + tableACL +
+                ON + innerTable + "." + which + EQUAL + tableACL + "." + Tables.ID + PARENTHESIS_CLOSE + " ") +
+                AS + AUX0 + " ";
+    }
 }
