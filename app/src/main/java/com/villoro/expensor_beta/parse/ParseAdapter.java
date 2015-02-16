@@ -90,17 +90,22 @@ public class ParseAdapter {
     }
 
     public static ArrayList<String> getPeopleInGroup(Context context, String groupParseId) {
-        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
-        String query = ParseQueries.queryPeopleInGroup();
-        Cursor cursor = mOpenHelper.getReadableDatabase().rawQuery(query, null);
+        if(groupParseId != null) {
+            ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+            String query = ParseQueries.queryPeopleInGroup(groupParseId);
+            Cursor cursor = mOpenHelper.getReadableDatabase().rawQuery(query, null);
 
-        ArrayList<String> output = new ArrayList<String>();
-        if (cursor.moveToFirst()) {
-            do {
-                output.add(cursor.getString(cursor.getColumnIndex(Tables.POINTS)));
-            } while (cursor.moveToNext());
-        } cursor.close();
-        return output;
+            ArrayList<String> output = new ArrayList<>();
+            if (cursor.moveToFirst()) {
+                do {
+                    output.add(cursor.getString(cursor.getColumnIndex(Tables.POINTS)));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            return output;
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 }

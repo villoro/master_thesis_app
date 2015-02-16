@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.Tables;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ public class ParseSync {
     public final String LOG_TAG = ParseSync.class.getSimpleName();
     //TODO make private
     private static String LAST_SYNC_EXPENSOR = "last_sync_expensor";
+    private static final String WHO_PAID_ID = "whoPaid";
+    private static final String WHO_SPENT_ID = "whoSpent";
     private static long DEFAULT_DATE = 0;
 
     Context mContext;
@@ -109,16 +113,6 @@ public class ParseSync {
         SharedPreferences.Editor editor =  sharedPreferences.edit();
         editor.putLong(LAST_SYNC_EXPENSOR, 0);
         editor.commit();
-    }
-
-    private class DateWithBoolean{
-        boolean finish;
-        Date date;
-
-        public DateWithBoolean(Date date){
-            finish = false;
-            this.date = date;
-        }
     }
 
 
@@ -312,7 +306,7 @@ public class ParseSync {
                 if (index >= 0){
                     if( types[i] == Tables.TYPE_DOUBLE)
                     {
-                        parseObject.put(columns[i], cursor.getDouble(index));
+                        parseObject.put(columns[i], Math.abs(cursor.getDouble(index)));
                     }
                     else if (types[i] == Tables.TYPE_INT)
                     {
@@ -329,9 +323,23 @@ public class ParseSync {
                 //It is a foreign key
                 int parseIndex = cursor.getColumnIndex(columns[i] + ParseQueries.PARSE);
                 String parseForeignID = cursor.getString(parseIndex);
+
+                //special treatment for transaction_people
+                String columnToStore = columns[i];
+                if((tableName == Tables.TABLENAME_TRANSACTIONS_PEOPLE) && (columns[i] == Tables.PEOPLE_ID)){
+                    double amount = cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT));
+                    if(amount > 0){
+                        columnToStore = WHO_SPENT_ID;
+                        parseObject.put(WHO_PAID_ID, ParseUser.getCurrentUser());
+                    } else {
+                        columnToStore = WHO_PAID_ID;
+                        parseObject.put(WHO_SPENT_ID, ParseUser.getCurrentUser());
+                    }
+                }
+
                 if(parseForeignID != null && parseForeignID.length() > 0){
                     Log.d("", "existeix foreign ID= " + parseForeignID);
-                    parseObject.put(columns[i],
+                    parseObject.put(columnToStore,
                             ParseObject.createWithoutData(origin[i], parseForeignID));
                 } else {
                     Log.d("", "no existeix foreign ID");
@@ -340,7 +348,7 @@ public class ParseSync {
                         if(objectsToUpload.type.get(j).equals(origin[i])){
                             if(objectsToUpload._ids.get(j) == cursor.getLong(index)){
                                 //add the object here
-                                parseObject.put(columns[i], objectsToUpload.parseObjects.get(j));
+                                parseObject.put(columnToStore, objectsToUpload.parseObjects.get(j));
                             }
                         }
                     }
@@ -348,11 +356,29 @@ public class ParseSync {
             }
         }
 
-        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
-        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
-        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
-        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
-        //TODO ADD ACL FOR GROUPS AS PERSON NOT ROLE
+        //set ACL
+        ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
+        switch (table.acl){
+            case Tables.ACL_INDIVIDUAL:
+                break;
+            case Tables.ACL_ONE_PERSON:
+                String personID = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
+                if(personID != null){
+                    parseACL.setReadAccess(personID, true);
+                    parseACL.setWriteAccess(personID, true);
+                }
+                break;
+            case Tables.ACL_GROUP:
+                String groupID = cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
+                ArrayList<String> peopleID = ParseAdapter.getPeopleInGroup(mContext, groupID);
+                for (String eachPerson : peopleID){
+                    if(eachPerson != null){
+                        parseACL.setReadAccess(eachPerson, true);
+                        parseACL.setWriteAccess(eachPerson, true);
+                    }
+                }
+                break;
+        }
         return parseObject;
     }
 

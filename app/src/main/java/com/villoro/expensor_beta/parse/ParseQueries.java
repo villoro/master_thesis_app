@@ -158,7 +158,7 @@ public class ParseQueries {
                 AS + AUX0 + " ";
     }
 
-    public static final String queryPeopleInGroup(){
+    public static final String queryPeopleInGroup(String groupID){
         String peopleInGroup = Tables.TABLENAME_PEOPLE_IN_GROUP;
         String group = Tables.TABLENAME_GROUPS;
         String people = Tables.TABLENAME_PEOPLE;
@@ -168,6 +168,7 @@ public class ParseQueries {
                     SELECT + peopleInGroup + "." + Tables.PEOPLE_ID +
                     FROM + peopleInGroup + JOIN + group +
                     ON + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + group + "." + Tables.ID +
+                    WHERE + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + groupID +
                     PARENTHESIS_CLOSE + AS + AUX +
                 JOIN + people +
                 ON + AUX + "." + Tables.PEOPLE_ID + EQUAL + people + "." + Tables.ID;

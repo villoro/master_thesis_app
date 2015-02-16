@@ -30,8 +30,6 @@ public class Tables {
     public static final String EMAIL = "email";
     public static final String PAID = "paid";
     public static final String SPENT = "spend";
-    public static final String WHO_PAID_ID = "whoPaid";
-    public static final String WHO_SPENT_ID = "whoSpent";
 
     //foreign keys columns
     public static final String CATEGORY_ID = "categoryID";

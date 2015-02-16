@@ -1,6 +1,8 @@
 package com.villoro.expensor_beta;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
@@ -24,6 +27,7 @@ import java.util.Date;
 
 public class ParseActivity extends ActionBarActivity {
 
+    public static Activity parseActivity;
     private static String LAST_UPDATE_EXPENSOR = "last_update_expensor";
     private static long DEFAULT_DATE = 0;
     ListView listView;
@@ -33,6 +37,9 @@ public class ParseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parse_temp);
+
+        parseActivity = this;
+        LoginActivity.loginActivity.finish();
 
         listView = (ListView) findViewById(R.id.tempListView);
         lastUpdated = (TextView) findViewById(R.id.lastUpdated);
@@ -92,6 +99,10 @@ public class ParseActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_log_out) {
+            ParseUser.logOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
