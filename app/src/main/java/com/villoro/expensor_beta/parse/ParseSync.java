@@ -314,7 +314,9 @@ public class ParseSync {
                     }
                     else
                     {
-                        parseObject.put(columns[i], cursor.getString(index));
+                        if(cursor.getString(index) != null) {
+                            parseObject.put(columns[i], cursor.getString(index));
+                        }
                     }
                 } else {
                     Log.d(LOG_TAG, "no existeix la columna");
@@ -330,10 +332,10 @@ public class ParseSync {
                     double amount = cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT));
                     if(amount > 0){
                         columnToStore = WHO_SPENT_ID;
-                        parseObject.put(WHO_PAID_ID, ParseUser.getCurrentUser());
+                        //parseObject.put(WHO_PAID_ID, ParseUser.getCurrentUser());
                     } else {
                         columnToStore = WHO_PAID_ID;
-                        parseObject.put(WHO_SPENT_ID, ParseUser.getCurrentUser());
+                        //parseObject.put(WHO_SPENT_ID, ParseUser.getCurrentUser());
                     }
                 }
 
@@ -362,23 +364,35 @@ public class ParseSync {
             case Tables.ACL_INDIVIDUAL:
                 break;
             case Tables.ACL_ONE_PERSON:
-                String personID = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
+                String personID = cursor.getString(cursor.getColumnIndex(Tables.PEOPLE_ID + ParseQueries.PARSE));
                 if(personID != null){
                     parseACL.setReadAccess(personID, true);
                     parseACL.setWriteAccess(personID, true);
                 }
                 break;
             case Tables.ACL_GROUP:
-                String groupID = cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
-                ArrayList<String> peopleID = ParseAdapter.getPeopleInGroup(mContext, groupID);
-                for (String eachPerson : peopleID){
-                    if(eachPerson != null){
-                        parseACL.setReadAccess(eachPerson, true);
-                        parseACL.setWriteAccess(eachPerson, true);
+
+                //get groupParseID
+                String groupID = null;
+                if(tableName == Tables.TABLENAME_GROUPS){
+                    groupID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                } else {
+                    cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
+                }
+
+                //get and setACL for people in the group
+                if(groupID != null) {
+                    ArrayList<String> peopleID = ParseAdapter.getPeopleInGroup(mContext, groupID);
+                    for (String eachPerson : peopleID) {
+                        if (eachPerson != null) {
+                            parseACL.setReadAccess(eachPerson, true);
+                            parseACL.setWriteAccess(eachPerson, true);
+                        }
                     }
                 }
                 break;
         }
+        parseObject.setACL(parseACL);
         return parseObject;
     }
 

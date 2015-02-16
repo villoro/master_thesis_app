@@ -151,11 +151,19 @@ public class ParseActivity extends ActionBarActivity {
 
     public void insertSQL(View v) {
 
+        //Log.d("", ParseQueries.queryParse(Tables.TABLENAME_WHO_PAID_SPENT, 0));
+
+        /*for(String tableName : Tables.TABLES) {
+            Log.e("", tableName);
+            Cursor cursor = ParseAdapter.getSmartCursor(this, tableName, 0);
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                Log.d("", cursor.getColumnName(i));
+            }
+        }*/
+
         InsertExampleValues insertExampleValues = new InsertExampleValues(this);
         insertExampleValues.insert();
-
-        String aux = "hola";
-        ParseAdapter.getPeopleInGroup(this, aux);
     }
 
     public Date readLastUpdateDate(){

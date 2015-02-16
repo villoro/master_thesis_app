@@ -23,7 +23,6 @@ public class ExpensorProvider extends ContentProvider {
     private static final int EXPENSE = 100;
     private static final int EXPENSE_WITH_ID = 101;
 
-    //TODO incomes
     private static final int INCOME = 200;
     private static final int INCOME_WITH_ID = 201;
 
@@ -34,6 +33,7 @@ public class ExpensorProvider extends ContentProvider {
     private static final int PEOPLE_WITH_ID = 401;
 
     private static final int PEOPLE_IN_GROUP = 450;
+    private static final int PEOPLE_IN_GROUP_WITH_ID = 451;
 
     private static final int GROUPS = 500;
     private static final int GROUPS_WITH_ID = 501;
@@ -43,8 +43,12 @@ public class ExpensorProvider extends ContentProvider {
 
     private static final int TRANSACTIONS_PEOPLE = 700;
     private static final int TRANSACTIONS_PEOPLE_WITH_ID = 701;
-    private static final int WHO_PAID = 801;
-    private static final int WHO_SPENT = 901;
+
+    private static final int WHO_PAID_SPENT = 800;
+    private static final int WHO_PAID_SPENT_WITH_ID = 801;
+
+    private static final int HOW_TO_SETTLE = 900;
+    private static final int HOW_TO_SETTLE_WITH_ID = 901;
 
     public static UriMatcher buildUriMatcher() {
         // All paths added to the UriMatcher have a corresponding code to return when a match is
@@ -54,8 +58,11 @@ public class ExpensorProvider extends ContentProvider {
         final String authority = ExpensorContract.CONTENT_AUTHORITY_EXPENSOR;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE, EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/#", EXPENSE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_EXPENSE, EXPENSE);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_EXPENSE + "/#", EXPENSE_WITH_ID);
+
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME, INCOME);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME + "/#", INCOME_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES);
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
@@ -64,6 +71,7 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/#", PEOPLE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#", PEOPLE_IN_GROUP_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
         matcher.addURI(authority, Tables.TABLENAME_GROUPS + "/#", GROUPS_WITH_ID);
@@ -74,7 +82,11 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE, TRANSACTIONS_PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/#", TRANSACTIONS_PEOPLE_WITH_ID);
 
-        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT, WHO_PAID);
+        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT, WHO_PAID_SPENT);
+        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT + "/#", WHO_PAID_SPENT_WITH_ID);
+
+        matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE, HOW_TO_SETTLE);
+        matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE + "/#", HOW_TO_SETTLE_WITH_ID);
 
         return matcher;
     }
@@ -201,9 +213,21 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
-            case WHO_PAID: {
+            case WHO_PAID_SPENT: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_WHO_PAID_SPENT,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case HOW_TO_SETTLE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_HOW_TO_SETTLE,
                         projection,
                         selection,
                         selectionArgs,
@@ -230,10 +254,51 @@ public class ExpensorProvider extends ContentProvider {
                 return ExpensorContract.ExpenseEntry.CONTENT_TYPE;
             case EXPENSE_WITH_ID:
                 return ExpensorContract.ExpenseEntry.CONTENT_ITEM_TYPE;
+
+            case INCOME:
+                return ExpensorContract.IncomeEntry.CONTENT_TYPE;
+            case INCOME_WITH_ID:
+                return ExpensorContract.IncomeEntry.CONTENT_ITEM_TYPE;
+
             case CATEGORIES:
                 return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
             case CATEGORIES_WITH_ID:
                 return ExpensorContract.CategoriesEntry.CONTENT_ITEM_TYPE;
+
+            case PEOPLE:
+                return ExpensorContract.PeopleEntry.CONTENT_TYPE;
+            case PEOPLE_WITH_ID:
+                return ExpensorContract.PeopleEntry.CONTENT_ITEM_TYPE;
+
+            case PEOPLE_IN_GROUP:
+                return ExpensorContract.PeopleInGroupEntry.CONTENT_TYPE;
+            case PEOPLE_IN_GROUP_WITH_ID:
+                return ExpensorContract.PeopleInGroupEntry.CONTENT_ITEM_TYPE;
+
+            case GROUPS:
+                return ExpensorContract.GroupEntry.CONTENT_TYPE;
+            case GROUPS_WITH_ID:
+                return ExpensorContract.GroupEntry.CONTENT_ITEM_TYPE;
+
+            case TRANSACTIONS_PEOPLE:
+                return ExpensorContract.TransactionPeopleEntry.CONTENT_TYPE;
+            case TRANSACTIONS_PEOPLE_WITH_ID:
+                return ExpensorContract.TransactionPeopleEntry.CONTENT_ITEM_TYPE;
+
+            case TRANSACTIONS_GROUP:
+                return ExpensorContract.TransactionGroupEntry.CONTENT_TYPE;
+            case TRANSACTIONS_GROUP_WITH_ID:
+                return ExpensorContract.TransactionGroupEntry.CONTENT_ITEM_TYPE;
+
+            case WHO_PAID_SPENT:
+                return ExpensorContract.WhoPaidSpentEntry.CONTENT_TYPE;
+            case WHO_PAID_SPENT_WITH_ID:
+                return ExpensorContract.WhoPaidSpentEntry.CONTENT_ITEM_TYPE;
+
+            case HOW_TO_SETTLE:
+                return ExpensorContract.HowToSettleEntry.CONTENT_TYPE;
+            case HOW_TO_SETTLE_WITH_ID:
+                return ExpensorContract.HowToSettleEntry.CONTENT_ITEM_TYPE;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -256,6 +321,16 @@ public class ExpensorProvider extends ContentProvider {
 
         switch (match) {
             case EXPENSE: {
+                values.put(Tables.TYPE, Tables.TYPE_EXPENSE);
+                long _id = db.insert(Tables.TABLENAME_TRANSACTION_SIMPLE, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
+                break;
+            }
+            case INCOME: {
+                values.put(Tables.TYPE, Tables.TYPE_INCOME);
                 long _id = db.insert(Tables.TABLENAME_TRANSACTION_SIMPLE, null, values);
                 if (_id > 0)
                     returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
@@ -280,6 +355,75 @@ public class ExpensorProvider extends ContentProvider {
 
                 break;
             }
+            case PEOPLE: {
+                if (db.query(
+                        Tables.TABLENAME_PEOPLE, new String[]{Tables.EMAIL},
+                        Tables.EMAIL + " = '" + values.get(Tables.EMAIL).toString() + "'",
+                        null, null, null, null).getCount() == 0) {
+                    long _id = db.insert(Tables.TABLENAME_PEOPLE, null, values);
+                    if (_id > 0)
+                        returnUri = ExpensorContract.PeopleEntry.buildPeopleUri(_id);
+                    else
+                        throw new SQLException("Failed to insert to row into " + uri);
+                } else {
+                    Log.e("", "ja hi ha un amb aquest email");
+                    returnUri = uri;
+                }
+
+                break;
+            }
+            case GROUPS: {
+                if (db.query(
+                        Tables.TABLENAME_GROUPS, new String[]{Tables.NAME},
+                        Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
+                        null, null, null, null).getCount() == 0) {
+                    long _id = db.insert(Tables.TABLENAME_GROUPS, null, values);
+                    if (_id > 0)
+                        returnUri = ExpensorContract.GroupEntry.buildGroupUri(_id);
+                    else
+                        throw new SQLException("Failed to insert to row into " + uri);
+                } else {
+                    Log.e("", "ja hi ha un amb aquest nom");
+                    returnUri = uri;
+                }
+
+                break;
+            }
+            case PEOPLE_IN_GROUP: {
+                //TODO check if person is in group
+                long _id = db.insert(Tables.TABLENAME_PEOPLE_IN_GROUP, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.PeopleInGroupEntry.buildPeopleInGroupUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
+                break;
+            }
+            case TRANSACTIONS_GROUP: {
+                long _id = db.insert(Tables.TABLENAME_TRANSACTIONS_GROUP, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.TransactionGroupEntry.buildTransactionGroupUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
+                break;
+            }
+            case TRANSACTIONS_PEOPLE: {
+                long _id = db.insert(Tables.TABLENAME_TRANSACTIONS_PEOPLE, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.TransactionPeopleEntry.buildTransactionPeopleUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
+                break;
+            }
+            case WHO_PAID_SPENT: {
+                //TODO check if that person is in transaction
+                long _id = db.insert(Tables.TABLENAME_WHO_PAID_SPENT, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.WhoPaidSpentEntry.buildWhoPaidSpentUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -300,9 +444,31 @@ public class ExpensorProvider extends ContentProvider {
             case EXPENSE:
                 rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
+            case INCOME:
+                rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
+                break;
             case CATEGORIES:
                 rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
+            case PEOPLE_IN_GROUP:
+                rowsDeleted = db.update(Tables.TABLENAME_PEOPLE_IN_GROUP, values, selection, selectionArgs);
+                break;
+            case GROUPS:
+                rowsDeleted = db.update(Tables.TABLENAME_GROUPS, values, selection, selectionArgs);
+                break;
+            case TRANSACTIONS_PEOPLE:
+                rowsDeleted = db.update(Tables.TABLENAME_TRANSACTIONS_PEOPLE, values, selection, selectionArgs);
+                break;
+            case TRANSACTIONS_GROUP:
+                rowsDeleted = db.update(Tables.TABLENAME_TRANSACTIONS_GROUP, values, selection, selectionArgs);
+                break;
+            case WHO_PAID_SPENT:
+                rowsDeleted = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
+                break;
+            case HOW_TO_SETTLE:
+                rowsDeleted = db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, selection, selectionArgs);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -330,6 +496,9 @@ public class ExpensorProvider extends ContentProvider {
             case EXPENSE:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
+            case INCOME:
+                rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
+                break;
             case CATEGORIES:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
@@ -348,7 +517,10 @@ public class ExpensorProvider extends ContentProvider {
             case TRANSACTIONS_PEOPLE:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTIONS_PEOPLE, values, selection, selectionArgs);
                 break;
-            case WHO_PAID:
+            case WHO_PAID_SPENT:
+                rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
+                break;
+            case HOW_TO_SETTLE:
                 rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
                 break;
             default:

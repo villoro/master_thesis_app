@@ -51,13 +51,13 @@ public class Tables {
     public static final String ACL_GROUP = "group";
 
     //main tables
-    public static final String TABLENAME_TRANSACTION_SIMPLE = "transactionSimple";
+    public static final String TABLENAME_TRANSACTION_SIMPLE = "transSimple";
     public static final String TABLENAME_CATEGORIES = "categories";
     public static final String TABLENAME_PEOPLE = "people";
     public static final String TABLENAME_PEOPLE_IN_GROUP = "peopleInGroup";
     public static final String TABLENAME_GROUPS = "groups";
-    public static final String TABLENAME_TRANSACTIONS_GROUP = "transactionsGroups";
-    public static final String TABLENAME_TRANSACTIONS_PEOPLE = "transactionsPeople";
+    public static final String TABLENAME_TRANSACTIONS_GROUP = "transGroups";
+    public static final String TABLENAME_TRANSACTIONS_PEOPLE = "transPeople";
     public static final String TABLENAME_WHO_PAID_SPENT = "whoPaidSpent";
     public static final String TABLENAME_HOW_TO_SETTLE = "howToSettle";
 

@@ -45,7 +45,23 @@ public class ParseQueries {
         Tables table = new Tables(tableName);
         String query = "";
         int count = 0;
-        ArrayList<String> columnsArrayList = new ArrayList<String>(Arrays.asList(table.columns));
+        ArrayList<String> columnsArrayList = new ArrayList<>(Arrays.asList(table.columns));
+        columnsArrayList.add(Tables.PARSE_ID_NAME);
+        columnsArrayList.add(Tables.LAST_UPDATE);
+
+        if(table.acl.equals(Tables.ACL_GROUP)){
+            boolean hasGroupID = false;
+            for (String origin: table.origin){
+                if(origin != null) {
+                    if (origin.equals(Tables.TABLENAME_GROUPS)) {
+                        hasGroupID = true;
+                    }
+                }
+            }
+            if(!hasGroupID){
+                columnsArrayList.add(Tables.GROUP_ID + PARSE);
+            }
+        }
 
         for(int i=0; i < table.columns.length ; i++){
             if(table.origin[i] != null){
@@ -75,35 +91,37 @@ public class ParseQueries {
             }
         }
 
-        switch (table.acl){
-            case Tables.ACL_ONE_PERSON:
-                if(! query.contains(Tables.PEOPLE_ID + PARSE) && query.length() > 0){
-                    for(int i = 0; i < table.columns.length ; i++){
-                        if(containsGroupOrPeople(table.origin[i], Tables.TABLENAME_PEOPLE)){
-                            String replacedText = forcedInnerACL
-                                    (table.origin[i], Tables.TABLENAME_PEOPLE, Tables.PEOPLE_ID);
-                            query = query.replace(table.origin[i], AUX0);
-                            query = query.replace(" " + AUX0 + " ", replacedText);
-                        } break;
+        if(table.acl.equals(Tables.ACL_GROUP)) {
+            boolean needACL = true;
+            for(int j = 0; j < table.columns.length; j++){
+                if(table.origin != null) {
+                    if (table.origin.equals(Tables.TABLENAME_GROUPS)) {
+                        needACL = false;
                     }
                 }
-                break;
-            case Tables.ACL_GROUP:
-                if(! query.contains(Tables.GROUP_ID + PARSE) && query.length() > 0){
-                    for(int i = 0; i < table.columns.length; i++){
-                        if(containsGroupOrPeople(table.origin[i], Tables.TABLENAME_GROUPS)){
-                            String replacedText = forcedInnerACL
-                                    (table.origin[i], Tables.TABLENAME_GROUPS, Tables.GROUP_ID);
-                            query = query.replace(table.origin[i], AUX0);
-                            query = query.replace(" " + AUX0 + " ", replacedText);
-                        } break;
+            }
+            if (needACL && query.length() > 0) {
+                for (int i = 0; i < table.columns.length; i++) {
+                    if (containsGroupOrPeople(table.origin[i], Tables.TABLENAME_GROUPS)) {
+                        String replacedText = forcedInnerACL
+                                (table.origin[i], Tables.TABLENAME_GROUPS, Tables.GROUP_ID);
+                        query = query.replace(table.origin[i], AUX0);
+                        query = query.replace(" " + AUX0 + " ", replacedText);
+                        query = query.replace(tableName + "." + Tables.GROUP_ID + PARSE,
+                                AUX0 + "." + Tables.GROUP_ID + PARSE);
                     }
+                    break;
                 }
-                break;
-            //other cases no need to do nothing
+            }
         }
 
-        return query;
+        if(query.length() > 0) {
+            //delete name "aux"
+            return SELECT + "*" + FROM + "(" + query + ")" + AS + "finalTable";
+        } else {
+            //return a empty String
+            return query;
+        }
     }
 
     public static String innerQuery(String tableName, String[] columns, String secondTable, String from, String whichColumn, long updatedAt){
@@ -112,11 +130,6 @@ public class ParseQueries {
         sb.append(SELECT + tableName + "." + Tables.ID + COMA);
         for(String column : columns){
             sb.append(tableName + "." + column + COMA);
-        }
-
-        if(firstInner){
-            sb.append(tableName + "." + Tables.LAST_UPDATE + COMA);
-            sb.append(tableName + "." + Tables.PARSE_ID_NAME + COMA);
         }
 
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
@@ -168,7 +181,7 @@ public class ParseQueries {
                     SELECT + peopleInGroup + "." + Tables.PEOPLE_ID +
                     FROM + peopleInGroup + JOIN + group +
                     ON + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + group + "." + Tables.ID +
-                    WHERE + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + groupID +
+                    WHERE + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + "'" + groupID + "'" +
                     PARENTHESIS_CLOSE + AS + AUX +
                 JOIN + people +
                 ON + AUX + "." + Tables.PEOPLE_ID + EQUAL + people + "." + Tables.ID;

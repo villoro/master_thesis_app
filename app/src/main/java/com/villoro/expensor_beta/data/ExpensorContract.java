@@ -24,20 +24,34 @@ public class ExpensorContract {
         return new Date();
     }
 
-    public static final Uri contentUri(String tableName){
-        return BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
-    }
-
     public static final class ExpenseEntry {
         private static final String tableName = Tables.TABLENAME_TRANSACTION_SIMPLE;
+        private static final String type = Tables.TYPE_EXPENSE;
 
         public static final Uri CONTENT_URI =
-        BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+        BASE_CONTENT_URI.buildUpon().appendPath(tableName).appendPath(type).build();
 
         public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName + "/" + type ;
         public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName + "/" + type;
+
+        public static Uri buildExpenseUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class IncomeEntry {
+        private static final String tableName = Tables.TABLENAME_TRANSACTION_SIMPLE;
+        private static final String type = Tables.TYPE_INCOME;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).appendPath(type).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName + "/" + type ;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName + "/" + type;
 
         public static Uri buildExpenseUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -71,9 +85,104 @@ public class ExpensorContract {
         public static final String CONTENT_ITEM_TYPE =
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
-        public static Uri buildExpenseUri(long id) {
+        public static Uri buildPeopleUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
 
+    public static final class PeopleInGroupEntry {
+        private static final String tableName = Tables.TABLENAME_PEOPLE_IN_GROUP;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+
+        public static Uri buildPeopleInGroupUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class GroupEntry {
+        private static final String tableName = Tables.TABLENAME_GROUPS;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+
+        public static Uri buildGroupUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class TransactionPeopleEntry {
+        private static final String tableName = Tables.TABLENAME_TRANSACTIONS_PEOPLE;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+
+        public static Uri buildTransactionPeopleUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class TransactionGroupEntry {
+        private static final String tableName = Tables.TABLENAME_TRANSACTIONS_GROUP;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+
+        public static Uri buildTransactionGroupUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class WhoPaidSpentEntry {
+        private static final String tableName = Tables.TABLENAME_WHO_PAID_SPENT;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+
+        public static Uri buildWhoPaidSpentUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class HowToSettleEntry {
+        private static final String tableName = Tables.TABLENAME_HOW_TO_SETTLE;
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
+
+        public static Uri buildHowToSettleUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
 }

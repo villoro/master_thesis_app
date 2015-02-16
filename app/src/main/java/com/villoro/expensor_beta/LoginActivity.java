@@ -65,8 +65,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         if(currentUser != null) {
             startExpensor();
         } else {
+            if(ParseActivity.parseActivity != null){
+                ParseActivity.parseActivity.finish();
+            }
 
-            ParseActivity.parseActivity.finish();
             // Set up the login form.
             mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
             populateAutoComplete();
