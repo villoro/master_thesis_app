@@ -40,7 +40,7 @@ public class ParseQueries {
 
     public static final String PARSE = "_Parse";
 
-    public static String queryParse(String tableName, long updatedAt){
+    public static String queryParse(String tableName, long updatedAt, long peopleID){
 
         Tables table = new Tables(tableName);
         String query = "";
@@ -83,7 +83,7 @@ public class ParseQueries {
                             table.origin[i],
                             tableName,
                             table.columns[i],
-                            updatedAt);
+                            updatedAt, peopleID);
                 } else {
                     query = innerQuery(
                             AUX + count,
@@ -91,7 +91,7 @@ public class ParseQueries {
                             table.origin[i],
                             PARENTHESIS_OPEN + query + PARENTHESIS_CLOSE + AS + AUX + count,
                             table.columns[i],
-                            updatedAt);
+                            updatedAt, peopleID);
                 }
 
                 //add pointsTo_Parse to columns
@@ -140,7 +140,8 @@ public class ParseQueries {
         }
     }
 
-    public static String innerQuery(String tableName, String[] columns, String secondTable, String from, String whichColumn, long updatedAt){
+    public static String innerQuery(String tableName, String[] columns, String secondTable, String from,
+                                    String whichColumn, long updatedAt, long peopleID){
      StringBuilder sb = new StringBuilder();
         boolean firstInner = !from.contains(SELECT);
         sb.append(SELECT + tableName + "." + Tables.ID + COMA);
@@ -152,14 +153,19 @@ public class ParseQueries {
         if(secondTable.equals(Tables.TABLENAME_PEOPLE)){
             sb.append(COMA + secondTable + "." + Tables.POINTS + AS + Tables.POINTS + PARSE);
         }
+
         sb.append(FROM + from + JOIN + secondTable);
         sb.append(ON + tableName + "." + whichColumn + EQUAL + secondTable + "." + Tables.ID);
 
-        if(firstInner){
+        if(firstInner && peopleID <= 0){
             sb.append(WHERE + tableName + "." +Tables.LAST_UPDATE + GREATER_THAN + updatedAt);
+        } else if(peopleID > 0 && secondTable.equals(Tables.TABLENAME_PEOPLE)) {
+            sb.append(WHERE + secondTable + "." + Tables.ID + EQUAL + "'" + peopleID + "'");
         }
         return sb.toString();
     }
+
+
 
     private static final String PEOPLE_PARSE = Tables.PEOPLE_ID + PARSE;
     private static final String GROUP_PARSE = Tables.GROUP_ID + PARSE;

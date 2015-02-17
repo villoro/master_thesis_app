@@ -192,15 +192,41 @@ public class ParseSync {
         for(int i = 0; i < columns.length; i++) {
             if(origin[i] != null){
                 //this is a foreign key, needs to be retrieved
-                ParseObject foreignObject = parseObject.getParseObject(columns[i]);
+                ParseObject foreignObject;
+
+                //special case transacionPeople
+                if(columns[i] == Tables.PEOPLE_ID && tableName.equals(Tables.TABLENAME_TRANSACTIONS_PEOPLE)){
+                    String whoPaidId = parseObject.getParseObject(WHO_PAID_ID).getObjectId();
+                    String whoSpentId = parseObject.getParseObject(WHO_SPENT_ID).getObjectId();
+                    String myId = ParseAdapter.getMyParseId(mContext);
+                    if(whoPaidId.equals(myId)){
+                        foreignObject = parseObject.getParseObject(WHO_SPENT_ID);
+                        Log.d("", "saving= " + parseObject.getDouble(Tables.AMOUNT));
+                        contentValues.put(Tables.AMOUNT, parseObject.getDouble(Tables.AMOUNT));
+                    } else if (whoSpentId.equals(myId)){
+                        foreignObject = parseObject.getParseObject(WHO_PAID_ID);
+                        Log.d("", "saving= " + - parseObject.getDouble(Tables.AMOUNT));
+                        contentValues.put(Tables.AMOUNT, - parseObject.getDouble(Tables.AMOUNT));
+                    } else {
+                        Log.e("", "NO POSSIBLE CASE");
+                        foreignObject = null;
+                    }
+
+                //usual case
+                } else {
+                    foreignObject = parseObject.getParseObject(columns[i]);
+                }
                 Log.d("", "trying to inser= " + parseObject.getClassName());
+                Log.d("", "to column= " + columns[i]);
                 Log.d("", "foreignkey= " + foreignObject.getClassName());
                 long foreignID = ParseAdapter.getIdFromParseId(mContext, origin[i], foreignObject.getObjectId());
                 contentValues.put(columns[i], foreignID);
             } else {
                 //it is a normal value, not a foreign key
                 if (types[i] == Tables.TYPE_DOUBLE) {
-                    contentValues.put(columns[i], parseObject.getDouble(columns[i]));
+                    if(!tableName.equals(Tables.TABLENAME_TRANSACTIONS_PEOPLE)){
+                        contentValues.put(columns[i], parseObject.getDouble(columns[i]));
+                    }
                 } else if (types[i] == Tables.TYPE_INT) {
                     contentValues.put(columns[i], parseObject.getInt(columns[i]));
                 } else {
@@ -266,7 +292,7 @@ public class ParseSync {
 
     private void parseTable(String tableName){
 
-        final Cursor cursor = ParseAdapter.getSmartCursor(mContext, tableName, dateSync.getTime());
+        final Cursor cursor = ParseAdapter.getSmartCursor(mContext, tableName, dateSync.getTime(), 0);
 
         if (cursor.moveToFirst()){
             do{
@@ -383,6 +409,12 @@ public class ParseSync {
         }
 
         //set ACL
+        parseObject.setACL(getParseACLFromSQLite(table, cursor));
+
+        return parseObject;
+    }
+
+    private ParseACL getParseACLFromSQLite(Tables table, Cursor cursor){
         ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
         switch (table.acl){
             case Tables.ACL_INDIVIDUAL:
@@ -398,7 +430,7 @@ public class ParseSync {
 
                 //get groupParseID
                 String groupID = null;
-                if(tableName == Tables.TABLENAME_GROUPS){
+                if(table.tableName == Tables.TABLENAME_GROUPS){
                     groupID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
                 } else {
                     cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
@@ -416,8 +448,7 @@ public class ParseSync {
                 }
                 break;
         }
-        parseObject.setACL(parseACL);
-        return parseObject;
+        return parseACL;
     }
 
     private void addToObjectsToUpload(Cursor cursor, String tableName, String parseID, ParseObject parseObject){

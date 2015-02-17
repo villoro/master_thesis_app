@@ -128,7 +128,7 @@ public class ParseActivity extends ActionBarActivity {
             Log.d("", "query= " + ParseQueries.queryParse(tableName, time));
         } */
 
-        Cursor cursor = ParseAdapter.getSmartCursor(this, Tables.TABLENAME_TRANSACTION_SIMPLE, time);
+        Cursor cursor = ParseAdapter.getSmartCursor(this, Tables.TABLENAME_TRANSACTION_SIMPLE, time, 0);
         Log.d("", "cursor size= " + cursor.getCount());
         if (cursor.moveToFirst()) {
             do {

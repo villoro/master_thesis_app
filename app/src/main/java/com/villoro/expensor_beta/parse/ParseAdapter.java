@@ -68,10 +68,10 @@ public class ParseAdapter {
         return database.update(tableName, contentValues, whereClause, null);
     }
 
-    public static Cursor getSmartCursor(Context context, String tableName, long updatedAt){
+    public static Cursor getSmartCursor(Context context, String tableName, long updatedAt, long peopleID){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
 
-        String query = ParseQueries.queryParse(tableName, updatedAt);
+        String query = ParseQueries.queryParse(tableName, updatedAt, peopleID);
         if(query.length() > 0){
             return mOpenHelper.getReadableDatabase().rawQuery(query, null);
         } else {
