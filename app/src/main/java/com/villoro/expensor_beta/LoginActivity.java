@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.villoro.expensor_beta.parse.ParseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -269,6 +270,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         private final String mEmail;
         private final String mPassword;
+        private ParseUser user;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -287,12 +289,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
 
             //create a new user
-            final ParseUser user = new ParseUser();
+            user = new ParseUser();
             user.setUsername(mEmail);
+            user.setEmail(mEmail);
             user.setPassword(mPassword);
 
             try {
                 user.signUp();
+
+                //insert myself if needed
+                if(ParseAdapter.getMyId(getApplicationContext()) <= 0){
+                    ParseAdapter.insertMyself(getApplicationContext(), user);
+                }
+
                 return true;
             } catch (ParseException e) {
                 e.printStackTrace();

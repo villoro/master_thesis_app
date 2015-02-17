@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.parse.ParseUser;
+import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
 
@@ -106,6 +108,58 @@ public class ParseAdapter {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    public static String getMyParseId(Context context){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        String email = ParseUser.getCurrentUser().getEmail();
+
+        Cursor cursor = db.query(
+                Tables.TABLENAME_PEOPLE,
+                new String[]{Tables.EMAIL, Tables.PARSE_ID_NAME, Tables.POINTS},
+                Tables.EMAIL + " = '" + email + "'",
+                null, null, null, null);
+        if(cursor.moveToFirst()) {
+            Log.d("", "cusor count= " + cursor.getCount());
+            String output = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+            cursor.close();
+            return output;
+        } else {
+            return null;
+        }
+    }
+
+    public static long getMyId(Context context){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        String email = ParseUser.getCurrentUser().getEmail();
+
+        Cursor cursor = db.query(
+                Tables.TABLENAME_PEOPLE,
+                new String[]{Tables.EMAIL, Tables.ID},
+                Tables.EMAIL + " = '" + email + "'",
+                null, null, null, null);
+        if(cursor.moveToFirst()) {
+            long id = cursor.getLong(cursor.getColumnIndex(Tables.ID));
+            cursor.close();
+            return id;
+        } else {
+            return -1;
+        }
+    }
+
+    public static void insertMyself(Context context, ParseUser parseUser){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Tables.EMAIL, parseUser.getEmail());
+        values.put(Tables.POINTS, parseUser.getObjectId());
+        values.put(Tables.NAME, parseUser.getEmail());
+        values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+
+        long id = db.insert(Tables.TABLENAME_PEOPLE, null, values);
     }
 
 }

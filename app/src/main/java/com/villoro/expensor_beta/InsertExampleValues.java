@@ -60,8 +60,8 @@ public class InsertExampleValues {
         insertSQL(incomeValues, ExpensorContract.IncomeEntry.CONTENT_URI);
 
         ContentValues peopleValues = new ContentValues();
-        peopleValues.put(Tables.NAME, "Maria");
-        peopleValues.put(Tables.EMAIL, "maria@maria.com");
+        peopleValues.put(Tables.NAME, "Villoro");
+        peopleValues.put(Tables.EMAIL, "villoro@villoro.com");
         insertSQL(peopleValues, ExpensorContract.PeopleEntry.CONTENT_URI);
 
         ContentValues groupValues = new ContentValues();
@@ -70,7 +70,7 @@ public class InsertExampleValues {
 
         ContentValues peopleInGroupValues = new ContentValues();
         peopleInGroupValues.put(Tables.GROUP_ID, 1);
-        peopleInGroupValues.put(Tables.PEOPLE_ID, 1);
+        peopleInGroupValues.put(Tables.PEOPLE_ID, 2);
         insertSQL(peopleInGroupValues, ExpensorContract.PeopleInGroupEntry.CONTENT_URI);
 
         ContentValues transactionGroupValues = new ContentValues();
@@ -84,19 +84,19 @@ public class InsertExampleValues {
         transactionPeopleValues.put(Tables.DATE, "2015_02_16");
         transactionPeopleValues.put(Tables.AMOUNT, 21.21);
         transactionPeopleValues.put(Tables.COMMENTS, "cine");
-        transactionPeopleValues.put(Tables.PEOPLE_ID, 1);
+        transactionPeopleValues.put(Tables.PEOPLE_ID, 2);
         insertSQL(transactionPeopleValues, ExpensorContract.TransactionPeopleEntry.CONTENT_URI);
 
         ContentValues transactionPeopleValues2 = new ContentValues();
         transactionPeopleValues2.put(Tables.DATE, "2015_02_16");
         transactionPeopleValues2.put(Tables.AMOUNT, -12);
         transactionPeopleValues2.put(Tables.COMMENTS, "T10");
-        transactionPeopleValues2.put(Tables.PEOPLE_ID, 1);
+        transactionPeopleValues2.put(Tables.PEOPLE_ID, 2);
         insertSQL(transactionPeopleValues2, ExpensorContract.TransactionPeopleEntry.CONTENT_URI);
 
         ContentValues whoPaidSpentValues = new ContentValues();
         whoPaidSpentValues.put(Tables.TRANSACTION_ID, 1);
-        whoPaidSpentValues.put(Tables.PEOPLE_ID, 1);
+        whoPaidSpentValues.put(Tables.PEOPLE_ID, 2);
         whoPaidSpentValues.put(Tables.SPENT, 10);
         whoPaidSpentValues.put(Tables.PAID, 0);
         insertSQL(whoPaidSpentValues, ExpensorContract.WhoPaidSpentEntry.CONTENT_URI);

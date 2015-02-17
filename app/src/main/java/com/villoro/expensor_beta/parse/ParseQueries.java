@@ -69,7 +69,14 @@ public class ParseQueries {
                 String[] arrayListToArray = new String[columnsArrayList.size()];
                 arrayListToArray = columnsArrayList.toArray(arrayListToArray);
 
+                //add if needed the column pointsTo
+                boolean addContains = false;
+                if(query.contains(Tables.POINTS + PARSE)){
+                    addContains = true;
+                }
+
                 if(count == 0){
+
                     query = innerQuery(
                             tableName,
                             arrayListToArray,
@@ -86,6 +93,15 @@ public class ParseQueries {
                             table.columns[i],
                             updatedAt);
                 }
+
+                //add pointsTo_Parse to columns
+                if(query.contains(Tables.POINTS + PARSE) && addContains){
+                    columnsArrayList.add(Tables.POINTS + PARSE);
+                } else {
+                    addContains = false;
+                }
+
+                //add the foreign key to the columns
                 columnsArrayList.add(table.columns[i] + PARSE);
                 count++;
             }
@@ -133,6 +149,9 @@ public class ParseQueries {
         }
 
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
+        if(secondTable.equals(Tables.TABLENAME_PEOPLE)){
+            sb.append(COMA + secondTable + "." + Tables.POINTS + AS + Tables.POINTS + PARSE);
+        }
         sb.append(FROM + from + JOIN + secondTable);
         sb.append(ON + tableName + "." + whichColumn + EQUAL + secondTable + "." + Tables.ID);
 
