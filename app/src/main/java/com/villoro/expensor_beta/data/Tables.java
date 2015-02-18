@@ -38,7 +38,8 @@ public class Tables {
     public static final String PEOPLE_ID = "peopleID";
 
     //Parse sync
-    public static final String POINTS = "pointsTo";
+    public static final String REAL_USER_ID = "realUserID";
+    public static final String PUBLIC_USER_ID = "publicID";
     public static final String LAST_UPDATE = "updated";
     public static final String PARSE_ID_NAME = "parseID";
     public static final String DELETED = "deleted";
@@ -110,10 +111,10 @@ public class Tables {
                 break;
 
             case TABLENAME_PEOPLE:
-                columns = new String[]{NAME, EMAIL, POINTS};
-                origin = new String[]{null, null, null};
-                types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_TEXT};
-                unique = new boolean[]{true, true, true};
+                columns = new String[]{NAME, EMAIL, REAL_USER_ID, PUBLIC_USER_ID};
+                origin = new String[]{null, null, null, PARSE_ID_NAME};
+                types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT};
+                unique = new boolean[]{true, true, true, true};
                 acl = ACL_INDIVIDUAL;
                 break;
 

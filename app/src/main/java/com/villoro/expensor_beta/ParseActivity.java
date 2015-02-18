@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
@@ -118,18 +119,7 @@ public class ParseActivity extends ActionBarActivity {
     public void updateSQL(View view){
         //updateCategory();
         //setList();
-
-        String groupID = "pn1AEzOdyv";
-        Log.e("", ParseQueries.queryPeopleInGroup(groupID));
-/*
-        for(String tableName : Tables.TABLES){
-            Log.d("", "table= " + tableName);
-            Log.d("", "query= " + ParseQueries.queryParse(tableName, time));
-        } */
-        ArrayList<String> peopleInGroup = ParseAdapter.getPeopleInGroup(this, groupID);
-        for(String aux : peopleInGroup){
-            Log.d("", "people points=" + aux);
-        }
+        Log.e("", ParseQueries.queryParse(Tables.TABLENAME_PEOPLE_IN_GROUP, 10, 0));
     }
 
 

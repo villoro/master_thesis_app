@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.ExpensorContract;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
  */
 public class ParseAdapter {
 
-    public static boolean tryToInsertSQLite(Context context, ContentValues contentValues, String tableName) {
+    public static long tryToInsertSQLite(Context context, ContentValues contentValues, String tableName) {
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase database = mOpenHelper. getWritableDatabase();
 
@@ -42,14 +41,13 @@ public class ParseAdapter {
         if (_id >= 0) {
             if (updatedAtParse > updatedAtSQL){
                 database.update(tableName, contentValues, whereClause, null);
-                return true;
+                return _id;
             } else {
-                return false;
+                return -1;
             }
         } else {
             contentValues.put(Tables.DELETED, Tables.DELETED_FALSE);
-            database.insert(tableName, null, contentValues);
-            return true;
+            return database.insert(tableName, null, contentValues);
         }
     }
 
@@ -99,7 +97,7 @@ public class ParseAdapter {
             ArrayList<String> output = new ArrayList<>();
             if (cursor.moveToFirst()) {
                 do {
-                    output.add(cursor.getString(cursor.getColumnIndex(Tables.POINTS)));
+                    output.add(cursor.getString(cursor.getColumnIndex(Tables.REAL_USER_ID)));
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -115,7 +113,7 @@ public class ParseAdapter {
         Cursor cursor = db.query(
                 Tables.TABLENAME_PEOPLE,
                 new String[]{Tables.EMAIL},
-                Tables.POINTS + " IS NULL",
+                Tables.REAL_USER_ID + " IS NULL",
                 null, null, null, null);
         ArrayList<String> output = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -127,14 +125,14 @@ public class ParseAdapter {
         return output;
     }
 
-    public static String getMyParseId(Context context){
+    public static String getMyParsePublicId(Context context){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         String email = ParseUser.getCurrentUser().getEmail();
 
         Cursor cursor = db.query(
                 Tables.TABLENAME_PEOPLE,
-                new String[]{Tables.EMAIL, Tables.PARSE_ID_NAME, Tables.POINTS},
+                new String[]{Tables.EMAIL, Tables.PARSE_ID_NAME, Tables.PUBLIC_USER_ID},
                 Tables.EMAIL + " = '" + email + "'",
                 null, null, null, null);
         if(cursor.moveToFirst()) {
@@ -171,7 +169,7 @@ public class ParseAdapter {
 
         ContentValues values = new ContentValues();
         values.put(Tables.EMAIL, parseUser.getEmail());
-        values.put(Tables.POINTS, parseUser.getObjectId());
+        values.put(Tables.REAL_USER_ID, parseUser.getObjectId());
         values.put(Tables.NAME, parseUser.getEmail());
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
 
@@ -183,7 +181,7 @@ public class ParseAdapter {
         final  SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Tables.POINTS, parseUserID);
+        values.put(Tables.REAL_USER_ID, parseUserID);
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
         return db.update(Tables.TABLENAME_PEOPLE, values, Tables.EMAIL + "= '" + email + "'", null);
     }

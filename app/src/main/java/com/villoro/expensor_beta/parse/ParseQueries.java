@@ -1,14 +1,9 @@
 package com.villoro.expensor_beta.parse;
 
-import android.database.Cursor;
-import android.util.Log;
-
-import com.parse.Parse;
 import com.villoro.expensor_beta.data.Tables;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Arnau on 10/02/2015.
@@ -71,7 +66,7 @@ public class ParseQueries {
 
                 //add if needed the column pointsTo
                 boolean addContains = false;
-                if(query.contains(Tables.POINTS + PARSE)){
+                if(!query.contains(Tables.REAL_USER_ID + PARSE)){
                     addContains = true;
                 }
 
@@ -95,8 +90,10 @@ public class ParseQueries {
                 }
 
                 //add pointsTo_Parse to columns
-                if(query.contains(Tables.POINTS + PARSE) && addContains){
-                    columnsArrayList.add(Tables.POINTS + PARSE);
+                if(query.contains(Tables.REAL_USER_ID + PARSE) && addContains){
+                    columnsArrayList.add(Tables.REAL_USER_ID + PARSE);
+                    columnsArrayList.add(Tables.PUBLIC_USER_ID + PARSE);
+                    columnsArrayList.add(Tables.EMAIL + PARSE);
                 } else {
                     addContains = false;
                 }
@@ -140,7 +137,7 @@ public class ParseQueries {
         }
     }
 
-    public static String innerQuery(String tableName, String[] columns, String secondTable, String from,
+    private static String innerQuery(String tableName, String[] columns, String secondTable, String from,
                                     String whichColumn, long updatedAt, long peopleID){
      StringBuilder sb = new StringBuilder();
         boolean firstInner = !from.contains(SELECT);
@@ -151,7 +148,9 @@ public class ParseQueries {
 
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
         if(secondTable.equals(Tables.TABLENAME_PEOPLE)){
-            sb.append(COMA + secondTable + "." + Tables.POINTS + AS + Tables.POINTS + PARSE);
+            sb.append(COMA + secondTable + "." + Tables.REAL_USER_ID + AS + Tables.REAL_USER_ID + PARSE);
+            sb.append(COMA + secondTable + "." + Tables.PUBLIC_USER_ID + AS + Tables.PUBLIC_USER_ID + PARSE);
+            sb.append(COMA + secondTable + "." + Tables.EMAIL + AS + Tables.EMAIL + PARSE);
         }
 
         sb.append(FROM + from + JOIN + secondTable);
@@ -166,9 +165,6 @@ public class ParseQueries {
     }
 
 
-
-    private static final String PEOPLE_PARSE = Tables.PEOPLE_ID + PARSE;
-    private static final String GROUP_PARSE = Tables.GROUP_ID + PARSE;
 
     private static boolean containsGroupOrPeople(String innerTableName, String tableACL){
         if(innerTableName == null){
@@ -201,7 +197,7 @@ public class ParseQueries {
         String group = Tables.TABLENAME_GROUPS;
         String people = Tables.TABLENAME_PEOPLE;
 
-        String query = SELECT + people + "." + Tables.POINTS +
+        String query = SELECT + people + "." + Tables.REAL_USER_ID +
                 FROM + PARENTHESIS_OPEN +
                     SELECT + peopleInGroup + "." + Tables.PEOPLE_ID +
                     FROM + peopleInGroup + JOIN + group +
