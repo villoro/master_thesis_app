@@ -22,6 +22,7 @@ import com.villoro.expensor_beta.parse.ParseAdapter;
 import com.villoro.expensor_beta.parse.ParseQueries;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -118,34 +119,17 @@ public class ParseActivity extends ActionBarActivity {
         //updateCategory();
         //setList();
 
-        Log.e("", "starting to do something");
-        SharedPreferences sharedPreferences = getSharedPreferences(LAST_UPDATE_EXPENSOR,
-                Context.MODE_PRIVATE);
-        Long time = sharedPreferences.getLong(LAST_UPDATE_EXPENSOR, DEFAULT_DATE);
+        String groupID = "pn1AEzOdyv";
+        Log.e("", ParseQueries.queryPeopleInGroup(groupID));
 /*
         for(String tableName : Tables.TABLES){
             Log.d("", "table= " + tableName);
             Log.d("", "query= " + ParseQueries.queryParse(tableName, time));
         } */
-
-        Cursor cursor = ParseAdapter.getSmartCursor(this, Tables.TABLENAME_TRANSACTION_SIMPLE, time, 0);
-        Log.d("", "cursor size= " + cursor.getCount());
-        if (cursor.moveToFirst()) {
-            do {
-                StringBuilder sb = new StringBuilder();
-                sb.append(Tables.ID + "= ").append("" + cursor.getInt(cursor.getColumnIndex(Tables.ID))+ ", ");
-                sb.append(Tables.DATE + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.DATE))+ ", ");
-                sb.append(Tables.CATEGORY_ID + "= ").append("" + cursor.getInt(cursor.getColumnIndex(Tables.CATEGORY_ID))+ ", ");
-                sb.append(Tables.CATEGORY_ID + ParseQueries.PARSE + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.CATEGORY_ID + ParseQueries.PARSE))+ ", ");
-                sb.append(Tables.AMOUNT + "= ").append("" + cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT))+ ", ");
-                sb.append(Tables.COMMENTS + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS))+ ", ");
-                sb.append(Tables.TYPE + "= ").append(cursor.getString(cursor.getColumnIndex(Tables.TYPE))+ ", ");
-                sb.append(Tables.LAST_UPDATE + "= ").append("" + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE))+ ", ");
-
-                Log.d("", "cursor 1= " + sb.toString());
-            } while (cursor.moveToNext());
+        ArrayList<String> peopleInGroup = ParseAdapter.getPeopleInGroup(this, groupID);
+        for(String aux : peopleInGroup){
+            Log.d("", "people points=" + aux);
         }
-        cursor.close();
     }
 
 

@@ -25,6 +25,7 @@ public class ParseSync {
     public final String LOG_TAG = ParseSync.class.getSimpleName();
     //TODO make private
     private static String LAST_SYNC_EXPENSOR = "last_sync_expensor";
+    private static String UPDATED_AT = "updatedAt";
     private static final String WHO_PAID_ID = "whoPaid";
     private static final String WHO_SPENT_ID = "whoSpent";
     private static long DEFAULT_DATE = 0;
@@ -38,6 +39,7 @@ public class ParseSync {
     boolean finish;
 
     List<String> idsDownloaded;
+    List<String> needACL;
     ListParseObjectsWithId objectsToUpload;
     ListParseObjectsWithId previousUploaded;
 
@@ -125,6 +127,8 @@ public class ParseSync {
 
         Log.d(LOG_TAG, "starting to download at " + startSync.getTime());
 
+        parseCheckNewUser();
+
         //level 1
         parseDownload(Tables.TABLENAME_GROUPS);
         parseDownload(Tables.TABLENAME_CATEGORIES);
@@ -140,10 +144,32 @@ public class ParseSync {
         parseDownload(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
     }
 
+    private void parseCheckNewUser(){
+        //TODO don't do if first download
+        needACL = new ArrayList<>();
+        ArrayList<String> peopleWithNoPoints = ParseAdapter.getEmailsPeopleWithNoPoints(mContext);
+        for(String emailPeople : peopleWithNoPoints){
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("email", emailPeople);
+            try {
+                List<ParseUser> parseUsers = query.find();
+                for (ParseUser parseUser : parseUsers) {
+                    if(ParseAdapter.updatePeoplePointsTo(mContext, emailPeople, parseUser.getObjectId()) > 0){
+                        needACL.add(parseUser.getObjectId());
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private int parseDownload(String tableName){
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery(tableName);
-        query.whereGreaterThan("updatedAt", dateSync);
+        query.whereGreaterThan(UPDATED_AT, dateSync);
+
+        //Log.e("", "date query= " + dateSync + " (" + dateSync.getTime() + ")");
 
         //include related objects if needed
         Tables table = new Tables(tableName);
@@ -201,14 +227,11 @@ public class ParseSync {
                     String myId = ParseAdapter.getMyParseId(mContext);
                     if(whoPaidId.equals(myId)){
                         foreignObject = parseObject.getParseObject(WHO_SPENT_ID);
-                        Log.d("", "saving= " + parseObject.getDouble(Tables.AMOUNT));
                         contentValues.put(Tables.AMOUNT, parseObject.getDouble(Tables.AMOUNT));
                     } else if (whoSpentId.equals(myId)){
                         foreignObject = parseObject.getParseObject(WHO_PAID_ID);
-                        Log.d("", "saving= " + - parseObject.getDouble(Tables.AMOUNT));
                         contentValues.put(Tables.AMOUNT, - parseObject.getDouble(Tables.AMOUNT));
                     } else {
-                        Log.e("", "NO POSSIBLE CASE");
                         foreignObject = null;
                     }
 
@@ -216,11 +239,9 @@ public class ParseSync {
                 } else {
                     foreignObject = parseObject.getParseObject(columns[i]);
                 }
-                Log.d("", "trying to inser= " + parseObject.getClassName());
-                Log.d("", "to column= " + columns[i]);
-                Log.d("", "foreignkey= " + foreignObject.getClassName());
-                long foreignID = ParseAdapter.getIdFromParseId(mContext, origin[i], foreignObject.getObjectId());
+                long foreignID = ParseAdapter.getIdFromParseId(mContext, origin[i], foreignObject.getObjectId(), Tables.PARSE_ID_NAME);
                 contentValues.put(columns[i], foreignID);
+
             } else {
                 //it is a normal value, not a foreign key
                 if (types[i] == Tables.TYPE_DOUBLE) {
@@ -257,6 +278,8 @@ public class ParseSync {
 
         //TODO ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
+        Log.d("", "starting to upload, query time= " + dateSync + " (" + dateSync.getTime() + ")");
+
         //level 1
         parseTable(Tables.TABLENAME_GROUPS);
         parseTable(Tables.TABLENAME_CATEGORIES);
@@ -270,6 +293,17 @@ public class ParseSync {
         parseTable(Tables.TABLENAME_PEOPLE_IN_GROUP);
         parseTable(Tables.TABLENAME_HOW_TO_SETTLE);
         parseTable(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
+
+        for (String parsePeopleID : needACL){
+            long SQLPeopleID = ParseAdapter.getIdFromParseId(mContext, Tables.TABLENAME_PEOPLE, parsePeopleID, Tables.POINTS);
+            for (String tableName : Tables.TABLES) {
+                //updateACL for every table that is not individual
+                if(!(new Tables(tableName)).acl.equals(Tables.ACL_INDIVIDUAL)) {
+                    Log.d("", "adding " + tableName + " ACL for user " + parsePeopleID);
+                    updateACL(tableName, SQLPeopleID);
+                }
+            }
+        }
 
         final List<ParseObject> parseObjects = objectsToUpload.parseObjects;
         final List<Long> _ids = objectsToUpload._ids;
@@ -307,8 +341,32 @@ public class ParseSync {
         cursor.close();
     }
 
+    private void updateACL(String tableName, long peopleID){
+        final Cursor cursor = ParseAdapter.getSmartCursor(mContext, tableName, 0, peopleID);
+        if (cursor.moveToFirst()){
+            do{
+                //Extract parseObject from cursor
+                String parseId = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                boolean needUpload = true;
+                for(String objectToUploadID : objectsToUpload.parseIDs){
+                    if(parseId.equals(objectToUploadID)){
+                        needUpload = false;
+                    }
+                }
+                if(needUpload) {
+                    String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                    ParseObject parseObject = getParseObjectInOrderToUpdateACL(cursor, tableName, parseID);
+                    objectsToUpload.addObject(parseObject, cursor.getLong(cursor.getColumnIndex(Tables.ID)), tableName);
+                }
+
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+    }
+
     private ParseObject createParseObjectFromCursor(Cursor cursor, String tableName, String parseID){
         ParseObject parseObject;
+        //Log.d(LOG_TAG, "object to upload with time= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)));
         if(parseID != null){
             parseObject = ParseObject.createWithoutData(tableName, parseID);
             Log.e(LOG_TAG, "intentant update parseID= " + parseID);
@@ -358,7 +416,6 @@ public class ParseSync {
                 String columnToStore = columns[i];
                 String columnMyId;
                 if((tableName == Tables.TABLENAME_TRANSACTIONS_PEOPLE) && (columns[i] == Tables.PEOPLE_ID)){
-                    Log.d("", "starting to upload transPeople");
                     double amount = cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT));
                     if(amount > 0){
                         columnToStore = WHO_SPENT_ID;
@@ -369,20 +426,17 @@ public class ParseSync {
                     }
                     String myParseId = ParseAdapter.getMyParseId(mContext);
                     //add my id
-                    Log.d("", "columnMyId= " + columnMyId);
                     if(myParseId != null && myParseId.length() > 0){
-                        Log.d("", "my id found= " + myParseId);
                         parseObject.put(columnMyId,
                                 ParseObject.createWithoutData(Tables.TABLENAME_PEOPLE, myParseId));
                     } else {
-                        Log.d("", "my id not found");
                         long myId = ParseAdapter.getMyId(mContext);
                         for (int j = 0; j < objectsToUpload._ids.size() ; j++){
                             //find the object
                             if(objectsToUpload.type.get(j).equals(Tables.TABLENAME_PEOPLE)){
                                 if(objectsToUpload._ids.get(j) == myId){
                                     //add the object here
-                                    parseObject.put(columnToStore, objectsToUpload.parseObjects.get(j));
+                                    parseObject.put(columnMyId, objectsToUpload.parseObjects.get(j));
                                 }
                             }
                         }
@@ -390,11 +444,9 @@ public class ParseSync {
                 }
 
                 if(parseForeignID != null && parseForeignID.length() > 0){
-                    Log.d("", "existeix foreign ID= " + parseForeignID);
                     parseObject.put(columnToStore,
                             ParseObject.createWithoutData(origin[i], parseForeignID));
                 } else {
-                    Log.d("", "no existeix foreign ID");
                     for (int j = 0; j < objectsToUpload._ids.size() ; j++){
                         //find the object
                         if(objectsToUpload.type.get(j).equals(origin[i])){
@@ -412,6 +464,18 @@ public class ParseSync {
         parseObject.setACL(getParseACLFromSQLite(table, cursor));
 
         return parseObject;
+    }
+
+    private ParseObject getParseObjectInOrderToUpdateACL(Cursor cursor, String tableName, String parseID){
+        ParseObject parseObject;
+        if(parseID != null){
+            parseObject = ParseObject.createWithoutData(tableName, parseID);
+            parseObject.setACL(getParseACLFromSQLite(new Tables(tableName), cursor));
+            return parseObject;
+        } else {
+            Log.e("", "NOT POSSIBLE CASE");
+            return null;
+        }
     }
 
     private ParseACL getParseACLFromSQLite(Tables table, Cursor cursor){
@@ -433,7 +497,7 @@ public class ParseSync {
                 if(table.tableName == Tables.TABLENAME_GROUPS){
                     groupID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
                 } else {
-                    cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
+                    groupID = cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
                 }
 
                 //get and setACL for people in the group
@@ -454,42 +518,38 @@ public class ParseSync {
     private void addToObjectsToUpload(Cursor cursor, String tableName, String parseID, ParseObject parseObject){
         //check if it's been downloaded
         if(!idsDownloaded.contains(parseID)){
-            Log.e(LOG_TAG, "object= " + parseID + " needs upload");
+            //Log.e(LOG_TAG, "object= " + parseID + " needs upload");
 
             //check if it was downloaded in a previous iteration
             if(previousUploaded.parseIDs.contains(parseID)){
-                Log.d("", "has been updated previously");
+                //Log.d("", "has been updated previously");
                 for(int k = 0; k < previousUploaded.parseIDs.size(); k++){
 
                     //check if there are changes from the previous upload
                     if( (previousUploaded.parseIDs.get(k).equals(parseID)) &&
                             (previousUploaded.parseObjects.get(k).getUpdatedAt().getTime() < parseObject.getUpdatedAt().getTime()) ){
-                        Log.d("", "has change de date");
+                        //Log.d("", "has change de date");
                         objectsToUpload.addObject(parseObject, cursor.getLong(cursor.getColumnIndex(Tables.ID)), tableName);
                     }
                 }
             } else {
-                Log.d("", "Not uploaded previously");
+                //Log.d("", "Not uploaded previously");
                 objectsToUpload.addObject(parseObject, cursor.getLong(cursor.getColumnIndex(Tables.ID)), tableName);
             }
 
         } else {
-            Log.e(LOG_TAG, "no need to upload= " + parseID);
+            //Log.e(LOG_TAG, "no need to upload= " + parseID);
         }
     }
 
     private void updateEntrySQL(ParseObject parseObject, long _id){
 
-        Log.e(LOG_TAG, "id= " + _id);
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime() );
+        contentValues.put(Tables.LAST_UPDATE, startSync.getTime() );
         contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
-
-        Log.d(LOG_TAG, "UPDATING: " + contentValues.toString());
 
         String tableName = parseObject.getClassName();
         ParseAdapter.updateWithId(mContext, contentValues, tableName, _id);
-        Log.e(LOG_TAG, "updated in SQL after upladint to parse");
 
         objectsUploaded++;
     }
