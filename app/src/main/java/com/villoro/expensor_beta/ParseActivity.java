@@ -16,16 +16,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
-import com.villoro.expensor_beta.parse.ParseAdapter;
-import com.villoro.expensor_beta.parse.ParseQueries;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -123,7 +119,7 @@ public class ParseActivity extends ActionBarActivity {
         //setList();
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(this);
         SQLiteDatabase database = mOpenHelper.getReadableDatabase();
-        Cursor cursor =  database.query(Tables.TABLENAME_PUBLIC_PEOPLE, null, null, null, null, null, null);
+        Cursor cursor =  database.query(Tables.TABLENAME_PEOPLE, null, null, null, null, null, null);
         Log.e("", "That user have " + cursor.getCount() + " publicPeople");
     }
 

@@ -25,7 +25,7 @@ public class ParseAdapter {
         String parseID = contentValues.getAsString(Tables.PARSE_ID_NAME);
         long updatedAtParse = contentValues.getAsLong(Tables.LAST_UPDATE);
         String whereClause;
-        if(tableName.equals(Tables.TABLENAME_PUBLIC_PEOPLE)){
+        if(tableName.equals(Tables.TABLENAME_PEOPLE)){
             whereClause = Tables.EMAIL + " = '" + contentValues.getAsString(Tables.EMAIL) + "'";
         } else {
             whereClause = Tables.PARSE_ID_NAME + " = '" + parseID + "'";
@@ -45,7 +45,7 @@ public class ParseAdapter {
         cursor.close();
 
         if (_id >= 0) {
-            if (updatedAtParse > updatedAtSQL || tableName.equals(Tables.TABLENAME_PUBLIC_PEOPLE)){
+            if (updatedAtParse > updatedAtSQL || tableName.equals(Tables.TABLENAME_PEOPLE)){
                 database.update(tableName, contentValues, whereClause, null);
                 return true;
             } else {
@@ -118,7 +118,7 @@ public class ParseAdapter {
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor cursor = db.query(
-                Tables.TABLENAME_PUBLIC_PEOPLE,
+                Tables.TABLENAME_PEOPLE,
                 new String[]{Tables.EMAIL},
                 Tables.USER_ID + " IS NULL",
                 null, null, null, null);
@@ -138,7 +138,7 @@ public class ParseAdapter {
         String email = ParseUser.getCurrentUser().getEmail();
 
         Cursor cursor = db.query(
-                Tables.TABLENAME_PUBLIC_PEOPLE,
+                Tables.TABLENAME_PEOPLE,
                 new String[]{Tables.EMAIL, Tables.PARSE_ID_NAME, Tables.USER_ID},
                 Tables.EMAIL + " = '" + email + "'",
                 null, null, null, null);
@@ -157,7 +157,7 @@ public class ParseAdapter {
         String email = ParseUser.getCurrentUser().getEmail();
 
         Cursor cursor = db.query(
-                Tables.TABLENAME_PUBLIC_PEOPLE,
+                Tables.TABLENAME_PEOPLE,
                 new String[]{Tables.EMAIL, Tables.ID},
                 Tables.EMAIL + " = '" + email + "'",
                 null, null, null, null);
@@ -190,6 +190,6 @@ public class ParseAdapter {
         ContentValues values = new ContentValues();
         values.put(Tables.USER_ID, parseUserID);
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
-        return db.update(Tables.TABLENAME_PUBLIC_PEOPLE, values, Tables.EMAIL + "= '" + email + "'", null);
+        return db.update(Tables.TABLENAME_PEOPLE, values, Tables.EMAIL + "= '" + email + "'", null);
     }
 }

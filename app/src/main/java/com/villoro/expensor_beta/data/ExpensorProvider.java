@@ -67,8 +67,8 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES);
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
 
-        matcher.addURI(authority, Tables.TABLENAME_PUBLIC_PEOPLE, PEOPLE);
-        matcher.addURI(authority, Tables.TABLENAME_PUBLIC_PEOPLE + "/#", PEOPLE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/#", PEOPLE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#", PEOPLE_IN_GROUP_WITH_ID);
@@ -155,7 +155,7 @@ public class ExpensorProvider extends ContentProvider {
             }
             case PEOPLE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_PUBLIC_PEOPLE,
+                        Tables.TABLENAME_PEOPLE,
                         projection,
                         selection,
                         selectionArgs,
@@ -356,25 +356,12 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case PEOPLE: {
-                ContentValues internalValues = new ContentValues();
-                internalValues.put(Tables.NAME, values.getAsString(Tables.NAME));
-                internalValues.put(Tables.LAST_UPDATE, values.getAsLong(Tables.LAST_UPDATE));
-                internalValues.put(Tables.DELETED, values.getAsInteger(Tables.DELETED));
-                values.remove(Tables.NAME);
-                values.remove(Tables.NEEDS_ACL);
-
                 if (db.query(
-                        Tables.TABLENAME_PUBLIC_PEOPLE, new String[]{Tables.EMAIL},
+                        Tables.TABLENAME_PEOPLE, new String[]{Tables.EMAIL},
                         Tables.EMAIL + " = '" + values.get(Tables.EMAIL).toString() + "'",
                         null, null, null, null).getCount() == 0) {
-                    internalValues.put(Tables.NEEDS_ACL, Tables.TRUE);
-                    long pointTo = db.insert(Tables.TABLENAME_INTERNAL_PEOPLE, null, internalValues);
-
-                    values.put(Tables.POINTS, pointTo);
-
-                    long _id = db.insert(Tables.TABLENAME_PUBLIC_PEOPLE, null, values);
-
-                    if (_id + pointTo > 0)
+                    long _id = db.insert(Tables.TABLENAME_PEOPLE, null, values);
+                    if (_id  > 0)
                         returnUri = ExpensorContract.PeopleEntry.buildPeopleUri(_id);
                     else
                         throw new SQLException("Failed to insert to row into " + uri);
@@ -464,8 +451,7 @@ public class ExpensorProvider extends ContentProvider {
                 rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:
-                rowsDeleted = db.update(Tables.TABLENAME_INTERNAL_PEOPLE, values, selection, selectionArgs);
-                rowsDeleted += db.update(Tables.TABLENAME_PUBLIC_PEOPLE, values, selection, selectionArgs);
+                rowsDeleted = db.update(Tables.TABLENAME_PEOPLE, values, selection, selectionArgs);
                 break;
             case PEOPLE_IN_GROUP:
                 rowsDeleted = db.update(Tables.TABLENAME_PEOPLE_IN_GROUP, values, selection, selectionArgs);
@@ -520,13 +506,7 @@ public class ExpensorProvider extends ContentProvider {
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:
-                ContentValues internalValues = new ContentValues();
-                internalValues.put(Tables.NAME, values.getAsString(Tables.NAME));
-                internalValues.put(Tables.NEEDS_ACL, values.getAsInteger(Tables.NEEDS_ACL));
-                values.remove(Tables.NAME);
-                values.remove(Tables.NEEDS_ACL);
-                rowsUpdated = db.update(Tables.TABLENAME_INTERNAL_PEOPLE, internalValues, selection, selectionArgs);
-                rowsUpdated += db.update(Tables.TABLENAME_PUBLIC_PEOPLE, values, selection, selectionArgs);
+                rowsUpdated = db.update(Tables.TABLENAME_PEOPLE, values, selection, selectionArgs);
                 break;
             case PEOPLE_IN_GROUP:
                 rowsUpdated = db.update(Tables.TABLENAME_PEOPLE_IN_GROUP, values, selection, selectionArgs);

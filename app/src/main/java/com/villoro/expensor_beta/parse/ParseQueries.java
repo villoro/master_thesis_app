@@ -146,7 +146,7 @@ public class ParseQueries {
         }
 
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
-        if(secondTable.equals(Tables.TABLENAME_PUBLIC_PEOPLE)){
+        if(secondTable.equals(Tables.TABLENAME_PEOPLE)){
             sb.append(COMA + secondTable + "." + Tables.USER_ID + AS + Tables.USER_ID + PARSE);
         }
 
@@ -155,7 +155,7 @@ public class ParseQueries {
 
         if(firstInner && peopleID <= 0){
             sb.append(WHERE + tableName + "." +Tables.LAST_UPDATE + GREATER_THAN + updatedAt);
-        } else if(peopleID > 0 && secondTable.equals(Tables.TABLENAME_PUBLIC_PEOPLE)) {
+        } else if(peopleID > 0 && secondTable.equals(Tables.TABLENAME_PEOPLE)) {
             sb.append(WHERE + secondTable + "." + Tables.ID + EQUAL + "'" + peopleID + "'");
         }
         return sb.toString();
@@ -195,7 +195,7 @@ public class ParseQueries {
     public static final String queryPeopleInGroup(String groupID){
         String peopleInGroup = Tables.TABLENAME_PEOPLE_IN_GROUP;
         String group = Tables.TABLENAME_GROUPS;
-        String people = Tables.TABLENAME_PUBLIC_PEOPLE;
+        String people = Tables.TABLENAME_PEOPLE;
 
         String query = SELECT + people + "." + Tables.USER_ID +
                 FROM + PARENTHESIS_OPEN +
