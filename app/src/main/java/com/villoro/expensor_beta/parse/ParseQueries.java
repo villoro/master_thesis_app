@@ -43,6 +43,7 @@ public class ParseQueries {
         ArrayList<String> columnsArrayList = new ArrayList<>(Arrays.asList(table.columns));
         columnsArrayList.add(Tables.PARSE_ID_NAME);
         columnsArrayList.add(Tables.LAST_UPDATE);
+        columnsArrayList.add(Tables.DELETED);
 
         if(table.acl.equals(Tables.ACL_GROUP)){
             boolean hasGroupID = false;
@@ -66,7 +67,7 @@ public class ParseQueries {
 
                 //add if needed the column pointsTo
                 boolean addContains = false;
-                if(!query.contains(Tables.REAL_USER_ID + PARSE)){
+                if(query.contains(Tables.USER_ID + PARSE)){
                     addContains = true;
                 }
 
@@ -90,10 +91,8 @@ public class ParseQueries {
                 }
 
                 //add pointsTo_Parse to columns
-                if(query.contains(Tables.REAL_USER_ID + PARSE) && addContains){
-                    columnsArrayList.add(Tables.REAL_USER_ID + PARSE);
-                    columnsArrayList.add(Tables.PUBLIC_USER_ID + PARSE);
-                    columnsArrayList.add(Tables.EMAIL + PARSE);
+                if(query.contains(Tables.USER_ID + PARSE) && addContains){
+                    columnsArrayList.add(Tables.USER_ID + PARSE);
                 } else {
                     addContains = false;
                 }
@@ -137,9 +136,9 @@ public class ParseQueries {
         }
     }
 
-    private static String innerQuery(String tableName, String[] columns, String secondTable, String from,
+    public static String innerQuery(String tableName, String[] columns, String secondTable, String from,
                                     String whichColumn, long updatedAt, long peopleID){
-     StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         boolean firstInner = !from.contains(SELECT);
         sb.append(SELECT + tableName + "." + Tables.ID + COMA);
         for(String column : columns){
@@ -147,10 +146,8 @@ public class ParseQueries {
         }
 
         sb.append(secondTable + "." + Tables.PARSE_ID_NAME + AS + whichColumn + PARSE);
-        if(secondTable.equals(Tables.TABLENAME_PEOPLE)){
-            sb.append(COMA + secondTable + "." + Tables.REAL_USER_ID + AS + Tables.REAL_USER_ID + PARSE);
-            sb.append(COMA + secondTable + "." + Tables.PUBLIC_USER_ID + AS + Tables.PUBLIC_USER_ID + PARSE);
-            sb.append(COMA + secondTable + "." + Tables.EMAIL + AS + Tables.EMAIL + PARSE);
+        if(secondTable.equals(Tables.TABLENAME_PUBLIC_PEOPLE)){
+            sb.append(COMA + secondTable + "." + Tables.USER_ID + AS + Tables.USER_ID + PARSE);
         }
 
         sb.append(FROM + from + JOIN + secondTable);
@@ -158,13 +155,16 @@ public class ParseQueries {
 
         if(firstInner && peopleID <= 0){
             sb.append(WHERE + tableName + "." +Tables.LAST_UPDATE + GREATER_THAN + updatedAt);
-        } else if(peopleID > 0 && secondTable.equals(Tables.TABLENAME_PEOPLE)) {
+        } else if(peopleID > 0 && secondTable.equals(Tables.TABLENAME_PUBLIC_PEOPLE)) {
             sb.append(WHERE + secondTable + "." + Tables.ID + EQUAL + "'" + peopleID + "'");
         }
         return sb.toString();
     }
 
 
+
+    private static final String PEOPLE_PARSE = Tables.PEOPLE_ID + PARSE;
+    private static final String GROUP_PARSE = Tables.GROUP_ID + PARSE;
 
     private static boolean containsGroupOrPeople(String innerTableName, String tableACL){
         if(innerTableName == null){
@@ -195,15 +195,15 @@ public class ParseQueries {
     public static final String queryPeopleInGroup(String groupID){
         String peopleInGroup = Tables.TABLENAME_PEOPLE_IN_GROUP;
         String group = Tables.TABLENAME_GROUPS;
-        String people = Tables.TABLENAME_PEOPLE;
+        String people = Tables.TABLENAME_PUBLIC_PEOPLE;
 
-        String query = SELECT + people + "." + Tables.REAL_USER_ID +
+        String query = SELECT + people + "." + Tables.USER_ID +
                 FROM + PARENTHESIS_OPEN +
-                    SELECT + peopleInGroup + "." + Tables.PEOPLE_ID +
-                    FROM + peopleInGroup + JOIN + group +
-                    ON + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + group + "." + Tables.ID +
-                    WHERE + group + "." + Tables.PARSE_ID_NAME + EQUAL + "'" + groupID + "'" +
-                    PARENTHESIS_CLOSE + AS + AUX +
+                SELECT + peopleInGroup + "." + Tables.PEOPLE_ID +
+                FROM + peopleInGroup + JOIN + group +
+                ON + peopleInGroup + "." + Tables.GROUP_ID + EQUAL + group + "." + Tables.ID +
+                WHERE + group + "." + Tables.PARSE_ID_NAME + EQUAL + "'" + groupID + "'" +
+                PARENTHESIS_CLOSE + AS + AUX +
                 JOIN + people +
                 ON + AUX + "." + Tables.PEOPLE_ID + EQUAL + people + "." + Tables.ID;
         return SELECT + "*" + FROM + "(" + query + ")" + AS + "finalTable";

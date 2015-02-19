@@ -36,25 +36,28 @@ public class Tables {
     public static final String GROUP_ID = "groupID";
     public static final String TRANSACTION_ID = "transactionID";
     public static final String PEOPLE_ID = "peopleID";
+    public static final String POINTS = "pointsTo";
 
     //Parse sync
-    public static final String REAL_USER_ID = "realUserID";
-    public static final String PUBLIC_USER_ID = "publicID";
+    public static final String USER_ID = "userID";
     public static final String LAST_UPDATE = "updated";
     public static final String PARSE_ID_NAME = "parseID";
     public static final String DELETED = "deleted";
+    public static final String NEEDS_ACL = "needACL";
 
     //Values for parse
-    public static final int DELETED_TRUE = 1;
-    public static final int DELETED_FALSE = 0;
+    public static final int TRUE = 1;
+    public static final int FALSE = 0;
     public static final String ACL_INDIVIDUAL = "individual";
     public static final String ACL_ONE_PERSON = "one_person";
     public static final String ACL_GROUP = "group";
+    public static final String ACL_PUBLIC = "public";
 
     //main tables
     public static final String TABLENAME_TRANSACTION_SIMPLE = "transSimple";
     public static final String TABLENAME_CATEGORIES = "categories";
-    public static final String TABLENAME_PEOPLE = "people";
+    public static final String TABLENAME_PUBLIC_PEOPLE = "publicPeople";
+    public static final String TABLENAME_INTERNAL_PEOPLE = "internalPeople";
     public static final String TABLENAME_PEOPLE_IN_GROUP = "peopleInGroup";
     public static final String TABLENAME_GROUPS = "groups";
     public static final String TABLENAME_TRANSACTIONS_GROUP = "transGroups";
@@ -80,7 +83,8 @@ public class Tables {
     public static final String[] TABLES = {
             TABLENAME_TRANSACTION_SIMPLE,
             TABLENAME_CATEGORIES,
-            TABLENAME_PEOPLE,
+            TABLENAME_PUBLIC_PEOPLE,
+            TABLENAME_INTERNAL_PEOPLE,
             TABLENAME_GROUPS,
             TABLENAME_PEOPLE_IN_GROUP,
             TABLENAME_TRANSACTIONS_GROUP,
@@ -110,17 +114,25 @@ public class Tables {
                 acl = ACL_INDIVIDUAL;
                 break;
 
-            case TABLENAME_PEOPLE:
-                columns = new String[]{NAME, EMAIL, REAL_USER_ID, PUBLIC_USER_ID};
-                origin = new String[]{null, null, null, PARSE_ID_NAME};
-                types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT};
-                unique = new boolean[]{true, true, true, true};
+            case TABLENAME_PUBLIC_PEOPLE:
+                columns = new String[]{EMAIL, USER_ID, POINTS};
+                origin = new String[]{null, null, TABLENAME_INTERNAL_PEOPLE};
+                types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_INT};
+                unique = new boolean[]{true, true, true};
+                acl = ACL_PUBLIC;
+                break;
+
+            case TABLENAME_INTERNAL_PEOPLE:
+                columns = new String[]{NAME, NEEDS_ACL};
+                origin = new String[]{null, null};
+                types = new String[]{TYPE_TEXT, TYPE_INT};
+                unique = new boolean[]{false, false};
                 acl = ACL_INDIVIDUAL;
                 break;
 
             case TABLENAME_PEOPLE_IN_GROUP:
                 columns = new String[]{PEOPLE_ID, GROUP_ID};
-                origin = new String[]{TABLENAME_PEOPLE, TABLENAME_GROUPS};
+                origin = new String[]{TABLENAME_PUBLIC_PEOPLE, TABLENAME_GROUPS};
                 types = new String[]{TYPE_INT, TYPE_INT};
                 unique = new boolean[]{false, false};
                 acl = ACL_GROUP;
@@ -144,7 +156,7 @@ public class Tables {
 
             case TABLENAME_TRANSACTIONS_PEOPLE:
                 columns = new String[]{DATE, AMOUNT, COMMENTS, PEOPLE_ID};
-                origin = new String[]{null, null, null, TABLENAME_PEOPLE};
+                origin = new String[]{null, null, null, TABLENAME_PUBLIC_PEOPLE};
                 types = new String[]{TYPE_DATE, TYPE_DOUBLE, TYPE_TEXT, TYPE_INT};
                 unique = new boolean[]{false, false, false, false};
                 acl = ACL_ONE_PERSON;
@@ -152,7 +164,7 @@ public class Tables {
 
             case TABLENAME_WHO_PAID_SPENT:
                 columns = new String[]{TRANSACTION_ID, PEOPLE_ID, PAID, SPENT};
-                origin = new String[]{TABLENAME_TRANSACTIONS_GROUP, TABLENAME_PEOPLE, null, null};
+                origin = new String[]{TABLENAME_TRANSACTIONS_GROUP, TABLENAME_PUBLIC_PEOPLE, null, null};
                 types = new String[]{TYPE_INT, TYPE_INT, TYPE_DOUBLE, TYPE_DOUBLE};
                 unique = new boolean[]{false, false, false, false};
                 acl = ACL_GROUP;
@@ -160,7 +172,7 @@ public class Tables {
 
             case TABLENAME_HOW_TO_SETTLE:
                 columns = new String[]{GROUP_ID, FROM, TO, AMOUNT};
-                origin = new String[]{TABLENAME_GROUPS, TABLENAME_PEOPLE, TABLENAME_PEOPLE, null};
+                origin = new String[]{TABLENAME_GROUPS, TABLENAME_PUBLIC_PEOPLE, TABLENAME_PUBLIC_PEOPLE, null};
                 types = new String[]{TYPE_INT, TYPE_INT, TYPE_INT, TYPE_DOUBLE};
                 unique = new boolean[]{false, false, false, false};
                 acl = ACL_GROUP;

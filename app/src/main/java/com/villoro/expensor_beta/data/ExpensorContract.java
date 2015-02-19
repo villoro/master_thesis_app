@@ -75,7 +75,7 @@ public class ExpensorContract {
     }
 
     public static final class PeopleEntry {
-        private static final String tableName = Tables.TABLENAME_PEOPLE;
+        private static final String tableName = Tables.TABLENAME_PUBLIC_PEOPLE;
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();

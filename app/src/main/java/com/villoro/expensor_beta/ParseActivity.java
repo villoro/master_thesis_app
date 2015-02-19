@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
 import com.villoro.expensor_beta.parse.ParseQueries;
@@ -119,7 +121,10 @@ public class ParseActivity extends ActionBarActivity {
     public void updateSQL(View view){
         //updateCategory();
         //setList();
-        Log.e("", ParseQueries.queryParse(Tables.TABLENAME_PEOPLE_IN_GROUP, 10, 0));
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(this);
+        SQLiteDatabase database = mOpenHelper.getReadableDatabase();
+        Cursor cursor =  database.query(Tables.TABLENAME_PUBLIC_PEOPLE, null, null, null, null, null, null);
+        Log.e("", "That user have " + cursor.getCount() + " publicPeople");
     }
 
 

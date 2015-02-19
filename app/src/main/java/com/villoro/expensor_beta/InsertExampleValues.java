@@ -64,6 +64,11 @@ public class InsertExampleValues {
         peopleValues.put(Tables.EMAIL, "villoro@villoro.com");
         insertSQL(peopleValues, ExpensorContract.PeopleEntry.CONTENT_URI);
 
+        ContentValues peopleValues2 = new ContentValues();
+        peopleValues2.put(Tables.NAME, "luke");
+        peopleValues2.put(Tables.EMAIL, "soy@tu.padre");
+        insertSQL(peopleValues2, ExpensorContract.PeopleEntry.CONTENT_URI);
+
         ContentValues groupValues = new ContentValues();
         groupValues.put(Tables.NAME, "los patatos");
         insertSQL(groupValues, ExpensorContract.GroupEntry.CONTENT_URI);
