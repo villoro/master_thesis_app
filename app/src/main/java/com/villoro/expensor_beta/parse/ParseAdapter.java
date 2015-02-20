@@ -132,6 +132,22 @@ public class ParseAdapter {
         return output;
     }
 
+    public static boolean thatPersonHadPreviouslyUserID(Context context, String email){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                Tables.TABLENAME_PEOPLE,
+                new String[]{Tables.USER_ID},
+                Tables.EMAIL + " = '" + email + "'",
+                null, null, null, null);
+        ArrayList<String> output = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            String userID = cursor.getString(cursor.getColumnIndex(Tables.USER_ID));
+            return userID != null || userID.length() > 0;
+        }
+        return false;
+    }
+
     public static String getMyParseId(Context context){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -170,7 +186,7 @@ public class ParseAdapter {
         }
     }
 
-    public static void insertMyself(Context context, ParseUser parseUser){
+    public static void insertMyself(Context context, ParseUser parseUser, String parseID){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
@@ -179,6 +195,9 @@ public class ParseAdapter {
         values.put(Tables.EMAIL, parseUser.getEmail());
         values.put(Tables.USER_ID, parseUser.getObjectId());
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        if(parseID != null){
+            values.put(Tables.PARSE_ID_NAME, parseID);
+        }
         Log.d("", "trying to insert= " + values.toString());
         context.getContentResolver().insert(ExpensorContract.PeopleEntry.CONTENT_URI, values);
     }

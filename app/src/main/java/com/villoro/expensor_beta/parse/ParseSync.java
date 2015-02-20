@@ -167,17 +167,26 @@ public class ParseSync {
 
     private int parseDownload(String tableName){
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(tableName);
+        Tables table = new Tables(tableName);
+        String parseClassName;
+        if(table.lastPrivateColumn < 0){
+            parseClassName = tableName;
+        } else {
+            parseClassName = tableName + PRIVATE;
+        }
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(parseClassName);
         query.whereGreaterThan(UPDATED_AT, dateSync);
 
         //Log.e("", "date query= " + dateSync + " (" + dateSync.getTime() + ")");
 
         //include related objects if needed
-        Tables table = new Tables(tableName);
         for(int i = 0; i < table.columns.length; i++){
             if(table.origin[i] != null){
                 query.include(table.columns[i]);
             }
+        }
+        if(table.lastPrivateColumn > 0 && table.lastPrivateColumn < table.columns.length){
+            query.include(Tables.POINTS);
         }
 
         List<ParseObject> downloadedParseObjects = null;
@@ -198,18 +207,39 @@ public class ParseSync {
 
             for(ParseObject parseObject : downloadedParseObjects){
                 if(!objectsToUpload.parseIDs.contains(parseObject.getObjectId())){
-                    insertParseObjectInSQL(parseObject);
+                    //decide whichs parts exists (private and/or public)
+                    String parseID = parseObject.getObjectId();
+                    long updatedAt = parseObject.getUpdatedAt().getTime();
+                    if(table.lastPrivateColumn < 0){
+                        Log.d("", "calling all shared");
+                        insertParseObjectInSQL(null, parseObject, parseID, updatedAt);
+                    } else if(table.lastPrivateColumn > 0 && table.lastPrivateColumn < table.columns.length){
+                        Log.d("", "calling partShared and partPrivate");
+                        ParseObject sharedPart = parseObject.getParseObject(Tables.POINTS);
+                        insertParseObjectInSQL(parseObject, sharedPart, parseID, updatedAt);
+                    } else {
+                        Log.d("", "calling all private");
+                        insertParseObjectInSQL(parseObject, null, parseID, updatedAt);
+                    }
                 }
             }
         }
         return downloadedParseObjects.size();
     }
 
-    private void insertParseObjectInSQL(ParseObject parseObject){
+    private void insertParseObjectInSQL(ParseObject privateObject, ParseObject sharedObject, String parseID, long updatedAt){
 
         //initialize
         ContentValues contentValues = new ContentValues();
-        String tableName = parseObject.getClassName();
+        String tableName;
+        if(sharedObject != null) {
+            tableName = sharedObject.getClassName();
+        } else if (privateObject != null) {
+            tableName = privateObject.getClassName().replace(PRIVATE, "");
+        } else {
+            tableName = null;
+        }
+
         Tables table = new Tables(tableName);
         String[] columns = table.columns;
         String[] types = table.getTypes();
@@ -217,6 +247,26 @@ public class ParseSync {
 
         //save every column
         for(int i = 0; i < columns.length; i++) {
+            //aux ParseObject to decide if take the private or public
+            ParseObject parseObject;
+            if(table.lastPrivateColumn <= i){
+                parseObject = sharedObject;
+            } else {
+                parseObject = privateObject;
+            }
+
+            //new user signed in, adding ACL
+            if(columns[i] == Tables.USER_ID){
+                Log.d("", "user " + sharedObject.getObjectId() + " could need ACL");
+                String userID = parseObject.getString(Tables.USER_ID);
+                if(ParseAdapter.thatPersonHadPreviouslyUserID(mContext, privateObject.getString(Tables.EMAIL)) &&
+                        userID != null && userID.length() > 0){
+                    Log.d("", "he needs ACL");
+                    needACL.add(userID);
+                }
+            }
+
+
             if(origin[i] != null){
                 //this is a foreign key, needs to be retrieved
                 ParseObject foreignObject;
@@ -245,27 +295,35 @@ public class ParseSync {
 
             } else {
                 //it is a normal value, not a foreign key
-                if (types[i] == Tables.TYPE_DOUBLE) {
-                    if(!tableName.equals(Tables.TABLENAME_TRANSACTIONS_PEOPLE)){
-                        contentValues.put(columns[i], parseObject.getDouble(columns[i]));
+                if(columns[i] != Tables.POINTS) {
+                    if (types[i] == Tables.TYPE_DOUBLE) {
+                        if (!tableName.equals(Tables.TABLENAME_TRANSACTIONS_PEOPLE)) {
+                            contentValues.put(columns[i], parseObject.getDouble(columns[i]));
+                        }
+                    } else if (types[i] == Tables.TYPE_INT) {
+                        contentValues.put(columns[i], parseObject.getInt(columns[i]));
+                    } else {
+                        contentValues.put(columns[i], parseObject.getString(columns[i]));
                     }
-                } else if (types[i] == Tables.TYPE_INT) {
-                    contentValues.put(columns[i], parseObject.getInt(columns[i]));
                 } else {
-                    contentValues.put(columns[i], parseObject.getString(columns[i]));
+                    contentValues.put(Tables.POINTS, sharedObject.getObjectId());
                 }
             }
         }
 
         //add parse values
-        contentValues.put(Tables.LAST_UPDATE, parseObject.getUpdatedAt().getTime());
-        contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
+        contentValues.put(Tables.LAST_UPDATE, updatedAt);
+        contentValues.put(Tables.PARSE_ID_NAME, parseID);
 
         //save id if it has been saved
         boolean hasBeenDownloaded = ParseAdapter.tryToInsertSQLite(mContext, contentValues, tableName);
         if(hasBeenDownloaded){
-            idsDownloaded.add(parseObject.getObjectId());
+            idsDownloaded.add(parseID);
             objectsDownloaded++;
+            if(privateObject != null && sharedObject != null){
+                idsDownloaded.add(contentValues.getAsString(Tables.POINTS));
+                objectsDownloaded++;
+            }
         }
     }
 
@@ -338,6 +396,7 @@ public class ParseSync {
                 Log.d("", "trying to parse " + tableName);
 
                 if(table.lastPrivateColumn < table.columns.length){
+
                     //work with shared part
                     String innerParseID;
                     if(table.lastPrivateColumn < 0){
@@ -347,8 +406,10 @@ public class ParseSync {
                         //there is a part shared and a part public with a pointer
                         innerParseID = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
                     }
+                    Log.d("", "starting createParseObjcetFromCursor");
                     innerObject = createParseObjectFromCursor(
                             cursor, table, innerParseID, false, null);
+                    Log.e("", "calling addObjectsToUpload for inner");
                     long _id = cursor.getLong(cursor.getColumnIndex(Tables.ID));
                     addToObjectsToUpload(_id, tableName, parseID, innerObject);
                 }
@@ -360,6 +421,7 @@ public class ParseSync {
 
                     //add _id and parseObject to the customParseObjects list
                     long _id = cursor.getLong(cursor.getColumnIndex(Tables.ID));
+
                     addToObjectsToUpload(_id, tableName, parseID, parseObject);
                 }
             } while (cursor.moveToNext());
@@ -424,7 +486,6 @@ public class ParseSync {
         //add values
         for(int i = initialIndex; i < finalIndex; i++)
         {
-            Log.d("", "Table= " + tableName + ", working in colum " + i);
             if(columns[i].equals(Tables.POINTS)){
                 parseObject.put(columns[i], sharedPart);
             } else {
@@ -568,27 +629,31 @@ public class ParseSync {
     private void addToObjectsToUpload(long _id, String parseClassName, String parseID, ParseObject parseObject){
         //check if it's been downloaded
         if(!idsDownloaded.contains(parseID)){
-            //Log.e(LOG_TAG, "object= " + parseID + " needs upload");
+            Log.e(LOG_TAG, "object= " + parseID + " needs upload");
 
             //check if it was downloaded in a previous iteration
             if(previousUploaded.parseIDs.contains(parseID)){
-                //Log.d("", "has been updated previously");
+                Log.d("", "has been updated previously id= " + _id);
                 for(int k = 0; k < previousUploaded.parseIDs.size(); k++){
-
+                    Log.d("", "checking if it's been previously uploaded with k= " + k);
                     //check if there are changes from the previous upload
+
+                    Log.d("", "time 1= " + previousUploaded.parseObjects.get(k).getUpdatedAt().getTime());
+                    Log.d("", "time 2=" + parseObject.getUpdatedAt().getTime());
+
                     if( (previousUploaded.parseIDs.get(k).equals(parseID)) &&
                             (previousUploaded.parseObjects.get(k).getUpdatedAt().getTime() < parseObject.getUpdatedAt().getTime()) ){
-                        //Log.d("", "has change de date");
+                        Log.d("", "has change de date");
                         objectsToUpload.addObject(parseObject, _id, parseClassName);
                     }
                 }
             } else {
-                //Log.d("", "Not uploaded previously");
+                Log.d("", "Not uploaded previously");
                 objectsToUpload.addObject(parseObject, _id, parseClassName);
             }
 
         } else {
-            //Log.e(LOG_TAG, "no need to upload= " + parseID);
+            Log.e(LOG_TAG, "no need to upload= " + parseID);
         }
     }
 
@@ -597,7 +662,6 @@ public class ParseSync {
         String parseObjectName = parseObject.getClassName();
 
         if(!parseObjectName.contains(PRIVATE)){
-            Log.e("", "saving a " + parseObject.getClassName());
             ContentValues contentValues = new ContentValues();
             contentValues.put(Tables.LAST_UPDATE, startSync.getTime() );
             contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());

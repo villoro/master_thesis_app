@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -30,7 +31,10 @@ import android.widget.TextView;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.parse.ParseAdapter;
 
 import java.util.ArrayList;
@@ -283,7 +287,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             //try to log an existing user
             try {
                 ParseUser.logIn(mEmail, mPassword);
+                tryToInsertMyself(ParseUser.getCurrentUser());
+
                 return true;
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -298,9 +305,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 user.signUp();
 
                 //insert myself if needed
-                if(ParseAdapter.getMyId(getApplicationContext()) <= 0){
-                    ParseAdapter.insertMyself(getApplicationContext(), user);
-                }
+                tryToInsertMyself(user);
 
                 return true;
             } catch (ParseException e) {
@@ -328,6 +333,32 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mAuthTask = null;
             showProgress(false);
         }
+
+        private void tryToInsertMyself(ParseUser user){
+            if(ParseAdapter.getMyId(getApplicationContext()) <= 0){
+
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(Tables.TABLENAME_PEOPLE);
+                query.whereEqualTo(Tables.EMAIL, mEmail);
+                Log.d("", "querying people with email= " + mEmail);
+                String parseID = null;
+
+                List<ParseObject> people = null;
+                try {
+                    people = query.find();
+                    if (people.size() > 0){
+                        Log.d("", "there is some");
+                        for (ParseObject person : people){
+                            parseID = person.getObjectId();
+                            Log.d("", "with id= " + person.getObjectId());
+                        }
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                ParseAdapter.insertMyself(getApplicationContext(), user, parseID);
+            }
+        }
+
     }
 }
 
