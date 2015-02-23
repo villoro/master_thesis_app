@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -23,8 +24,11 @@ import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
+import com.villoro.expensor_beta.parse.ParseAdapter;
+import com.villoro.expensor_beta.parse.ParseQueries;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -120,10 +124,52 @@ public class ParseActivity extends ActionBarActivity {
     public void updateSQL(View view){
         //updateCategory();
         //setList();
-        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(this);
+        /*ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(this);
         SQLiteDatabase database = mOpenHelper.getReadableDatabase();
         Cursor cursor =  database.query(Tables.TABLENAME_PEOPLE, null, null, null, null, null, null);
         Log.e("", "That user have " + cursor.getCount() + " publicPeople");
+        if(cursor.moveToFirst()){
+            do{
+                Log.d("", "name= " + cursor.getString(cursor.getColumnIndex(Tables.NAME)) +
+                        ", userID= " + cursor.getString(cursor.getColumnIndex(Tables.USER_ID)));
+            } while (cursor.moveToNext());
+        }
+
+        ArrayList<String> peopleInGroup = ParseAdapter.getPeopleInGroup(this, "jmKAbEM0Sa");
+        Log.d("", ParseQueries.queryPeopleInGroup("jmKAbEM0Sa"));
+        Log.d("", "peopleInGroup jmKAbEM0Sa count= " + peopleInGroup.size());
+        for(String person: peopleInGroup){
+            Log.d("", "person= " + person);
+        }
+
+        Cursor cursor2 =  database.query(Tables.TABLENAME_PEOPLE_IN_GROUP, null, null, null, null, null, null);
+        Log.e("", "That user have " + cursor2.getCount() + " publicPeople");*/
+
+        /*ParseObject prova = new ParseObject("prova");
+        prova.put("name", "topo tamadre");
+        prova.setACL(new ParseACL(ParseUser.getCurrentUser()));
+        prova.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d("", "object saved");
+            }
+        }); */
+
+        /*ParseObject prova2 = ParseObject.createWithoutData("prova", "qNFi3ebPnN");
+
+        ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
+        String personID = "RMfarUDA6c";
+        parseACL.setReadAccess(personID, true);
+        parseACL.setWriteAccess(personID, true);
+
+        prova2.setACL(parseACL);
+        prova2.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d("", "object updated");
+            }
+        }); */
+
     }
 
 

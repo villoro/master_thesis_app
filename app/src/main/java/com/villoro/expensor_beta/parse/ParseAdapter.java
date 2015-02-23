@@ -105,6 +105,8 @@ public class ParseAdapter {
             String query = ParseQueries.queryPeopleInGroup(groupParseId);
             Cursor cursor = mOpenHelper.getReadableDatabase().rawQuery(query, null);
 
+            Log.d("ParseAdapter", "cursor count= " + cursor.getCount());
+
             ArrayList<String> output = new ArrayList<>();
             if (cursor.moveToFirst()) {
                 do {
