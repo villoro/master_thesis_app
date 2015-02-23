@@ -345,6 +345,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 List<ParseObject> people = null;
                 try {
                     people = query.find();
+                    Log.d("", "query with no error");
                     if (people.size() > 0){
                         Log.d("", "there is some");
                         for (ParseObject person : people){

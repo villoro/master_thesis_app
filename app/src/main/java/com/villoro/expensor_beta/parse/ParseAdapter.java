@@ -43,15 +43,19 @@ public class ParseAdapter {
             updatedAtSQL = cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE));
         }
         cursor.close();
+        Log.d("", "trying to insert " + contentValues.toString());
 
         if (_id >= 0) {
             if (updatedAtParse > updatedAtSQL || tableName.equals(Tables.TABLENAME_PEOPLE)){
+                Log.d("", "updatedAtParse > upadatedAtSQL -> inserting");
                 database.update(tableName, contentValues, whereClause, null);
                 return true;
             } else {
+                Log.d("", "updatedAtParse < upadatedAtSQL -> not inserting");
                 return false;
             }
         } else {
+            Log.d("", "this object don't exist");
             contentValues.put(Tables.DELETED, Tables.FALSE);
             database.insert(tableName, null, contentValues);
             return true;

@@ -367,7 +367,10 @@ public class ParseSync {
         final List<ParseObject> parseObjects = objectsToUpload.parseObjects;
         final List<Long> _ids = objectsToUpload._ids;
 
+        Log.d("", "should be updating " + parseObjects.size());
+
         try {
+            Log.d("", "inside try parseObject.saveAll");
             if(parseObjects.size() > 0){
                 ParseObject.saveAll(parseObjects);
                 Log.e(LOG_TAG,"objects saved= " + parseObjects.size());
@@ -390,8 +393,22 @@ public class ParseSync {
         if (cursor.moveToFirst()){
             do{
                 //Extract parseObject from cursor
-                String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
                 Tables table = new Tables(tableName);
+                String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                String privateID;
+                if(0 < table.lastPrivateColumn && table.lastPrivateColumn < table.columns.length){
+                    //there is a part shared and a part private with a pointer
+                    privateID = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
+                    Log.d("", "table= " + tableName + " is private and shared");
+                } else if (table.lastPrivateColumn < 0){
+                    //only shared part
+                    privateID = null;
+                } else {
+                    //only private part
+                    privateID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                    Log.d("", "table= " + tableName + " is only private");
+                } Log.d("", "lastPrivateColumn =" + table.lastPrivateColumn + ", columns= " + table.columns.length);
+
                 ParseObject innerObject = null;
                 Log.d("", "trying to parse " + tableName);
 
@@ -399,14 +416,10 @@ public class ParseSync {
 
                     //work with shared part
                     String innerParseID;
-                    if(table.lastPrivateColumn < 0){
-                        //all the object is shared
-                        innerParseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
-                    } else {
-                        //there is a part shared and a part public with a pointer
-                        innerParseID = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
-                    }
+                    innerParseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+
                     Log.d("", "starting createParseObjcetFromCursor");
+                    Log.e("", "calling createParseObject for public with id= " +innerParseID);
                     innerObject = createParseObjectFromCursor(
                             cursor, table, innerParseID, false, null);
                     Log.e("", "calling addObjectsToUpload for inner");
@@ -417,12 +430,12 @@ public class ParseSync {
                 if(table.lastPrivateColumn > 0){
                     //work with the private part
                     ParseObject parseObject = createParseObjectFromCursor(
-                            cursor, table, parseID, true, innerObject);
+                            cursor, table, privateID, true, innerObject);
 
                     //add _id and parseObject to the customParseObjects list
                     long _id = cursor.getLong(cursor.getColumnIndex(Tables.ID));
 
-                    addToObjectsToUpload(_id, tableName, parseID, parseObject);
+                    addToObjectsToUpload(_id, tableName + PRIVATE, parseID, parseObject);
                 }
             } while (cursor.moveToNext());
         }
@@ -444,7 +457,7 @@ public class ParseSync {
                 if(needUpload) {
                     String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
                     ParseObject parseObject = getParseObjectInOrderToUpdateACL(cursor, tableName, parseID);
-                    objectsToUpload.addObject(parseObject, cursor.getLong(cursor.getColumnIndex(Tables.ID)), tableName);
+                    objectsToUpload.addObject(parseObject, cursor.getLong(cursor.getColumnIndex(Tables.ID)));
                 }
 
             } while (cursor.moveToNext());
@@ -452,7 +465,7 @@ public class ParseSync {
         cursor.close();
     }
 
-    private ParseObject createParseObjectFromCursor(Cursor cursor, Tables table, String parseID, boolean isPrivatePart, ParseObject sharedPart){
+    private ParseObject createParseObjectFromCursor(Cursor cursor, Tables table, String parseID, boolean isPrivatePart, ParseObject publicPart){
         //Initialize table
         String tableName = table.tableName;
         String[] columns = table.columns;
@@ -469,12 +482,14 @@ public class ParseSync {
             parseClass = tableName + PRIVATE;
             initialIndex = 0;
             finalIndex = table.lastPrivateColumn;
+            Log.d("", "private object className= " + parseClass + ", initialIndex= " + initialIndex + ", finalIndex= " + finalIndex);
         } else {
             parseClass = tableName;
             initialIndex = Math.max(table.lastPrivateColumn, 0); //don't allow -1, minimum value 0
             finalIndex = columns.length;
+            Log.d("", "public object className= " + parseClass + ", initialIndex= " + initialIndex + ", finalIndex= " + finalIndex);
         }
-        //Log.d(LOG_TAG, "object to upload with time= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)));
+        Log.d(LOG_TAG, "working with= " + tableName + ", private?= " + isPrivatePart);
         if(parseID != null){
             parseObject = ParseObject.createWithoutData(parseClass, parseID);
             Log.e(LOG_TAG, "intentant update parseID= " + parseID);
@@ -487,7 +502,7 @@ public class ParseSync {
         for(int i = initialIndex; i < finalIndex; i++)
         {
             if(columns[i].equals(Tables.POINTS)){
-                parseObject.put(columns[i], sharedPart);
+                parseObject.put(columns[i], publicPart);
             } else {
                 //Reading all columns
                 int index = cursor.getColumnIndex(columns[i]);
@@ -644,12 +659,12 @@ public class ParseSync {
                     if( (previousUploaded.parseIDs.get(k).equals(parseID)) &&
                             (previousUploaded.parseObjects.get(k).getUpdatedAt().getTime() < parseObject.getUpdatedAt().getTime()) ){
                         Log.d("", "has change de date");
-                        objectsToUpload.addObject(parseObject, _id, parseClassName);
+                        objectsToUpload.addObject(parseObject, _id);
                     }
                 }
             } else {
                 Log.d("", "Not uploaded previously");
-                objectsToUpload.addObject(parseObject, _id, parseClassName);
+                objectsToUpload.addObject(parseObject, _id);
             }
 
         } else {
@@ -660,6 +675,7 @@ public class ParseSync {
     private void updateEntrySQL(ParseObject parseObject, long _id){
 
         String parseObjectName = parseObject.getClassName();
+        Log.d("", "calling Update Entry SQL");
 
         if(!parseObjectName.contains(PRIVATE)){
             ContentValues contentValues = new ContentValues();
@@ -668,8 +684,8 @@ public class ParseSync {
             ParseAdapter.updateWithId(mContext, contentValues, parseObjectName, _id);
         }
 
-
         objectsUploaded++;
+        Log.d("", "objectsUploaded should be incremented, value= " + objectsUploaded);
     }
 
     private class ListParseObjectsWithId {
@@ -685,10 +701,11 @@ public class ParseSync {
             parseIDs = new ArrayList<>();
         }
 
-        public void addObject(ParseObject parseObject, long id, String parseClassName){
+        public void addObject(ParseObject parseObject, long id){
+            Log.d("", "adding object to upload with class= "  + parseObject.getClassName() + ", id= " + id);
             parseObjects.add(parseObject);
             _ids.add(id);
-            type.add(parseClassName);
+            type.add(parseObject.getClassName());
         }
     }
 
