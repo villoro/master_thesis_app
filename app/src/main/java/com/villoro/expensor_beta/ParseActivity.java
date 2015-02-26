@@ -30,6 +30,7 @@ import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class ParseActivity extends ActionBarActivity {
@@ -145,33 +146,129 @@ public class ParseActivity extends ActionBarActivity {
         Cursor cursor2 =  database.query(Tables.TABLENAME_PEOPLE_IN_GROUP, null, null, null, null, null, null);
         Log.e("", "That user have " + cursor2.getCount() + " publicPeople");*/
 
-        /*ParseObject prova = new ParseObject("prova");
-        prova.put("name", "topo tamadre");
-        prova.setACL(new ParseACL(ParseUser.getCurrentUser()));
-        prova.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                Log.d("", "object saved");
-            }
-        }); */
+        /*List<ParseObject> parseObjects = new ArrayList<>();
 
-        /*ParseObject prova2 = ParseObject.createWithoutData("prova", "qNFi3ebPnN");
+        String personID = "IoowRxipMW";
 
+        ParseObject group = ParseObject.createWithoutData("groups", "t5YpflZi8F");
         ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
-        String personID = "RMfarUDA6c";
         parseACL.setReadAccess(personID, true);
         parseACL.setWriteAccess(personID, true);
 
-        prova2.setACL(parseACL);
-        prova2.saveInBackground(new SaveCallback() {
+        group.setACL(parseACL);
+        parseObjects.add(group);
+
+        ParseObject peopleInGroup = ParseObject.createWithoutData("peopleInGroup", "fSgMRBonsw");
+
+        ParseACL parseACL2 = new ParseACL(ParseUser.getCurrentUser());
+        parseACL2.setReadAccess(personID, true);
+        parseACL2.setWriteAccess(personID, true);
+
+        peopleInGroup.setACL(parseACL2);
+        parseObjects.add(peopleInGroup);
+
+        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                Log.d("", "object updated");
+                Log.d("", "saved");
             }
         }); */
 
+       updateACL();
     }
 
+    private void updateACL(){
+
+        List<ParseObject> parseObjects = new ArrayList<>();
+        List<String> needACL = new ArrayList<>();
+        String user = "VFEixuWGWy";
+
+        needACL.add(user);
+
+        for (String parsePeopleId : needACL) {
+            Log.d("", "working with userID= " + parsePeopleId);
+
+            long peopleID = ParseAdapter.getIdFromParseId(this, Tables.TABLENAME_PEOPLE, parsePeopleId, Tables.USER_ID);
+            Log.d("", "in SQLite has id= " + peopleID);
+
+            for (String tableName : Tables.TABLES) {
+                Log.e("", "TABLE= " + tableName);
+                Tables table = new Tables(tableName);
+                if (!table.acl.equals(Tables.ACL_PUBLIC) && !tableName.equals(Tables.TABLENAME_PEOPLE)) {
+                    Cursor cursor = ParseAdapter.getSmartCursor(this, tableName, 0, peopleID);
+
+                    if (cursor.moveToFirst()) {
+                        do {
+                            Log.d("", "cursor have= " + cursor.getCount());
+
+                            String parseId = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                            Log.d("", "trying to create a " + tableName + " with id= " + parseId);
+
+                            ParseObject objectToUpdateACL = ParseObject.createWithoutData(tableName, parseId);
+
+                            objectToUpdateACL.setACL(getParseACLFromSQLite(table, cursor));
+
+                            parseObjects.add(objectToUpdateACL);
+                        } while (cursor.moveToNext());
+                    }
+                    cursor.close();
+                }
+            }
+        }
+
+        Log.d("", "there is " + parseObjects.size() + " objects to update ACL");
+        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d("", "all saved");
+            }
+        });
+    }
+
+    private ParseACL getParseACLFromSQLite(Tables table, Cursor cursor){
+        ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
+        switch (table.acl){
+            case Tables.ACL_INDIVIDUAL:
+                Log.d("getParseACLFromSQLite", "ACL_INDIVIDUAL doing nothing");
+                break;
+            case Tables.ACL_ONE_PERSON:
+                String personID = cursor.getString(cursor.getColumnIndex(Tables.USER_ID + ParseQueries.PARSE));
+                if(personID != null){
+                    parseACL.setReadAccess(personID, true);
+                    parseACL.setWriteAccess(personID, true);
+                }
+                Log.d("getParseACLFromSQLite", "ACL_ONE_PERSON adding ACL to= " + personID);
+                break;
+            case Tables.ACL_GROUP:
+
+                //get groupParseID
+                String groupID = null;
+                if(table.tableName == Tables.TABLENAME_GROUPS){
+                    groupID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                } else {
+                    groupID = cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
+                }
+
+                //get and setACL for people in the group
+                if(groupID != null) {
+                    ArrayList<String> peopleID = ParseAdapter.getPeopleInGroup(this, groupID);
+                    for (String eachPerson : peopleID) {
+                        Log.d("getParseACLFromSQLite", "granting group access to person= " + eachPerson);
+                        if (eachPerson != null) {
+                            parseACL.setReadAccess(eachPerson, true);
+                            parseACL.setWriteAccess(eachPerson, true);
+                        }
+                    }
+                }
+                Log.d("getParseACLFromSQLite", "ACL_GROUP adding ACL to people in group= " + groupID);
+                break;
+            default:
+                Log.e("getParseACLFromSQLite", "case null, error");
+                parseACL = new ParseACL();
+                break;
+        }
+        return parseACL;
+    }
 
     public void insertSQL(View v) {
 

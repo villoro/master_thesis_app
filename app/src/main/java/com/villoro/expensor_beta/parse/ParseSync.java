@@ -11,6 +11,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.Tables;
 
 import java.util.ArrayList;
@@ -74,6 +75,10 @@ public class ParseSync {
 
             //upload
             parseUpload();
+
+            //updateACL
+            updateACL();
+
             //prepare next iteration
             saveDate(startSync);
             Log.e("", "DATE SAVED= " + startSync.getTime());
@@ -386,19 +391,6 @@ public class ParseSync {
             Log.d("parseUpload", "my id not removed");
         }
 
-        for (String parsePeopleID : needACL){
-            long SQLPeopleID = ParseAdapter.getIdFromParseId(mContext, Tables.TABLENAME_PEOPLE, parsePeopleID, Tables.USER_ID);
-            for (String tableName : Tables.TABLES) {
-                //updateACL for every table that is not individual and it's not people table
-                if(!(new Tables(tableName)).acl.equals(Tables.ACL_INDIVIDUAL) &&
-                        !tableName.equals(Tables.TABLENAME_PEOPLE)) {
-                    Log.d("parseUpload", "adding " + tableName + " ACL for user " + parsePeopleID + " , and id= " + SQLPeopleID);
-                    updateACL(tableName, SQLPeopleID);
-                    Log.d("parseUpload", "objectsToUpload count= " + objectsToUpload.parseObjects.size());
-                }
-            }
-        }
-
         Log.e("parseUpload", "there are " + objectsToUpload.parseObjects.size() + " to upload");
         Log.e("parseUpload", "there are " + objectsToUpload._ids.size() + " to upload");
         Log.e("parseUpload", "there are " + objectsToUpload.parseIDs.size() + " to upload");
@@ -482,45 +474,6 @@ public class ParseSync {
 
                     addToObjectsToUpload(_id, parseID, parseObject);
                 }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-    }
-
-    private void updateACL(String tableName, long peopleID){
-        final Cursor cursor = ParseAdapter.getSmartCursor(mContext, tableName, 0, peopleID);
-        if (cursor.moveToFirst()){
-            do{
-                Tables table = new Tables(tableName);
-                String parseId;
-                //Extract parseObject from cursor
-                if(0 < table.lastPrivateColumn && table.lastPrivateColumn < table.columns.length){
-                    //there is a part shared and a part private with a pointer
-                    parseId = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
-                    //Log.d("parseTable", "table= " + tableName + " is private and shared");
-                } else if (table.lastPrivateColumn < 0){
-                    //only shared part
-                    parseId = null;
-                } else {
-                    //only private part
-                    parseId = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
-                    //Log.d("parseTable", "table= " + tableName + " is only private");
-                }
-                boolean needUpload = true;
-                for(String objectToUploadID : objectsToUpload.parseIDs){
-                    if(parseId != null) {
-                        if (parseId.equals(objectToUploadID)) {
-                            needUpload = false;
-                        }
-                    }
-                }
-                if(needUpload) {
-                    String idObjectThatNeedACL = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
-                    ParseObject parseObject = getParseObjectInOrderToUpdateACL(cursor, tableName, idObjectThatNeedACL);
-                    Log.d("updateACL", "adding object to upload " + parseObject.getClassName() + " for user " + peopleID);
-                    objectsToUpload.addObject(parseObject, cursor.getLong(cursor.getColumnIndex(Tables.ID)));
-                }
-
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -648,70 +601,6 @@ public class ParseSync {
         return parseObject;
     }
 
-    private ParseObject getParseObjectInOrderToUpdateACL(Cursor cursor, String tableName, String idObjectThatNeedACL){
-        ParseObject parseObject;
-        Log.d("getParseObjectInOrderToUpdateACL", "getting PO to update ACL for table= " + tableName + ", for object with id= " + idObjectThatNeedACL);
-        if(idObjectThatNeedACL != null){
-            String parseClassName  = tableName;
-
-            parseObject = ParseObject.createWithoutData(parseClassName, idObjectThatNeedACL);
-            Log.e("getParseObjectInOrderToUpdateACL", "created ParseObject with class name= " + parseClassName);
-
-            if(!(new Tables(tableName)).acl.equals(Tables.ACL_PUBLIC)) {
-                parseObject.setACL(getParseACLFromSQLite(new Tables(tableName), cursor));
-            }
-            return parseObject;
-        } else {
-            Log.e("getParseObjectInOrderToUpdateACL", "NOT POSSIBLE CASE");
-            return null;
-        }
-    }
-
-    private ParseACL getParseACLFromSQLite(Tables table, Cursor cursor){
-        ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
-        switch (table.acl){
-            case Tables.ACL_INDIVIDUAL:
-                Log.d("getParseACLFromSQLite", "ACL_INDIVIDUAL doing nothing");
-                break;
-            case Tables.ACL_ONE_PERSON:
-                String personID = cursor.getString(cursor.getColumnIndex(Tables.USER_ID + ParseQueries.PARSE));
-                if(personID != null){
-                    parseACL.setReadAccess(personID, true);
-                    parseACL.setWriteAccess(personID, true);
-                }
-                Log.d("getParseACLFromSQLite", "ACL_ONE_PERSON adding ACL to= " + personID);
-                break;
-            case Tables.ACL_GROUP:
-
-                //get groupParseID
-                String groupID = null;
-                if(table.tableName == Tables.TABLENAME_GROUPS){
-                    groupID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
-                } else {
-                    groupID = cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
-                }
-
-                //get and setACL for people in the group
-                if(groupID != null) {
-                    ArrayList<String> peopleID = ParseAdapter.getPeopleInGroup(mContext, groupID);
-                    for (String eachPerson : peopleID) {
-                        Log.d("getParseACLFromSQLite", "granting group access to person= " + eachPerson);
-                        if (eachPerson != null) {
-                            parseACL.setReadAccess(eachPerson, true);
-                            parseACL.setWriteAccess(eachPerson, true);
-                        }
-                    }
-                }
-                Log.d("getParseACLFromSQLite", "ACL_GROUP adding ACL to people in group= " + groupID);
-                break;
-            default:
-                Log.e("getParseACLFromSQLite", "case null, error");
-                parseACL = new ParseACL();
-                break;
-        }
-        return parseACL;
-    }
-
     private void addToObjectsToUpload(long _id, String parseID, ParseObject parseObject){
         //check if it's been downloaded
         if(!idsDownloaded.contains(parseID)){
@@ -779,4 +668,99 @@ public class ParseSync {
         }
     }
 
+
+
+
+
+    //--------------PARSE UPDATE ACL-------------------------
+
+    private void updateACL(){
+
+        List<ParseObject> parseObjects = new ArrayList<>();
+
+        for (String parsePeopleId : needACL) {
+            Log.d("updateACL", "working with userID= " + parsePeopleId);
+
+            long peopleID = ParseAdapter.getIdFromParseId(mContext, Tables.TABLENAME_PEOPLE, parsePeopleId, Tables.USER_ID);
+            Log.d("updateACL", "in SQLite has id= " + peopleID);
+
+            for (String tableName : Tables.TABLES) {
+                Log.e("updateACL", "TABLE= " + tableName);
+                Tables table = new Tables(tableName);
+                if (!table.acl.equals(Tables.ACL_PUBLIC) && !tableName.equals(Tables.TABLENAME_PEOPLE)) {
+                    Cursor cursor = ParseAdapter.getSmartCursor(mContext, tableName, 0, peopleID);
+
+                    if (cursor.moveToFirst()) {
+                        do {
+                            Log.d("updateACL", "cursor have= " + cursor.getCount());
+
+                            String parseId = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                            Log.d("updateACL", "trying to create a " + tableName + " with id= " + parseId);
+
+                            ParseObject objectToUpdateACL = ParseObject.createWithoutData(tableName, parseId);
+
+                            objectToUpdateACL.setACL(getParseACLFromSQLite(table, cursor));
+
+                            parseObjects.add(objectToUpdateACL);
+                        } while (cursor.moveToNext());
+                    }
+                    cursor.close();
+                }
+            }
+        }
+
+        Log.d("updateACL", "there is " + parseObjects.size() + " objects to update ACL");
+        ParseObject.saveAllInBackground(parseObjects, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d("updateACL", "done");
+            }
+        });
+        Log.d("updateACL", "finish update ACL");
+    }
+
+    private ParseACL getParseACLFromSQLite(Tables table, Cursor cursor){
+        ParseACL parseACL = new ParseACL(ParseUser.getCurrentUser());
+        switch (table.acl){
+            case Tables.ACL_INDIVIDUAL:
+                Log.d("getParseACLFromSQLite", "ACL_INDIVIDUAL doing nothing");
+                break;
+            case Tables.ACL_ONE_PERSON:
+                String personID = cursor.getString(cursor.getColumnIndex(Tables.USER_ID + ParseQueries.PARSE));
+                if(personID != null){
+                    parseACL.setReadAccess(personID, true);
+                    parseACL.setWriteAccess(personID, true);
+                }
+                Log.d("getParseACLFromSQLite", "ACL_ONE_PERSON adding ACL to= " + personID);
+                break;
+            case Tables.ACL_GROUP:
+
+                //get groupParseID
+                String groupID = null;
+                if(table.tableName == Tables.TABLENAME_GROUPS){
+                    groupID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+                } else {
+                    groupID = cursor.getString(cursor.getColumnIndex(Tables.GROUP_ID + ParseQueries.PARSE));
+                }
+
+                //get and setACL for people in the group
+                if(groupID != null) {
+                    ArrayList<String> peopleID = ParseAdapter.getPeopleInGroup(mContext, groupID);
+                    for (String eachPerson : peopleID) {
+                        Log.d("getParseACLFromSQLite", "granting group access to person= " + eachPerson);
+                        if (eachPerson != null) {
+                            parseACL.setReadAccess(eachPerson, true);
+                            parseACL.setWriteAccess(eachPerson, true);
+                        }
+                    }
+                }
+                Log.d("getParseACLFromSQLite", "ACL_GROUP adding ACL to people in group= " + groupID);
+                break;
+            default:
+                Log.e("getParseACLFromSQLite", "case null, error");
+                parseACL = new ParseACL();
+                break;
+        }
+        return parseACL;
+    }
 }
