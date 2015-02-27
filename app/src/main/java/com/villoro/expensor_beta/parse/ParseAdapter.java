@@ -99,6 +99,21 @@ public class ParseAdapter {
         return output;
     }
 
+    public static String getPublicIdFromParseId(Context context, String tableName, String parseID){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        Cursor cursor = mOpenHelper.getReadableDatabase().query(tableName, new String[]{Tables.POINTS},
+                Tables.PARSE_ID_NAME + " = '" + parseID + "'", null, null, null, null);
+
+        String output;
+        if(cursor.moveToFirst()) {
+            output = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
+        } else {
+            output = null;
+        }
+        cursor.close();
+        return output;
+    }
+
     public static ArrayList<String> getPeopleInGroup(Context context, String groupParseId) {
         if(groupParseId != null) {
             ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
@@ -154,18 +169,18 @@ public class ParseAdapter {
         return false;
     }
 
-    public static String getMyParseId(Context context){
+    public static String getMyPublicId(Context context){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         String email = ParseUser.getCurrentUser().getEmail();
 
         Cursor cursor = db.query(
                 Tables.TABLENAME_PEOPLE,
-                new String[]{Tables.EMAIL, Tables.PARSE_ID_NAME, Tables.USER_ID},
+                new String[]{Tables.EMAIL, Tables.PARSE_ID_NAME, Tables.USER_ID, Tables.POINTS},
                 Tables.EMAIL + " = '" + email + "'",
                 null, null, null, null);
         if(cursor.moveToFirst()) {
-            String output = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
+            String output = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
             cursor.close();
             return output;
         } else {
@@ -192,7 +207,7 @@ public class ParseAdapter {
         }
     }
 
-    public static void insertMyself(Context context, ParseUser parseUser, String parseID){
+    public static void insertMyself(Context context, ParseUser parseUser, String parsePublicPeopleID){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
@@ -201,8 +216,8 @@ public class ParseAdapter {
         values.put(Tables.EMAIL, parseUser.getEmail());
         values.put(Tables.USER_ID, parseUser.getObjectId());
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
-        if(parseID != null){
-            values.put(Tables.PARSE_ID_NAME, parseID);
+        if(parsePublicPeopleID != null){
+            values.put(Tables.POINTS, parsePublicPeopleID);
         }
         Log.d("", "trying to insert= " + values.toString());
         context.getContentResolver().insert(ExpensorContract.PeopleEntry.CONTENT_URI, values);

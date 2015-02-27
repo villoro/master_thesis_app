@@ -65,7 +65,7 @@ public class ParseQueries {
                 String[] arrayListToArray = new String[columnsArrayList.size()];
                 arrayListToArray = columnsArrayList.toArray(arrayListToArray);
 
-                //add if needed the column pointsTo
+                //add if needed the column userID
                 boolean addContains = false;
                 if(query.contains(Tables.USER_ID + PARSE)){
                     addContains = true;

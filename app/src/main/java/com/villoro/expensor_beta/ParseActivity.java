@@ -174,7 +174,9 @@ public class ParseActivity extends ActionBarActivity {
             }
         }); */
 
-       updateACL();
+        Log.d("", ParseQueries.queryParse(Tables.TABLENAME_PEOPLE_IN_GROUP, 0, 0));
+
+       //updateACL();
     }
 
     private void updateACL(){
