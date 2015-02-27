@@ -188,6 +188,18 @@ public class Tables {
     }
 
 
+    public boolean isAllPrivate(){
+        return lastPrivateColumn >= columns.length;
+    }
+
+    public boolean isAllShared(){
+        return lastPrivateColumn < 0;
+    }
+
+    public boolean isPrivateAndShared(){
+        return !isAllPrivate() && !isAllShared();
+    }
+
     public String createTable()
     {
         return createGenericTable(tableName, columns, types, unique);

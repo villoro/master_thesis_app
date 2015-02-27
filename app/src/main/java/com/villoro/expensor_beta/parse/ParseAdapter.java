@@ -161,12 +161,14 @@ public class ParseAdapter {
                 new String[]{Tables.USER_ID},
                 Tables.EMAIL + " = '" + email + "'",
                 null, null, null, null);
-        ArrayList<String> output = new ArrayList<>();
+        boolean output;
         if (cursor.moveToFirst()) {
             String userID = cursor.getString(cursor.getColumnIndex(Tables.USER_ID));
-            return userID != null || userID.length() > 0;
+            output = userID != null || userID.length() > 0;
         }
-        return false;
+        output = false;
+        cursor.close();
+        return output;
     }
 
     public static String getMyPublicId(Context context){
@@ -184,6 +186,7 @@ public class ParseAdapter {
             cursor.close();
             return output;
         } else {
+            cursor.close();
             return null;
         }
     }
@@ -203,6 +206,7 @@ public class ParseAdapter {
             cursor.close();
             return id;
         } else {
+            cursor.close();
             return -1;
         }
     }

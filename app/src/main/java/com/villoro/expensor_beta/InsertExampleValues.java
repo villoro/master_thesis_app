@@ -20,7 +20,7 @@ public class InsertExampleValues {
     }
 
     public void insert(){
-        /*ContentValues categoryValues = new ContentValues();
+        ContentValues categoryValues = new ContentValues();
         categoryValues.put(Tables.NAME, "Food");
         categoryValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         categoryValues.put(Tables.COLOR, 2);
@@ -57,7 +57,7 @@ public class InsertExampleValues {
         incomeValues.put(Tables.AMOUNT, 500);
         incomeValues.put(Tables.COMMENTS, "Gestkom");
         incomeValues.put(Tables.CATEGORY_ID, 3);
-        insertSQL(incomeValues, ExpensorContract.IncomeEntry.CONTENT_URI);*/
+        insertSQL(incomeValues, ExpensorContract.IncomeEntry.CONTENT_URI);
 
         ContentValues peopleValues = new ContentValues();
         peopleValues.put(Tables.NAME, "Villoro");
@@ -78,33 +78,33 @@ public class InsertExampleValues {
         peopleInGroupValues.put(Tables.PEOPLE_ID, 2);
         insertSQL(peopleInGroupValues, ExpensorContract.PeopleInGroupEntry.CONTENT_URI);
 
-        /*ContentValues transactionGroupValues = new ContentValues();
+        ContentValues transactionGroupValues = new ContentValues();
         transactionGroupValues.put(Tables.DATE, "2015_02_16");
         transactionGroupValues.put(Tables.GROUP_ID, 1);
         transactionGroupValues.put(Tables.AMOUNT, 10);
         transactionGroupValues.put(Tables.COMMENTS, "jojo");
-        insertSQL(transactionGroupValues, ExpensorContract.TransactionGroupEntry.CONTENT_URI);*/
+        insertSQL(transactionGroupValues, ExpensorContract.TransactionGroupEntry.CONTENT_URI);
 
-        /*ContentValues transactionPeopleValues = new ContentValues();
+        ContentValues transactionPeopleValues = new ContentValues();
         transactionPeopleValues.put(Tables.DATE, "2015_02_16");
         transactionPeopleValues.put(Tables.AMOUNT, 21.21);
         transactionPeopleValues.put(Tables.COMMENTS, "cine");
         transactionPeopleValues.put(Tables.PEOPLE_ID, 2);
-        insertSQL(transactionPeopleValues, ExpensorContract.TransactionPeopleEntry.CONTENT_URI);*/
+        insertSQL(transactionPeopleValues, ExpensorContract.TransactionPeopleEntry.CONTENT_URI);
 
-        /*ContentValues transactionPeopleValues2 = new ContentValues();
+        ContentValues transactionPeopleValues2 = new ContentValues();
         transactionPeopleValues2.put(Tables.DATE, "2015_02_16");
         transactionPeopleValues2.put(Tables.AMOUNT, -12);
         transactionPeopleValues2.put(Tables.COMMENTS, "T10");
         transactionPeopleValues2.put(Tables.PEOPLE_ID, 2);
-        insertSQL(transactionPeopleValues2, ExpensorContract.TransactionPeopleEntry.CONTENT_URI);*/
+        insertSQL(transactionPeopleValues2, ExpensorContract.TransactionPeopleEntry.CONTENT_URI);
 
-        /*ContentValues whoPaidSpentValues = new ContentValues();
+        ContentValues whoPaidSpentValues = new ContentValues();
         whoPaidSpentValues.put(Tables.TRANSACTION_ID, 1);
         whoPaidSpentValues.put(Tables.PEOPLE_ID, 2);
         whoPaidSpentValues.put(Tables.SPENT, 10);
         whoPaidSpentValues.put(Tables.PAID, 0);
-        insertSQL(whoPaidSpentValues, ExpensorContract.WhoPaidSpentEntry.CONTENT_URI);*/
+        insertSQL(whoPaidSpentValues, ExpensorContract.WhoPaidSpentEntry.CONTENT_URI);
 
         /* TODO
         ContentValues howToSettleValues = new ContentValues();

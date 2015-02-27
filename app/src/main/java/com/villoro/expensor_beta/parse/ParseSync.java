@@ -190,7 +190,7 @@ public class ParseSync {
                 query.include(table.columns[i]);
             }
         }
-        if(table.lastPrivateColumn > 0 && table.lastPrivateColumn < table.columns.length){
+        if(table.isPrivateAndShared()){
             query.include(Tables.POINTS);
         }
 
@@ -212,13 +212,13 @@ public class ParseSync {
 
             for(ParseObject parseObject : downloadedParseObjects){
                 if(!objectsToUpload.parseIDs.contains(parseObject.getObjectId())){
-                    //decide whichs parts exists (private and/or public)
+                    //decide which parts exists (private and/or public)
                     String parseID = parseObject.getObjectId();
                     long updatedAt = parseObject.getUpdatedAt().getTime();
-                    if(table.lastPrivateColumn < 0){
+                    if(table.isAllShared()){
                         //Log.d("", "calling all shared");
                         insertParseObjectInSQL(null, parseObject, parseID, updatedAt);
-                    } else if(table.lastPrivateColumn > 0 && table.lastPrivateColumn < table.columns.length){
+                    } else if(table.isPrivateAndShared()){
                         //Log.d("", "calling partShared and partPrivate");
                         ParseObject sharedPart = parseObject.getParseObject(Tables.POINTS);
                         insertParseObjectInSQL(parseObject, sharedPart, parseID, updatedAt);
@@ -309,7 +309,7 @@ public class ParseSync {
                 String whichColumn;
                 Tables originalTable = new Tables(origin[i]);
                 Log.d("insertParseObjectInSQL", "table= " + tableName + ", origin= " + origin[i]);
-                if(originalTable.lastPrivateColumn > 0 && originalTable.lastPrivateColumn < originalTable.columns.length){
+                if(originalTable.isPrivateAndShared()){
                     whichColumn = Tables.POINTS;
                 } else {
                     whichColumn = Tables.PARSE_ID_NAME;
@@ -399,13 +399,6 @@ public class ParseSync {
         final List<ParseObject> parseObjects = objectsToUpload.parseObjects;
         final List<Long> _ids = objectsToUpload._ids;
 
-        for (ParseObject auxObject : parseObjects){
-            Log.d("parseUpload", "object with className= " + auxObject.getClassName() + ", id= " + auxObject.getObjectId());
-            Log.d("parseUpload", auxObject.toString());
-        }
-
-
-
         try {
             if(parseObjects.size() > 0){
                 ParseObject.saveAll(parseObjects);
@@ -432,11 +425,11 @@ public class ParseSync {
                 Tables table = new Tables(tableName);
                 String parseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
                 String privateID;
-                if(0 < table.lastPrivateColumn && table.lastPrivateColumn < table.columns.length){
+                if(table.isPrivateAndShared()){
                     //there is a part shared and a part private with a pointer
                     privateID = cursor.getString(cursor.getColumnIndex(Tables.POINTS));
                     //Log.d("parseTable", "table= " + tableName + " is private and shared");
-                } else if (table.lastPrivateColumn < 0){
+                } else if (table.isAllShared()){
                     //only shared part
                     privateID = null;
                 } else {
@@ -543,10 +536,11 @@ public class ParseSync {
                     Tables originalTable = new Tables(origin[i]);
                     if(parseForeignID != null){
                         //If there is a part shared and private, the foreign id has to be the shared
-                        if(originalTable.lastPrivateColumn > 0 && originalTable.lastPrivateColumn < originalTable.columns.length){
+                        if(originalTable.isPrivateAndShared()){
                             parseForeignID = ParseAdapter.getPublicIdFromParseId(mContext, origin[i], parseForeignID);
                         }
                     }
+                    Log.d("createParseObjectFromCursor", "working with column= " + columns[i] + ", that has foreign key type= " + origin[i] + ", with id= " + parseForeignID);
 
                     //special treatment for transaction_people
                     String columnToStore = columns[i];
@@ -583,11 +577,19 @@ public class ParseSync {
                         parseObject.put(columnToStore,
                                 ParseObject.createWithoutData(origin[i], parseForeignID));
                     } else {
+                        //Log.d("createParseObjectFromCursor", "finding the object");
                         for (int j = 0; j < objectsToUpload._ids.size(); j++) {
                             //find the object
-                            if (objectsToUpload.type.get(j).equals(origin[i])) {
+                            String className = origin[i];
+                            if(originalTable.isAllPrivate()) {
+                               className = origin[i] + PRIVATE;
+                            }
+                            //Log.d("createParseObjectFromCursor", "looking for type " + objectsToUpload.type.get(j) + " = " + className);
+                            if (objectsToUpload.type.get(j).equals(className)) {
+                                //Log.d("createParseObjectFromCursor", "looking for id " + objectsToUpload._ids.get(j) + " = " + cursor.getLong(index));
                                 if (objectsToUpload._ids.get(j) == cursor.getLong(index)) {
                                     //add the object here
+                                    //Log.d("createParseObjectFromCursor", "object found");
                                     parseObject.put(columnToStore, objectsToUpload.parseObjects.get(j));
                                 }
                             }
@@ -611,7 +613,7 @@ public class ParseSync {
     private void addToObjectsToUpload(long _id, String parseID, ParseObject parseObject){
         //check if it's been downloaded
         if(!idsDownloaded.contains(parseID)){
-            Log.e("addToObjectsToUpload", "object= " + parseID + " needs upload");
+            Log.e("addToObjectsToUpload", "object with id= " + parseID + " needs upload");
 
             //check if it was downloaded in a previous iteration
             if(previousUploaded.parseIDs.contains(parseID)){
