@@ -116,15 +116,15 @@ public class Tables {
                 break;
 
             case TABLENAME_PEOPLE:
-                columns = new String[]{NAME, NEEDS_ACL, POINTS, // 1 - 3 private
-                        EMAIL, USER_ID}; //  4 - 5 public
+                columns = new String[]{NAME, POINTS, // 1 - 2 private
+                        EMAIL, USER_ID}; //  3 - 4 public
                 origin = new String[]{null, null,
                         null, null, null};
                 types = new String[]{TYPE_TEXT, TYPE_INT, TYPE_INT,
                         TYPE_TEXT, TYPE_TEXT};
                 unique = new boolean[]{false, false, true,
                         true, true};
-                lastPrivateColumn = 3;
+                lastPrivateColumn = 2;
                 acl = ACL_PUBLIC;
                 break;
 

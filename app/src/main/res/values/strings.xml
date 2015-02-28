@@ -8,7 +8,24 @@
 
     <string name="app_name">Expensor_beta</string>
     <string name="hello_world">Hello world!</string>
+
+    <!-- actions in menu -->
+    <string name="action_sync">Sync</string>
     <string name="action_settings">Settings</string>
     <string name="action_log_out">Log out</string>
+
+    <!-- TODO delete this dummy action -->
+    <string name="action_example">Example action</string>
+
+    <!-- Sections -->
+    <string name="title_section_main">Dashboard</string>
+    <string name="title_section_history">History</string>
+    <string name="title_section_people">People</string>
+    <string name="title_section_groups">Groups</string>
+    <string name="title_section_settings">Settings</string>
+
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>
