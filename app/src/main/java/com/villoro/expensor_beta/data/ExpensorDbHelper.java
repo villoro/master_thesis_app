@@ -14,7 +14,7 @@ import com.villoro.expensor_beta.parse.ParseSync;
 public class ExpensorDbHelper extends SQLiteOpenHelper{
 
     private static final int DATABASE_VERSION = 2;
-    public static final String DATABASE_NAME = "expensor.db";
+    private static final String DATABASE_NAME = "expensor.db";
 
     private Context context;
 
@@ -23,16 +23,31 @@ public class ExpensorDbHelper extends SQLiteOpenHelper{
         this.context = context;
     }
 
-    public void createTable(String tableName, SQLiteDatabase db)
+    private void createTable(String tableName, SQLiteDatabase db)
     {
         Tables table = new Tables(tableName);
         db.execSQL(table.createTable());
     }
 
-    public void dropTable(String tableName, SQLiteDatabase db)
+    private void dropTable(String tableName, SQLiteDatabase db)
     {
         Tables table = new Tables(tableName);
         db.execSQL(table.dropTable());
+    }
+
+    public void restartDatabase(){
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            for (String tableName : Tables.TABLES)
+            {
+                dropTable(tableName, db);
+                createTable(tableName, db);
+            }
+            ParseSync.resetLastSync(context);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

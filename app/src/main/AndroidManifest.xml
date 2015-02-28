@@ -50,6 +50,11 @@
             android:launchMode="singleInstance">
         </activity>
 
+        <activity
+            android:name=".add_or_update.AddOrUpdateActivity"
+            android:label="@string/title_activity_empty">
+        </activity>
+
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.ExpensorAuthenticatorService" >
             <intent-filter>

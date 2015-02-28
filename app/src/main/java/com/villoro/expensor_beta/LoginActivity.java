@@ -260,6 +260,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void startExpensor(){
+        finish();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

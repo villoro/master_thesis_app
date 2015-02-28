@@ -1,9 +1,11 @@
 package com.villoro.expensor_beta.sections;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,20 +13,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.villoro.expensor_beta.navigationDrawer.MainActivity;
+import com.villoro.expensor_beta.LoginActivity;
 import com.villoro.expensor_beta.R;
-
-import java.lang.Override;
+import com.villoro.expensor_beta.add_or_update.AddOrUpdateActivity;
+import com.villoro.expensor_beta.navigationDrawer.MainActivity;
 
 /**
  * Created by Arnau on 28/02/2015.
  */
-public class DashboardFragment extends Fragment{
 
-    public DashboardFragment(){};
+public class HistoryFragment extends Fragment{
 
-    public static DashboardFragment newDashboardFragment(int sectionNumber){
-        DashboardFragment fragment = new DashboardFragment();
+    public HistoryFragment(){};
+
+    public static HistoryFragment newHistoryFragment(int sectionNumber){
+        HistoryFragment fragment = new HistoryFragment();
         Bundle args = new Bundle();
         args.putInt(MainActivity.ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -48,7 +51,7 @@ public class DashboardFragment extends Fragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_dashboard, menu);
+        inflater.inflate(R.menu.menu_history, menu);
     }
 
     @Override
@@ -57,19 +60,22 @@ public class DashboardFragment extends Fragment{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        switch (id){
+            case R.id.action_add_transaction:
+                Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+                startActivity(intent);
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
         return rootView;
     }
-
-
-    //TODO probably I'll use a loader
 }

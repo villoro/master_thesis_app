@@ -12,8 +12,11 @@ import android.support.v4.widget.DrawerLayout;
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.LoginActivity;
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.navigationDrawer.NavigationDrawerFragment;
+import com.villoro.expensor_beta.parse.ParseAdapter;
 import com.villoro.expensor_beta.sections.DashboardFragment;
+import com.villoro.expensor_beta.sections.GroupFragment;
+import com.villoro.expensor_beta.sections.HistoryFragment;
+import com.villoro.expensor_beta.sections.PeopleFragment;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
 import java.lang.CharSequence;
@@ -29,7 +32,7 @@ public class MainActivity extends ActionBarActivity
      * fragment.
      */
     public static final String ARG_SECTION_NUMBER = "section_number";
-    private static final int SECTION_MAIN = 0;
+    private static final int SECTION_DASHBOARD = 0;
     private static final int SECTION_HISTORY = 1;
     private static final int SECTION_PEOPLE = 2;
     private static final int SECTION_GROUPS = 3;
@@ -67,25 +70,25 @@ public class MainActivity extends ActionBarActivity
 
         //decide which fragment is needed
         switch (position){
-            case SECTION_MAIN:
+            case SECTION_DASHBOARD:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newMainFragment(position)).commit();
+                        replace(R.id.container, DashboardFragment.newDashboardFragment(position)).commit();
                 break;
             case SECTION_HISTORY:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newMainFragment(position)).commit();
+                        replace(R.id.container, HistoryFragment.newHistoryFragment(position)).commit();
                 break;
             case SECTION_PEOPLE:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newMainFragment(position)).commit();
+                        replace(R.id.container, PeopleFragment.newPeopleFragment(position)).commit();
                 break;
             case SECTION_GROUPS:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newMainFragment(position)).commit();
+                        replace(R.id.container, GroupFragment.newGroupFragment(position)).commit();
                 break;
             case SECTION_SETTINGS:
-                fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newMainFragment(position)).commit();
+                /*fragmentManager.beginTransaction().
+                        replace(R.id.container, DashboardFragment.newDashboardFragment(position)).commit();*/
                 break;
         }
 
@@ -93,8 +96,8 @@ public class MainActivity extends ActionBarActivity
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case SECTION_MAIN:
-                mTitle = getString(R.string.title_section_main);
+            case SECTION_DASHBOARD:
+                mTitle = getString(R.string.title_section_dashboard);
                 break;
             case SECTION_HISTORY:
                 mTitle = getString(R.string.title_section_history);
@@ -146,43 +149,16 @@ public class MainActivity extends ActionBarActivity
             case R.id.action_settings:
                 return true;
             case R.id.action_log_out:
+                //Logout and delete database
                 ParseUser.logOut();
+                ParseAdapter.deleteAll(this);
+                finish();
+
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    /*public static class PlaceholderFragment extends Fragment {
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
-    } */
 
 }

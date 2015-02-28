@@ -229,11 +229,16 @@ public class ParseAdapter {
 
     public static int updatePeoplePointsTo(Context context, String email, String parseUserID){
         ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
-        final  SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(Tables.USER_ID, parseUserID);
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
         return db.update(Tables.TABLENAME_PEOPLE, values, Tables.EMAIL + "= '" + email + "'", null);
+    }
+
+    public static void deleteAll(Context context){
+        ExpensorDbHelper mOpenHelper = new ExpensorDbHelper(context);
+        mOpenHelper.restartDatabase();
     }
 }
