@@ -32,8 +32,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.data.Tables;
-import com.villoro.expensor_beta.navigationDrawer.MainActivity;
-import com.villoro.expensor_beta.parse.ParseAdapter;
+import com.villoro.expensor_beta.sections.MainActivity;
+import com.villoro.expensor_beta.sync.parse.ParseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

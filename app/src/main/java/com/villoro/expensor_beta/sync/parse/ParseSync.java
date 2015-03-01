@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta.parse;
+package com.villoro.expensor_beta.sync.parse;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -409,6 +409,7 @@ public class ParseSync {
 
                 //update date of last sync
                 for(int i = 0; i < parseObjects.size(); i++) {
+                    Log.e("parseUpload", "should be calling updateEntrySQL");
                     updateEntrySQL(parseObjects.get(i), _ids.get(i));
                     objectsToUpload.parseIDs.add(parseObjects.get(i).getObjectId());
                 }
@@ -579,8 +580,13 @@ public class ParseSync {
                     }
 
                     if (parseForeignID != null && parseForeignID.length() > 0) {
+                        String foreignClassName = origin[i];
+                        if(originalTable.isAllPrivate()){
+                            foreignClassName = origin[i] + PRIVATE;
+                        }
+
                         parseObject.put(columnToStore,
-                                ParseObject.createWithoutData(origin[i], parseForeignID));
+                                ParseObject.createWithoutData(foreignClassName, parseForeignID));
                     } else {
                         //Log.d("createParseObjectFromCursor", "finding the object");
                         for (int j = 0; j < objectsToUpload._ids.size(); j++) {
@@ -649,14 +655,20 @@ public class ParseSync {
     private void updateEntrySQL(ParseObject parseObject, long _id){
 
         String parseObjectName = parseObject.getClassName();
+        Log.d("updateEntrySQL", "calling Update Entry SQL");
 
-        if(!parseObjectName.contains(PRIVATE)){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(Tables.LAST_UPDATE, startSync.getTime() );
+        String tableName = parseObjectName.replace(PRIVATE, "");
+        Tables table = new Tables(tableName);
+
+        Log.d("updateEntrySQL", "className= " + parseObjectName + ", tableName= " + tableName);
+
+        ContentValues contentValues = new ContentValues();
+        if(table.isPrivateAndShared() && parseObjectName.contains(PRIVATE) ){
+            contentValues.put(Tables.POINTS, parseObject.getObjectId());
+        } else {
             contentValues.put(Tables.PARSE_ID_NAME, parseObject.getObjectId());
-            ParseAdapter.updateWithId(mContext, contentValues, parseObjectName, _id);
         }
-
+        ParseAdapter.updateWithId(mContext, contentValues, tableName, _id);
         objectsUploaded++;
     }
 

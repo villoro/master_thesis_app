@@ -32,6 +32,15 @@
     <string name="title_section_groups">Groups</string>
     <string name="title_section_settings">Settings</string>
 
+    <!-- Info layout -->
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="hint_name_people">e.g. Daenerys Targaryen</string>
+    <string name="hint_name_group">e.g- House Stark</string>
+    <string name="hint_email">e.g. dany_targaryen@gmail.com</string>
+    <string name="hint_comments">Comments</string>
+    <string name="hint_amount">Amount</string>
+
     <!-- Navigation Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

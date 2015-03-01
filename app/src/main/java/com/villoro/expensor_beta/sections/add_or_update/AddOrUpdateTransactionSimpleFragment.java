@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta.add_or_update;
+package com.villoro.expensor_beta.sections.add_or_update;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,7 +25,7 @@ import com.villoro.expensor_beta.dialogs.DialogDatePicker;
 /**
  * Created by Arnau on 01/03/2015.
  */
-public class TransactionSimpleFragment extends Fragment implements DialogDatePicker.CommDatePicker, AddOrUpdateInterface{
+public class AddOrUpdateTransactionSimpleFragment extends Fragment implements DialogDatePicker.CommDatePicker, AddOrUpdateInterface{
 
     Context context;
     long currentID;
@@ -45,7 +45,7 @@ public class TransactionSimpleFragment extends Fragment implements DialogDatePic
     String date, comments;
     double amount;
 
-    public TransactionSimpleFragment(){};
+    public AddOrUpdateTransactionSimpleFragment(){};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,9 +157,11 @@ public class TransactionSimpleFragment extends Fragment implements DialogDatePic
         values.put(Tables.COMMENTS, comments);
         values.put(Tables.AMOUNT, amount);
         values.put(Tables.CATEGORY_ID, categoryID);
-        context.getContentResolver().insert(
-                ExpensorContract.ExpenseEntry.CONTENT_URI, values
-        );
+        if (currentID > 0){
+            context.getContentResolver().update(ExpensorContract.ExpenseEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+        } else {
+            context.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, values);
+        }
     }
 
     @Override

@@ -46,12 +46,12 @@
         </activity>
 
         <activity
-            android:name=".navigationDrawer.MainActivity"
+            android:name=".sections.MainActivity"
             android:launchMode="singleInstance">
         </activity>
 
         <activity
-            android:name=".add_or_update.AddOrUpdateActivity"
+            android:name=".sections.add_or_update.AddOrUpdateActivity"
             android:label="@string/title_activity_empty">
         </activity>
 

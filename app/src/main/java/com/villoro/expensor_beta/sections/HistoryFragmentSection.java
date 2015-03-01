@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,29 +18,27 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.villoro.expensor_beta.LoginActivity;
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.add_or_update.AddOrUpdateActivity;
+import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
-import com.villoro.expensor_beta.navigationDrawer.MainActivity;
 
 /**
  * Created by Arnau on 28/02/2015.
  */
 
-public class HistoryFragment extends Fragment implements DialogLongClickList.CommGetChoise, DialogOkCancel.CommOkCancel{
+public class HistoryFragmentSection extends Fragment implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel{
 
     ListView listView;
     Context context;
     long listID;
 
-    public HistoryFragment(){};
+    public HistoryFragmentSection(){};
 
-    public static HistoryFragment newHistoryFragment(int sectionNumber){
-        HistoryFragment fragment = new HistoryFragment();
+    public static HistoryFragmentSection newHistoryFragment(int sectionNumber){
+        HistoryFragmentSection fragment = new HistoryFragmentSection();
         Bundle args = new Bundle();
         args.putInt(MainActivity.ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -95,7 +92,7 @@ public class HistoryFragment extends Fragment implements DialogLongClickList.Com
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_section_history, container, false);
         listView = (ListView) rootView.findViewById(R.id.lv_transactions);
 
         setListView();
@@ -112,15 +109,15 @@ public class HistoryFragment extends Fragment implements DialogLongClickList.Com
         if (cursor.moveToFirst()){
             do{
                 StringBuilder sb = new StringBuilder();
-                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + " ");
-                sb.append("date= " + cursor.getString(cursor.getColumnIndex(Tables.DATE)) + " ");
-                sb.append("categoryID= " + cursor.getInt(cursor.getColumnIndex(Tables.CATEGORY_ID)) + " ");
-                sb.append("amount= " + cursor.getInt(cursor.getColumnIndex(Tables.AMOUNT)) + " ");
-                sb.append("comments= " + cursor.getInt(cursor.getColumnIndex(Tables.COMMENTS)) + " ");
-                if(cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) !=  null){
-                    sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + " ");
-                }
-                sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)) + " ");
+                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + ", ");
+
+                sb.append("date= " + cursor.getString(cursor.getColumnIndex(Tables.DATE)) + ", ");
+                sb.append("categoryID= " + cursor.getInt(cursor.getColumnIndex(Tables.CATEGORY_ID)) + ", ");
+                sb.append("amount= " + cursor.getInt(cursor.getColumnIndex(Tables.AMOUNT)) + ", ");
+                sb.append("comments= " + cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)) + ", ");
+
+                sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + ", ");
+                sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)) + ", ");
                 sb.append("deleted= " + cursor.getInt(cursor.getColumnIndex(Tables.DELETED)));
 
                 aux[i] = sb.toString();
@@ -133,12 +130,8 @@ public class HistoryFragment extends Fragment implements DialogLongClickList.Com
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO delete that
-                if(id==0){
-                    id = position + 1;
-                    Log.e("HistoryFragment", "temporary using position= " + position);
-                }
-                showLongClickList(id);
+                //TODO when using cursorAdapter delete the "1"
+                showLongClickList(id + 1);
                 return true;
             }
         });
@@ -152,8 +145,8 @@ public class HistoryFragment extends Fragment implements DialogLongClickList.Com
     }
 
     @Override
-    public void getChoise(int choise) {
-        if (choise == DialogLongClickList.CASE_EDIT)
+    public void getChoice(int choice) {
+        if (choice == DialogLongClickList.CASE_EDIT)
         {
             Intent intent = new Intent(context, AddOrUpdateActivity.class);
             intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
@@ -161,7 +154,7 @@ public class HistoryFragment extends Fragment implements DialogLongClickList.Com
 
             startActivity(intent);
         }
-        if (choise == DialogLongClickList.CASE_DELETE)
+        if (choice == DialogLongClickList.CASE_DELETE)
         {
             DialogOkCancel dialog = new DialogOkCancel();
             dialog.setCommunicator(this, dialog.CASE_FROM_LONG_CLICK);

@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta.navigationDrawer;
+package com.villoro.expensor_beta.sections.navigationDrawer;
 
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;

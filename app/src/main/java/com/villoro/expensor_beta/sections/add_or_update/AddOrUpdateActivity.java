@@ -1,7 +1,6 @@
-package com.villoro.expensor_beta.add_or_update;
+package com.villoro.expensor_beta.sections.add_or_update;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,19 +14,20 @@ import com.villoro.expensor_beta.dialogs.DialogOkCancel;
  */
 public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCancel.CommOkCancel {
 
-    public static String WHICH_LIST = "whichList";
-    public static String ID_OBJECT = "idObject";
+    public final static String WHICH_LIST = "whichList";
+    public final static String ID_OBJECT = "idObject";
 
-    public static int CASE_EXPENSE = 0;
-    public static int CASE_INCOME = 1;
-    public static int CASE_CATEGORIES = 2;
-    public static int CASE_PEOPLE = 3;
-    public static int CASE_GROUP = 4;
+    public final static int CASE_EXPENSE = 0;
+    public final static int CASE_INCOME = 1;
+    public final static int CASE_CATEGORIES = 2;
+    public final static int CASE_PEOPLE = 3;
+    public final static int CASE_GROUP = 4;
 
     int whichCase;
     long ID;
 
-    TransactionSimpleFragment transactionSimpleFragment;
+    AddOrUpdateTransactionSimpleFragment transactionSimpleFragment;
+    AddOrUpdateGroupFragment groupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +41,19 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         Log.d("AddOrUpdateActivity", "id= " + ID);
 
         if (savedInstanceState == null){
-            transactionSimpleFragment = new TransactionSimpleFragment();
-            transactionSimpleFragment.initialize(ID);
-            getSupportFragmentManager().beginTransaction().add(R.id.container, transactionSimpleFragment).commit();
+            switch (whichCase){
+                case CASE_EXPENSE:
+                    transactionSimpleFragment = new AddOrUpdateTransactionSimpleFragment();
+                    transactionSimpleFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, transactionSimpleFragment).commit();
+                    break;
+                case CASE_GROUP:
+                    groupFragment = new AddOrUpdateGroupFragment();
+                    groupFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, groupFragment).commit();
+
+            }
+
         }
     }
 
@@ -71,7 +81,15 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_ok) {
-            transactionSimpleFragment.add();
+            switch (whichCase){
+                case CASE_EXPENSE:
+                    transactionSimpleFragment.add();
+                    break;
+                case CASE_GROUP:
+                    groupFragment.add();
+                    break;
+            }
+
             finish();
             return true;
         }
@@ -94,7 +112,15 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     public void ifOkDo(boolean ok, int whichCase) {
         if(ok)
         {
-            transactionSimpleFragment.delete();
+            switch (whichCase){
+                case CASE_EXPENSE:
+                    transactionSimpleFragment.delete();
+                    break;
+                case CASE_GROUP:
+                    groupFragment.delete();
+                    break;
+            }
+
             finish();
         }
     }

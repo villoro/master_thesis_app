@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,21 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.ParseACL;
-import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.villoro.expensor_beta.data.ExpensorContract;
-import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
-import com.villoro.expensor_beta.parse.ParseAdapter;
-import com.villoro.expensor_beta.parse.ParseQueries;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class ParseActivity extends ActionBarActivity {

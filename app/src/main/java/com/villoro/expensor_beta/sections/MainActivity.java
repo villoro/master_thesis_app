@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta.navigationDrawer;
+package com.villoro.expensor_beta.sections;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -13,11 +13,12 @@ import com.parse.ParseUser;
 import com.villoro.expensor_beta.LoginActivity;
 import com.villoro.expensor_beta.ParseActivity;
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.parse.ParseAdapter;
-import com.villoro.expensor_beta.sections.DashboardFragment;
-import com.villoro.expensor_beta.sections.GroupFragment;
-import com.villoro.expensor_beta.sections.HistoryFragment;
-import com.villoro.expensor_beta.sections.PeopleFragment;
+import com.villoro.expensor_beta.sections.navigationDrawer.NavigationDrawerFragment;
+import com.villoro.expensor_beta.sync.parse.ParseAdapter;
+import com.villoro.expensor_beta.sections.DashboardFragmentSection;
+import com.villoro.expensor_beta.sections.GroupFragmentSection;
+import com.villoro.expensor_beta.sections.HistoryFragmentSection;
+import com.villoro.expensor_beta.sections.PeopleFragmentSection;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
 import java.lang.CharSequence;
@@ -73,19 +74,19 @@ public class MainActivity extends ActionBarActivity
         switch (position){
             case SECTION_DASHBOARD:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newDashboardFragment(position)).commit();
+                        replace(R.id.container, DashboardFragmentSection.newDashboardFragment(position)).commit();
                 break;
             case SECTION_HISTORY:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, HistoryFragment.newHistoryFragment(position)).commit();
+                        replace(R.id.container, HistoryFragmentSection.newHistoryFragment(position)).commit();
                 break;
             case SECTION_PEOPLE:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, PeopleFragment.newPeopleFragment(position)).commit();
+                        replace(R.id.container, PeopleFragmentSection.newPeopleFragment(position)).commit();
                 break;
             case SECTION_GROUPS:
                 fragmentManager.beginTransaction().
-                        replace(R.id.container, GroupFragment.newGroupFragment(position)).commit();
+                        replace(R.id.container, GroupFragmentSection.newGroupFragment(position)).commit();
                 break;
             case SECTION_SETTINGS:
                 /*fragmentManager.beginTransaction().

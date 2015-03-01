@@ -4,9 +4,8 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.villoro.expensor_beta.parse.ParseSync;
+import com.villoro.expensor_beta.sync.parse.ParseSync;
 
 /**
  * Created by Arnau on 19/01/2015.

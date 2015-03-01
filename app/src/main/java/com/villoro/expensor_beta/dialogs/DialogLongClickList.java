@@ -14,7 +14,7 @@ public class DialogLongClickList extends DialogFragment {
     public static int CASE_EDIT = 0;
     public static int CASE_DELETE = 1;
 
-    CommGetChoise commGetChoise;
+    CommGetChoice commGetChoise;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -27,7 +27,7 @@ public class DialogLongClickList extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // TODO Auto-generated method stub
-                commGetChoise.getChoise(which);
+                commGetChoise.getChoice(which);
             }
         });
 
@@ -35,13 +35,13 @@ public class DialogLongClickList extends DialogFragment {
         return dialog;
     }
 
-    public void setCommunicator(CommGetChoise commGetChoise){
-        this.commGetChoise = commGetChoise;
+    public void setCommunicator(CommGetChoice commGetChoice){
+        this.commGetChoise = commGetChoice;
     }
 
-    public interface CommGetChoise
+    public interface CommGetChoice
     {
-        public void getChoise(int choise);
+        public void getChoice(int choice);
     }
 
 }

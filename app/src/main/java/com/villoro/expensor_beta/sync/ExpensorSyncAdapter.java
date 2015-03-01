@@ -5,29 +5,13 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.SyncResult;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.parse.FindCallback;
-import com.parse.ParseAnalytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.Utility;
-import com.villoro.expensor_beta.data.Tables;
-import com.villoro.expensor_beta.parse.ParseAdapter;
-import com.villoro.expensor_beta.parse.ParseSync;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.villoro.expensor_beta.sync.parse.ParseSync;
 
 /**
  * Created by Arnau on 28/01/2015.

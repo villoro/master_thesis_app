@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta.parse;
+package com.villoro.expensor_beta.sync.parse;
 
 import android.content.ContentValues;
 import android.content.Context;
