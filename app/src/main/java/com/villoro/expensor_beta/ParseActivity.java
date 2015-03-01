@@ -174,8 +174,6 @@ public class ParseActivity extends ActionBarActivity {
             }
         }); */
 
-        Log.d("", ParseQueries.queryParse(Tables.TABLENAME_TRANSACTION_SIMPLE, 0, 0));
-
        //updateACL();
     }
 

@@ -5,6 +5,7 @@ package com.villoro.expensor_beta.data;
  */
 
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class Tables {
 
@@ -101,7 +102,7 @@ public class Tables {
                 columns = new String[]{DATE, CATEGORY_ID, AMOUNT, COMMENTS, TYPE};
                 origin = new String[]{null, TABLENAME_CATEGORIES, null, null, null};
                 types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT, TYPE_TEXT};
-                unique = new boolean[]{false, false, false, false, false, false};
+                unique = new boolean[]{false, false, false, false, false};
                 lastPrivateColumn = 5;
                 acl = ACL_INDIVIDUAL;
                 break;
@@ -119,10 +120,10 @@ public class Tables {
                 columns = new String[]{NAME, POINTS, // 1 - 2 private
                         EMAIL, USER_ID}; //  3 - 4 public
                 origin = new String[]{null, null,
-                        null, null, null};
-                types = new String[]{TYPE_TEXT, TYPE_INT, TYPE_INT,
+                        null, null};
+                types = new String[]{TYPE_TEXT, TYPE_INT,
                         TYPE_TEXT, TYPE_TEXT};
-                unique = new boolean[]{false, false, true,
+                unique = new boolean[]{false, false,
                         true, true};
                 lastPrivateColumn = 2;
                 acl = ACL_PUBLIC;
@@ -202,6 +203,11 @@ public class Tables {
 
     public String createTable()
     {
+        int length = columns.length;
+        if(length != origin.length || length != types.length || length != unique.length){
+            Log.e("Tables", "error creating table= " + tableName);
+            return null;
+        }
         return createGenericTable(tableName, columns, types, unique);
     }
 

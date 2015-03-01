@@ -293,12 +293,15 @@ public class ParseSync {
                     String whoSpentId = parseObject.getParseObject(WHO_SPENT_ID).getObjectId();
                     String myId = ParseAdapter.getMyPublicId(mContext);
                     if(whoPaidId.equals(myId)){
+                        Log.d("insertParseObjectInSQL", "case who spent");
                         foreignObject = parseObject.getParseObject(WHO_SPENT_ID);
                         contentValues.put(Tables.AMOUNT, parseObject.getDouble(Tables.AMOUNT));
                     } else if (whoSpentId.equals(myId)){
+                        Log.d("insertParseObjectInSQL", "case who paid");
                         foreignObject = parseObject.getParseObject(WHO_PAID_ID);
                         contentValues.put(Tables.AMOUNT, - parseObject.getDouble(Tables.AMOUNT));
                     } else {
+                        Log.e("insertParseObjectInSQL", "my id= " + myId + ", whoPaidId= " + whoPaidId + ", whoSpentId= " + whoSpentId);
                         foreignObject = null;
                     }
 
@@ -443,6 +446,7 @@ public class ParseSync {
 
                 if(table.lastPrivateColumn < table.columns.length){
 
+                    Log.d("parseTable", "workin with table= " + tableName + " in part shard since " + table.lastPrivateColumn + " < " + table.columns.length);
                     //work with shared part
                     String innerParseID;
                     innerParseID = cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME));
@@ -457,6 +461,7 @@ public class ParseSync {
                 }
 
                 if(table.lastPrivateColumn > 0){
+                    Log.d("parseTable", "workin with table= " + tableName + " in part private since " + table.lastPrivateColumn + " > 0");
                     //work with the private part
                     ParseObject parseObject = createParseObjectFromCursor(
                             cursor, table, privateID, true, innerObject);

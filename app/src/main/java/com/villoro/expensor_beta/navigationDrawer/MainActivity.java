@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 
 import com.parse.ParseUser;
 import com.villoro.expensor_beta.LoginActivity;
+import com.villoro.expensor_beta.ParseActivity;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.parse.ParseAdapter;
 import com.villoro.expensor_beta.sections.DashboardFragment;
@@ -147,6 +148,10 @@ public class MainActivity extends ActionBarActivity
                 ExpensorSyncAdapter.syncImmediately(this);
                 return true;
             case R.id.action_settings:
+                //TODO make real settings activity
+                Intent intent2 = new Intent(this, ParseActivity.class);
+                startActivity(intent2);
+
                 return true;
             case R.id.action_log_out:
                 //Logout and delete database
