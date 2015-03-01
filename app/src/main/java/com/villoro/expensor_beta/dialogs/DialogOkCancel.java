@@ -11,7 +11,11 @@ import android.support.v4.app.DialogFragment;
  */
 public class DialogOkCancel extends DialogFragment{
 
+    public static int CASE_FROM_LONG_CLICK = 1;
+    public static int CASE_DIRECT = 2;
+
     CommOkCancel communicator;
+    int whichCase;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -22,13 +26,13 @@ public class DialogOkCancel extends DialogFragment{
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                communicator.ifOkDo(false);
+                communicator.ifOkDo(false, whichCase);
             }
         });
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                communicator.ifOkDo(true);
+                communicator.ifOkDo(true, whichCase);
             }
         });
 
@@ -36,13 +40,14 @@ public class DialogOkCancel extends DialogFragment{
         return dialog;
     }
 
-    public void setCommunicator(CommOkCancel communicator){
+    public void setCommunicator(CommOkCancel communicator, int whichCase){
         this.communicator = communicator;
+        this.whichCase = whichCase;
     }
 
     public interface CommOkCancel
     {
-        public void ifOkDo(boolean ok);
+        public void ifOkDo(boolean ok, int whichCase);
     }
 
 }

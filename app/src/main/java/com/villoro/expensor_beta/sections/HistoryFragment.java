@@ -1,10 +1,13 @@
 package com.villoro.expensor_beta.sections;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,17 +15,28 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.villoro.expensor_beta.LoginActivity;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.add_or_update.AddOrUpdateActivity;
+import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.Tables;
+import com.villoro.expensor_beta.dialogs.DialogLongClickList;
+import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.navigationDrawer.MainActivity;
 
 /**
  * Created by Arnau on 28/02/2015.
  */
 
-public class HistoryFragment extends Fragment{
+public class HistoryFragment extends Fragment implements DialogLongClickList.CommGetChoise, DialogOkCancel.CommOkCancel{
+
+    ListView listView;
+    Context context;
+    long listID;
 
     public HistoryFragment(){};
 
@@ -46,6 +60,13 @@ public class HistoryFragment extends Fragment{
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        context = getActivity();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setListView();
     }
 
     @Override
@@ -75,7 +96,86 @@ public class HistoryFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+        listView = (ListView) rootView.findViewById(R.id.lv_transactions);
 
+        setListView();
         return rootView;
+    }
+
+    public void setListView(){
+        Cursor cursor = getActivity().getContentResolver().query(
+                ExpensorContract.ExpenseEntry.CONTENT_URI, null, null, null, null);
+        String[] aux = new String[cursor.getCount()];
+
+        int i = 0;
+
+        if (cursor.moveToFirst()){
+            do{
+                StringBuilder sb = new StringBuilder();
+                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + " ");
+                sb.append("date= " + cursor.getString(cursor.getColumnIndex(Tables.DATE)) + " ");
+                sb.append("categoryID= " + cursor.getInt(cursor.getColumnIndex(Tables.CATEGORY_ID)) + " ");
+                sb.append("amount= " + cursor.getInt(cursor.getColumnIndex(Tables.AMOUNT)) + " ");
+                sb.append("comments= " + cursor.getInt(cursor.getColumnIndex(Tables.COMMENTS)) + " ");
+                if(cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) !=  null){
+                    sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + " ");
+                }
+                sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)) + " ");
+                sb.append("deleted= " + cursor.getInt(cursor.getColumnIndex(Tables.DELETED)));
+
+                aux[i] = sb.toString();
+                i++;
+            } while (cursor.moveToNext());
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, aux);
+        listView.setAdapter(arrayAdapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //TODO delete that
+                if(id==0){
+                    id = position + 1;
+                    Log.e("HistoryFragment", "temporary using position= " + position);
+                }
+                showLongClickList(id);
+                return true;
+            }
+        });
+    }
+
+    public void showLongClickList(long id){
+        DialogLongClickList dialog = new DialogLongClickList();
+        dialog.setCommunicator(this);
+        dialog.show(getFragmentManager(), null);
+        listID = id;
+    }
+
+    @Override
+    public void getChoise(int choise) {
+        if (choise == DialogLongClickList.CASE_EDIT)
+        {
+            Intent intent = new Intent(context, AddOrUpdateActivity.class);
+            intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
+            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+
+            startActivity(intent);
+        }
+        if (choise == DialogLongClickList.CASE_DELETE)
+        {
+            DialogOkCancel dialog = new DialogOkCancel();
+            dialog.setCommunicator(this, dialog.CASE_FROM_LONG_CLICK);
+            dialog.show(getFragmentManager(), null);
+
+        }
+    }
+
+    @Override
+    public void ifOkDo(boolean ok, int whichCase) {
+        if(ok){
+            Log.d("TransactionSimpleFragment", "trying to delete id= " + listID);
+            context.getContentResolver().delete(ExpensorContract.ExpenseEntry.CONTENT_URI, Tables.ID + " = '" + listID + "'", null);
+            setListView();
+        }
     }
 }

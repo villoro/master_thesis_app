@@ -1,7 +1,9 @@
 package com.villoro.expensor_beta.add_or_update;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,14 +27,24 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     int whichCase;
     long ID;
 
+    TransactionSimpleFragment transactionSimpleFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_or_update);
 
         Bundle extras = getIntent().getExtras();
         whichCase = extras.getInt(WHICH_LIST);
 
         ID = extras.getLong(ID_OBJECT);
+        Log.d("AddOrUpdateActivity", "id= " + ID);
+
+        if (savedInstanceState == null){
+            transactionSimpleFragment = new TransactionSimpleFragment();
+            transactionSimpleFragment.initialize(ID);
+            getSupportFragmentManager().beginTransaction().add(R.id.container, transactionSimpleFragment).commit();
+        }
     }
 
     @Override
@@ -59,7 +71,8 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_ok) {
-            //here should go the add logic
+            transactionSimpleFragment.add();
+            finish();
             return true;
         }
         if (id == R.id.action_cancel) {
@@ -69,7 +82,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         if (id == R.id.action_discard) {
 
             DialogOkCancel dialog = new DialogOkCancel();
-            dialog.setCommunicator(this);
+            dialog.setCommunicator(this, DialogOkCancel.CASE_DIRECT);
             dialog.show(getSupportFragmentManager(), null);
 
             return true;
@@ -78,11 +91,10 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     }
 
     @Override
-    public void ifOkDo(boolean ok) {
-        // TODO Auto-generated method stub
+    public void ifOkDo(boolean ok, int whichCase) {
         if(ok)
         {
-            //fragment.delete();
+            transactionSimpleFragment.delete();
             finish();
         }
     }

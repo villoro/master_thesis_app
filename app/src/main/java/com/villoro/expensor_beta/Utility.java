@@ -4,6 +4,7 @@ import com.parse.ParseObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -45,4 +46,55 @@ public class Utility {
         }
         return date;
     }*/
+
+
+    //----------------------------- NEEDS WORK ------------------------------
+    //TODO improve that
+    public static int[] dateFromString(String date)
+    {
+        String[] aux = {"","",""};
+        int[] output = new int[3];
+        int i = 0;
+
+        while(date.length()>0 && i < 2)
+        {
+            String letter = date.substring(0,1);
+            date = date.substring(1, date.length());
+            if(letter.equals("/"))
+            {
+                output[i] = Integer.parseInt(aux[i]);
+                i++;
+            }
+            else
+            {
+                aux[i] += letter;
+            }
+        }
+        output[2] = Integer.parseInt(date);
+        return output;
+    }
+
+    //TODO improve that
+    public static String dateToString(int[] date)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Integer.toString(date[0])).append("/");
+        sb.append(Integer.toString(date[1])).append("/");
+        sb.append(Integer.toString(date[2]));
+        return sb.toString();
+    }
+
+    //TODO improve that
+    public static int[] getDate()
+    {
+        final Calendar c = Calendar.getInstance();
+        return new int[]
+                {c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)};
+    }
+
+    //TODO improve that
+    public static String formatDoubleToSQLite(String amount)
+    {
+        return amount.replace(",", ".");
+    }
 }

@@ -439,6 +439,9 @@ public class ExpensorProvider extends ContentProvider {
 
         ContentValues values = new ContentValues();
         values.put(Tables.DELETED, Tables.TRUE);
+        if (values.get(Tables.LAST_UPDATE) == null) {
+            values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());
+        }
 
         switch (match) {
             case EXPENSE:
@@ -475,6 +478,8 @@ public class ExpensorProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        Log.d("ExpensorProvider", "rows deleted= " + rowsDeleted);
         // Because a null deletes all rows
         if (selection == null || rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
