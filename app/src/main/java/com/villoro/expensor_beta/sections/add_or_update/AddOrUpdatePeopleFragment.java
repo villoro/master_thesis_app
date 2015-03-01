@@ -60,7 +60,7 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
         values.put(Tables.NAME, name);
         values.put(Tables.EMAIL, email);
         if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.PeopleEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            //context.getContentResolver().update(ExpensorContract.PeopleEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
             context.getContentResolver().insert(ExpensorContract.PeopleEntry.CONTENT_URI, values);
         }

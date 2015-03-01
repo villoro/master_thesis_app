@@ -153,7 +153,7 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
         {
             Intent intent = new Intent(context, AddOrUpdateActivity.class);
             intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
-            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_GROUP);
+            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_PEOPLE);
 
             startActivity(intent);
         }

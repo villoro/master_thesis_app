@@ -28,6 +28,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
 
     AddOrUpdateTransactionSimpleFragment transactionSimpleFragment;
     AddOrUpdateGroupFragment groupFragment;
+    AddOrUpdatePeopleFragment peopleFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,12 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     groupFragment = new AddOrUpdateGroupFragment();
                     groupFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, groupFragment).commit();
-
+                    break;
+                case CASE_PEOPLE:
+                    peopleFragment = new AddOrUpdatePeopleFragment();
+                    peopleFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, peopleFragment).commit();
+                    break;
             }
 
         }
@@ -88,6 +94,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                 case CASE_GROUP:
                     groupFragment.add();
                     break;
+                case CASE_PEOPLE:
+                    peopleFragment.add();
+                    break;
             }
 
             finish();
@@ -118,6 +127,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     break;
                 case CASE_GROUP:
                     groupFragment.delete();
+                    break;
+                case CASE_PEOPLE:
+                    peopleFragment.delete();
                     break;
             }
 
