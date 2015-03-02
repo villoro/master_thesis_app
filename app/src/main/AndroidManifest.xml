@@ -55,6 +55,11 @@
             android:label="@string/title_activity_empty">
         </activity>
 
+        <activity
+            android:name=".sections.details.ShowDetailsActivity"
+            android:label="@string/title_activity_empty">
+        </activity>
+
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.ExpensorAuthenticatorService" >
             <intent-filter>

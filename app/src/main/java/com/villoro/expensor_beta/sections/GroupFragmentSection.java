@@ -24,6 +24,7 @@ import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
+import com.villoro.expensor_beta.sections.details.ShowDetailsActivity;
 
 /**
  * Created by Arnau on 28/02/2015.
@@ -131,6 +132,14 @@ public class GroupFragmentSection extends Fragment implements DialogLongClickLis
                 //TODO when using cursorAdapter delete the "1"
                 showLongClickList(id + 1);
                 return true;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(context, ShowDetailsActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, id + 1);
+                startActivity(intent);
             }
         });
     }

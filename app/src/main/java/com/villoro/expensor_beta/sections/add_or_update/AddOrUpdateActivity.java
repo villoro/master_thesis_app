@@ -22,6 +22,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     public final static int CASE_CATEGORIES = 2;
     public final static int CASE_PEOPLE = 3;
     public final static int CASE_GROUP = 4;
+    public final static int CASE_PEOPLE_IN_GROUP = 5;
 
     int whichCase;
     long ID;
@@ -29,6 +30,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     AddOrUpdateTransactionSimpleFragment transactionSimpleFragment;
     AddOrUpdateGroupFragment groupFragment;
     AddOrUpdatePeopleFragment peopleFragment;
+    AddOrUpdatePeopleInGroupFragment peopleInGroupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,10 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     peopleFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, peopleFragment).commit();
                     break;
+                case CASE_PEOPLE_IN_GROUP:
+                    peopleInGroupFragment = new AddOrUpdatePeopleInGroupFragment();
+                    peopleInGroupFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, peopleInGroupFragment).commit();
             }
 
         }
@@ -97,6 +103,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                 case CASE_PEOPLE:
                     peopleFragment.add();
                     break;
+                case CASE_PEOPLE_IN_GROUP:
+                    peopleInGroupFragment.add();
+                    break;
             }
 
             finish();
@@ -130,6 +139,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     break;
                 case CASE_PEOPLE:
                     peopleFragment.delete();
+                    break;
+                case CASE_PEOPLE_IN_GROUP:
+                    peopleInGroupFragment.delete();
                     break;
             }
 
