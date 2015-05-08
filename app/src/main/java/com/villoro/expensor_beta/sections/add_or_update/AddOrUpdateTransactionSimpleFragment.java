@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.villoro.expensor_beta.R;
@@ -32,7 +35,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     Button b_date;
 
     EditText e_amount, e_comments;
-    Spinner sp_categories;
+
+    ListView lv_categories;
 
     ImageView iv_categories;
 
@@ -40,9 +44,9 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     DialogDatePicker dialogDate;
 
     Cursor cursorCategories;
-    int[] to;
+    int[] to, date;
 
-    String date, comments;
+    String comments;
     double amount;
 
     public AddOrUpdateTransactionSimpleFragment(){};
@@ -57,7 +61,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     @Override
     public void onResume() {
         super.onResume();
-        setSpinner();
+        setRadioGroup();
     }
 
     @Override
@@ -69,8 +73,9 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         e_comments = (EditText) rv.findViewById(R.id.et_comments);
         e_amount = (EditText) rv.findViewById(R.id.et_amount);
-        sp_categories = (Spinner) rv.findViewById(R.id.sp_categories);
-        setSpinner();
+        lv_categories = (ListView) rv.findViewById(R.id.lv_categories);
+
+        date = new int[5];
 
         if (currentID >0)
         {
@@ -82,7 +87,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     private void bindButtonDate(View rv)
     {
         b_date = (Button) rv.findViewById(R.id.b_date);
-        b_date.setText(Utility.dateToString(Utility.getDate()));
+        b_date.setText(Utility.dateOnlyToString(Utility.getDate()));
         b_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,15 +101,22 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         dialogDate.setCommunicator(this);
     }
 
-    private void setSpinner(){
-        to = new int[]{android.R.id.text1};
+    private void setRadioGroup(){
+        /*to = new int[]{android.R.id.text1};
         cursorCategories = context.getContentResolver().query(
                 ExpensorContract.CategoriesEntry.CONTENT_URI, null, null, null, null);
         sp_adapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_1, cursorCategories, new String[]{Tables.NAME},
                 to, 0);
-        sp_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_categories.setAdapter(sp_adapter);
+        sp_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
+
+        RadioButton radioButton = new RadioButton(getActivity());
+        //TODO ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(getActivity(),)
+        /*int dimension = (int) getResources().getDimension(R.dimen.row_thickness);
+        params.width = dimension; params.height = dimension;
+        radioButton.setLayoutParams(params);
+
+        r_categories.addView(radioButton); */
     }
 
     private void bindIVCategories(View rv)
@@ -123,7 +135,10 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
     @Override
     public void setDate(int year, int month, int day) {
-        b_date.setText(Utility.dateToString(new int[]{day, month, year}));
+        b_date.setText(Utility.dateOnlyToString(new int[]{day, month, year}));
+        date[0] = year;
+        date[1] = month;
+        date[2] = day;
     }
 
 
@@ -143,20 +158,19 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
     @Override
     public void add() {
-        date = b_date.getText().toString().trim();
         comments = e_comments.getText().toString().trim();
         amount = Double.parseDouble(Utility.formatDoubleToSQLite(e_amount.getText().toString().trim()));
 
         String from = "";
 
-        long categoryID = sp_categories.getSelectedItemId();
+        //TODO long categoryID = sp_categories.getSelectedItemId();
 
         //TODO check if values are possible
         ContentValues values = new ContentValues();
-        //TODO values.put(Tables.DATE, date);
+        values.put(Tables.DATE, Utility.completeDateToString(date));
         values.put(Tables.COMMENTS, comments);
         values.put(Tables.AMOUNT, amount);
-        values.put(Tables.CATEGORY_ID, categoryID);
+        //TODO values.put(Tables.CATEGORY_ID, categoryID);
         if (currentID > 0){
             context.getContentResolver().update(ExpensorContract.ExpenseEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
@@ -174,7 +188,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         //TODO b_date.setText();
         int categoryID = tempCursor.getInt(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
-        sp_categories.setSelection(categoryID);
+        //TODO sp_categories.setSelection(categoryID);
         e_amount.setText("" + tempCursor.getDouble(tempCursor.getColumnIndex(Tables.AMOUNT)));
         e_comments.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.COMMENTS)));
     }

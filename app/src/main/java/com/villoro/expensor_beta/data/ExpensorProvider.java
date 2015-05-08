@@ -26,8 +26,8 @@ public class ExpensorProvider extends ContentProvider {
     private static final int INCOME = 200;
     private static final int INCOME_WITH_ID = 201;
 
-    private static final int CATEGORIES = 300;
-    private static final int CATEGORIES_WITH_ID = 301;
+    private static final int CATEGORIES_EXPENSE = 300;
+    private static final int CATEGORIES_EXPENSE_WITH_ID = 301;
 
     private static final int PEOPLE = 400;
     private static final int PEOPLE_WITH_ID = 401;
@@ -64,8 +64,8 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME, INCOME);
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME + "/#", INCOME_WITH_ID);
 
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES);
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES_EXPENSE);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_EXPENSE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/#", PEOPLE_WITH_ID);
@@ -129,11 +129,11 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
-            case CATEGORIES: {
+            case CATEGORIES_EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
-                        selection,
+                        Tables.TYPE + " = " + Tables.TYPE_EXPENSE,
                         selectionArgs,
                         null,
                         null,
@@ -141,7 +141,7 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
-            case CATEGORIES_WITH_ID: {
+            case CATEGORIES_EXPENSE_WITH_ID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
@@ -260,9 +260,9 @@ public class ExpensorProvider extends ContentProvider {
             case INCOME_WITH_ID:
                 return ExpensorContract.IncomeEntry.CONTENT_ITEM_TYPE;
 
-            case CATEGORIES:
+            case CATEGORIES_EXPENSE:
                 return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
-            case CATEGORIES_WITH_ID:
+            case CATEGORIES_EXPENSE_WITH_ID:
                 return ExpensorContract.CategoriesEntry.CONTENT_ITEM_TYPE;
 
             case PEOPLE:
@@ -338,11 +338,12 @@ public class ExpensorProvider extends ContentProvider {
                     throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
-            case CATEGORIES: {
+            case CATEGORIES_EXPENSE: {
                 if (db.query(
                         Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
                         Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
                         null, null, null, null).getCount() == 0) {
+                    values.put(Tables.TYPE, Tables.TYPE_EXPENSE);
                     long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
                     if (_id > 0)
                         returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
@@ -450,7 +451,7 @@ public class ExpensorProvider extends ContentProvider {
             case INCOME:
                 rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
-            case CATEGORIES:
+            case CATEGORIES_EXPENSE:
                 rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:
@@ -507,7 +508,7 @@ public class ExpensorProvider extends ContentProvider {
             case INCOME:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
-            case CATEGORIES:
+            case CATEGORIES_EXPENSE:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:

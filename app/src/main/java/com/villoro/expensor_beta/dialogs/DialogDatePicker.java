@@ -16,6 +16,7 @@ public class DialogDatePicker extends DialogFragment
 
     CommDatePicker comm;
     String oldDate;
+    int[] date; //{yyyy, mm, dd, hh, mm, ss}
 
     public DialogDatePicker() {
         // TODO Auto-generated constructor stub
@@ -26,7 +27,7 @@ public class DialogDatePicker extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
 
-        int[] date = Utility.dateFromString(oldDate);
+        date = Utility.onlyDateFromString(oldDate);
 
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), this, date[2], date[1] - 1, date[0]);

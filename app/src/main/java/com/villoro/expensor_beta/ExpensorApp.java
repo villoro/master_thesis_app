@@ -23,6 +23,9 @@ public class ExpensorApp extends Application{
         //Link a parse.com/expensor_alfa
         Parse.initialize(this, "CVyaV0ibsxsi0tUm2VBZALUttuGJeixhqCPYPyXM", "oI5C3b9Le5vzZHNrt8XceFvlGIY2BmDXkUkog2zk");
 
+        //Link a parse.com/expensor_beta
+        //Parse.initialize(this, "Ui3h6McHif4OMiHsDQemy6mEw0LfttcF7Xr4ATpx", "1KVMEGr0MBr8g7rqPttYyFV9zStjpC6C9ljtWxCZ");
+
 
     }
 }
