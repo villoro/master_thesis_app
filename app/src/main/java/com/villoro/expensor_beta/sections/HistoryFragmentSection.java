@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.adapters.TransactionSimpleAdapter;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
@@ -34,6 +35,8 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     ListView listView;
     Context context;
     long listID;
+
+    TransactionSimpleAdapter transactionSimpleAdapter;
 
     public HistoryFragmentSection(){};
 
@@ -102,31 +105,9 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     public void setListView(){
         Cursor cursor = getActivity().getContentResolver().query(
                 ExpensorContract.ExpenseEntry.CONTENT_URI, null, null, null, null);
-        String[] aux = new String[cursor.getCount()];
+        transactionSimpleAdapter = new TransactionSimpleAdapter(context, cursor, 0);
 
-        int i = 0;
-
-        if (cursor.moveToFirst()){
-            do{
-                StringBuilder sb = new StringBuilder();
-                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + ", ");
-
-                sb.append("date= " + cursor.getString(cursor.getColumnIndex(Tables.DATE)) + ", ");
-                sb.append("categoryID= " + cursor.getInt(cursor.getColumnIndex(Tables.CATEGORY_ID)) + ", ");
-                sb.append("amount= " + cursor.getInt(cursor.getColumnIndex(Tables.AMOUNT)) + ", ");
-                sb.append("comments= " + cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)) + ", ");
-
-                sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + ", ");
-                sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)) + ", ");
-                sb.append("deleted= " + cursor.getInt(cursor.getColumnIndex(Tables.DELETED)));
-
-                aux[i] = sb.toString();
-                i++;
-            } while (cursor.moveToNext());
-        }
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, aux);
-        listView.setAdapter(arrayAdapter);
+        listView.setAdapter(transactionSimpleAdapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

@@ -59,8 +59,6 @@ public class ShowListActivity extends ActionBarActivity {
         Cursor cursor = getContentResolver().query(ExpensorContract.CategoriesEntry.CONTENT_URI, null, null, null, null);
         CategoryAdapter categoryAdapter = new CategoryAdapter(this, cursor, 0);
         lv_colors.setAdapter(categoryAdapter);
-
-        cursor.close();
     }
 
 }

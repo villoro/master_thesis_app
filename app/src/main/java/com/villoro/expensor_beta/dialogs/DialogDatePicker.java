@@ -27,7 +27,7 @@ public class DialogDatePicker extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
 
-        date = Utility.onlyDateFromString(oldDate);
+        date = Utility.dateFromString(oldDate);
 
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), this, date[2], date[1] - 1, date[0]);
@@ -46,7 +46,7 @@ public class DialogDatePicker extends DialogFragment
 
     }
 
-    public void setPreviusDate(String date)
+    public void setPreviousDate(String date)
     {
         this.oldDate = date;
     }
