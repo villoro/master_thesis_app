@@ -2,6 +2,7 @@ package com.villoro.expensor_beta.sections.add_or_update;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.villoro.expensor_beta.Utility;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogDatePicker;
+import com.villoro.expensor_beta.sections.showList.ShowListActivity;
 
 /**
  * Created by Arnau on 01/03/2015.
@@ -125,10 +127,9 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         iv_categories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Work on that
-                /*Intent intent = new Intent(getActivity(), ShowList.class);
-                intent.putExtra(Utils.WHICH_LIST, Utils.CASE_CATEGORIES);
-                startActivity(intent); */
+
+                Intent intent = new Intent(getActivity(), ShowListActivity.class);
+                startActivity(intent);
             }
         });
     }

@@ -56,6 +56,11 @@
         </activity>
 
         <activity
+            android:name=".sections.showList.ShowListActivity"
+            android:label="@string/title_activity_empty">
+        </activity>
+
+        <activity
             android:name=".sections.details.ShowDetailsActivity"
             android:label="@string/title_activity_empty">
         </activity>

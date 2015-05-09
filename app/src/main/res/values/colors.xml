@@ -18,4 +18,17 @@
     <item name="section_divider" type="color">@color/blue</item>
     <item name="divider" type="color">@color/lighter_gray</item>
 
+    <array name="categories_colors">
+        <item>@color/blue</item>
+        <item>@color/dark_blue</item>
+        <item>@color/purple</item>
+        <item>@color/dark_purple</item>
+        <item>@color/green</item>
+        <item>@color/dark_green</item>
+        <item>@color/orange</item>
+        <item>@color/dark_orange</item>
+        <item>@color/red</item>
+        <item>@color/dark_red</item>
+    </array>
+
 </resources>

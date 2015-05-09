@@ -6,26 +6,27 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.Tables;
 
 /**
- * Created by Arnau on 08/05/2015.
+ * Created by Arnau on 09/05/2015.
  */
-public class CategoryRadioAdapter extends CursorAdapter{
+public class CategoryAdapter extends CursorAdapter{
 
     private LayoutInflater mInflater;
-    RadioButton[] radioButtons;
 
-    public CategoryRadioAdapter(Context context, Cursor c, int flags) {
+    public CategoryAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
 
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
 
-        radioButtons = new RadioButton[c.getCount()];
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+        return mInflater.inflate(R.layout.row_categories, viewGroup, false);
     }
 
     @Override
@@ -36,12 +37,5 @@ public class CategoryRadioAdapter extends CursorAdapter{
         tv_color.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
-
-        RadioButton rb = (RadioButton) view.findViewById(R.id.row_category_radio_button);
-    }
-
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return mInflater.inflate(R.layout.row_categories_radio, viewGroup, false);
     }
 }

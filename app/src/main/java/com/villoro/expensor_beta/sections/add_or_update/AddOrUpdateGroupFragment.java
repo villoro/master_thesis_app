@@ -82,6 +82,7 @@ public class AddOrUpdateGroupFragment extends Fragment implements AddOrUpdateInt
         tempCursor.moveToFirst();
 
         e_name.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
+        tempCursor.close();
     }
 
     @Override

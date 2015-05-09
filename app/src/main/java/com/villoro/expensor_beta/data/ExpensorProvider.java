@@ -133,7 +133,7 @@ public class ExpensorProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
-                        Tables.TYPE + " = " + Tables.TYPE_EXPENSE,
+                        Tables.TYPE + " = '" + Tables.TYPE_EXPENSE + "'",
                         selectionArgs,
                         null,
                         null,

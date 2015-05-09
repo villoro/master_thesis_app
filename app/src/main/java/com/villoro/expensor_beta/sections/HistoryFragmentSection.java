@@ -92,8 +92,8 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_section_history, container, false);
-        listView = (ListView) rootView.findViewById(R.id.lv_transactions);
+        View rootView = inflater.inflate(R.layout.fragment_listview, container, false);
+        listView = (ListView) rootView.findViewById(R.id.m_listview);
 
         setListView();
         return rootView;

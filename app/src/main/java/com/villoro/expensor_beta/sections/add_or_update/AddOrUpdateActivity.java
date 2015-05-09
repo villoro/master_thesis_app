@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 
 /**
@@ -31,6 +32,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     AddOrUpdateGroupFragment groupFragment;
     AddOrUpdatePeopleFragment peopleFragment;
     AddOrUpdatePeopleInGroupFragment peopleInGroupFragment;
+    AddOrUpdateCategoriesFragment categoriesFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,16 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     transactionSimpleFragment = new AddOrUpdateTransactionSimpleFragment();
                     transactionSimpleFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionSimpleFragment).commit();
+                    break;
+                case CASE_CATEGORIES:
+                    categoriesFragment = new AddOrUpdateCategoriesFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Tables.TYPE, extras.getString(Tables.TYPE));
+                    categoriesFragment.setArguments(bundle);
+
+                    categoriesFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, categoriesFragment).commit();
                     break;
                 case CASE_GROUP:
                     groupFragment = new AddOrUpdateGroupFragment();
@@ -97,6 +109,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                 case CASE_EXPENSE:
                     transactionSimpleFragment.add();
                     break;
+                case CASE_CATEGORIES:
+                    categoriesFragment.add();
+                    break;
                 case CASE_GROUP:
                     groupFragment.add();
                     break;
@@ -133,6 +148,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
             switch (whichCase){
                 case CASE_EXPENSE:
                     transactionSimpleFragment.delete();
+                    break;
+                case CASE_CATEGORIES:
+                    categoriesFragment.delete();
                     break;
                 case CASE_GROUP:
                     groupFragment.delete();
