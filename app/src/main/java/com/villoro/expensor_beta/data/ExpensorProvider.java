@@ -19,12 +19,20 @@ public class ExpensorProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private ExpensorDbHelper mOpenHelper;
 
+    private static final String GRAPH = ExpensorContract.GraphEntry.GRAPH;
+    private static final String ALL = ExpensorContract.GraphEntry.ALL;
+
     //what I need to retrive
     private static final int EXPENSE = 100;
     private static final int EXPENSE_WITH_ID = 101;
 
-    private static final int INCOME = 200;
-    private static final int INCOME_WITH_ID = 201;
+    private static final int INCOME = 150;
+    private static final int INCOME_WITH_ID = 151;
+
+    private static final int GRAPH_EXPENSE = 200;
+    private static final int GRAPH_INCOME = 201;
+    private static final int GRAPH_EXPENSE_ALL = 202;
+    private static final int GRAPH_INCOME_ALL = 203;
 
     private static final int CATEGORIES_EXPENSE = 300;
     private static final int CATEGORIES_EXPENSE_WITH_ID = 301;
@@ -63,6 +71,11 @@ public class ExpensorProvider extends ContentProvider {
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME, INCOME);
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME + "/#", INCOME_WITH_ID);
+
+        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_EXPENSE + "/#/#", GRAPH_EXPENSE);
+        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_INCOME + "/#/#", GRAPH_INCOME);
+        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_EXPENSE + "/" + ALL + "/#/#", GRAPH_EXPENSE_ALL);
+        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_INCOME + "/" + ALL + "/#/#", GRAPH_INCOME_ALL);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES_EXPENSE);
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_EXPENSE_WITH_ID);
@@ -128,6 +141,34 @@ public class ExpensorProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
+            }
+            case GRAPH_EXPENSE: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        ExpensorQueries.queryGraphExpense(
+                                ExpensorContract.GraphEntry.getYearFromUri(uri),
+                                ExpensorContract.GraphEntry.getMonthFromUri(uri)
+                        ), null);
+            }
+            case GRAPH_INCOME: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        ExpensorQueries.queryGraphExpense(
+                                ExpensorContract.GraphEntry.getYearFromUri(uri),
+                                ExpensorContract.GraphEntry.getMonthFromUri(uri)
+                        ), null);
+            }
+            case GRAPH_EXPENSE_ALL: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        ExpensorQueries.queryGraphExpense(
+                                ExpensorContract.GraphEntry.getYearFromUriAll(uri),
+                                ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
+                        ), null);
+            }
+            case GRAPH_INCOME_ALL: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        ExpensorQueries.queryGraphExpense(
+                                ExpensorContract.GraphEntry.getYearFromUriAll(uri),
+                                ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
+                        ), null);
             }
             case CATEGORIES_EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -259,6 +300,15 @@ public class ExpensorProvider extends ContentProvider {
                 return ExpensorContract.IncomeEntry.CONTENT_TYPE;
             case INCOME_WITH_ID:
                 return ExpensorContract.IncomeEntry.CONTENT_ITEM_TYPE;
+
+            case GRAPH_EXPENSE:
+                return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
+            case GRAPH_INCOME:
+                return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
+            case GRAPH_EXPENSE_ALL:
+                return ExpensorContract.GraphEntry.CONTENT_TYPE;
+            case GRAPH_INCOME_ALL:
+                return ExpensorContract.GraphEntry.CONTENT_TYPE;
 
             case CATEGORIES_EXPENSE:
                 return ExpensorContract.CategoriesEntry.CONTENT_TYPE;

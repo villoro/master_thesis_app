@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
@@ -126,6 +127,18 @@ public class Utility {
         return new int[]
                 {c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
                 c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND)};
+    }
+
+    public static String getFirstDay(int year, int month){
+        int[] output = new int[]{year, month, 1, 00, 00, 00};
+        return completeDateToString(output);
+    }
+
+    public static String getLastDay(int year, int month){
+        Calendar mCal = new GregorianCalendar(year, month, 1);
+        int[] output = new int[]{year, month, 1, 23, 59, 59};
+        output[2] = mCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        return completeDateToString(output);
     }
 
 

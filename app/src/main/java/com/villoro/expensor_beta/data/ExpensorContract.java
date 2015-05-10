@@ -58,6 +58,54 @@ public class ExpensorContract {
         }
     }
 
+    public static final class GraphEntry {
+        public static final String GRAPH = "graph";
+        public static final String ALL = "all";
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH;
+
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH;
+
+        public static final Uri INCOME_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_INCOME).build();
+        public static final Uri EXPENSE_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_EXPENSE).build();
+        public static final Uri INCOME_ALL_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_INCOME).appendPath(ALL).build();
+        public static final Uri EXPENSE_ALL_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_EXPENSE).appendPath(ALL).build();
+
+        public static Uri buildIncomeGraphUri(String year, String month){
+            return INCOME_URI.buildUpon().appendPath(year).appendPath(month).build();
+        }
+        public static Uri buildExpenseGraphUri(String year, String month){
+            return EXPENSE_URI.buildUpon().appendPath(year).appendPath(month).build();
+        }
+
+        public static int getYearFromUri(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(2) );
+        }
+        public static int getMonthFromUri(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(3) );
+        }
+
+        public static Uri buildIncomeGraphAllUri(String year, String month){
+            return INCOME_ALL_URI.buildUpon().appendPath(year).appendPath(month).build();
+        }
+        public static Uri buildExpenseGraphAllUri(String year, String month){
+            return EXPENSE_ALL_URI.buildUpon().appendPath(year).appendPath(month).build();
+        }
+
+        public static int getYearFromUriAll(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(3) );
+        }
+        public static int getMonthFromUriAll(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(4) );
+        }
+    }
+
     public static final class CategoriesEntry {
         private static final String tableName = Tables.TABLENAME_CATEGORIES;
 

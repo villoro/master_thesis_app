@@ -33,6 +33,9 @@ public class Tables {
     public static final String PAID = "paid";
     public static final String SPENT = "spend";
 
+    //query columns
+    public static final String SUM_AMOUNT = "sum_amount";
+
     //foreign keys columns
     public static final String CATEGORY_ID = "categoryID";
     public static final String GROUP_ID = "groupID";
