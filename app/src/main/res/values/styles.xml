@@ -68,11 +68,18 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
+    <style name="linearLayout_main_container_without_padding">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
     <style name="linearLayout_main_container">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:padding">@dimen/fragment_margin</item>
+        <item name="android:paddingLeft">@dimen/fragment_margin</item>
+        <item name="android:paddingRight">@dimen/fragment_margin</item>
     </style>
 
     <style name="icon">

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
@@ -36,6 +38,10 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     Context context;
     long listID;
 
+    String typeTransaction;
+    Button b_expense, b_income;
+    Uri uri;
+
     TransactionSimpleAdapter transactionSimpleAdapter;
 
     public HistoryFragmentSection(){};
@@ -45,6 +51,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         Bundle args = new Bundle();
         args.putInt(MainActivity.ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -61,6 +68,10 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
         context = getActivity();
+
+        typeTransaction = Tables.TYPE_EXPENSE;
+        uri = ExpensorContract.ExpenseEntry.CONTENT_URI;
+        Log.e("", "typeTransaction= " + typeTransaction);
     }
 
     @Override
@@ -86,6 +97,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
                 Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
                 intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
                 intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+                intent.putExtra(Tables.TYPE, typeTransaction);
                 startActivity(intent);
                 return true;
         }
@@ -95,16 +107,28 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_listview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_section_history, container, false);
         listView = (ListView) rootView.findViewById(R.id.m_listview);
+
+        b_expense = (Button) rootView.findViewById(R.id.b_expense);
+        b_income = (Button) rootView.findViewById(R.id.b_income);
+        setButtonExpense();
+        setButtonIncome();
 
         setListView();
         return rootView;
     }
 
     public void setListView(){
+        Uri uri;
+        if(typeTransaction.equals(Tables.TYPE_INCOME)){
+            uri = ExpensorContract.IncomeEntry.CONTENT_URI;
+        } else {
+            uri = ExpensorContract.ExpenseEntry.CONTENT_URI;
+        }
+
         Cursor cursor = getActivity().getContentResolver().query(
-                ExpensorContract.ExpenseEntry.CONTENT_URI, null, null, null, null);
+                uri, null, null, null, null);
         transactionSimpleAdapter = new TransactionSimpleAdapter(context, cursor, 0);
 
         listView.setAdapter(transactionSimpleAdapter);
@@ -148,8 +172,36 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     public void ifOkDo(boolean ok, int whichCase) {
         if(ok){
             Log.d("TransactionSimpleFragment", "trying to delete id= " + listID);
-            context.getContentResolver().delete(ExpensorContract.ExpenseEntry.CONTENT_URI, Tables.ID + " = '" + listID + "'", null);
+            context.getContentResolver().delete(uri, Tables.ID + " = '" + listID + "'", null);
             setListView();
         }
+    }
+
+    public void setButtonExpense(){
+        b_expense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
+                    typeTransaction = Tables.TYPE_EXPENSE;
+                    uri = ExpensorContract.ExpenseEntry.CONTENT_URI;
+                    Log.e("", "typeTransaction= " + typeTransaction);
+                    setListView();
+                }
+            }
+        });
+    }
+
+    public void setButtonIncome(){
+        b_income.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!typeTransaction.equals(Tables.TYPE_INCOME)){
+                    typeTransaction = Tables.TYPE_INCOME;
+                    uri = ExpensorContract.IncomeEntry.CONTENT_URI;
+                    Log.e("", "typeTransaction= " + typeTransaction);
+                    setListView();
+                }
+            }
+        });
     }
 }

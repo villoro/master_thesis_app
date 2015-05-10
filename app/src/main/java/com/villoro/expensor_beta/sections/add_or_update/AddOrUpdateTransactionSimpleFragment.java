@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,9 +36,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     Button b_date;
 
     EditText e_amount, e_comments;
-
     ListView lv_categories;
-
     ImageView iv_categories;
 
     CategoryRadioAdapter categoryRadioAdapter;
@@ -49,6 +48,10 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     String comments;
     double amount;
 
+    String typeTransaction;
+    Button b_expense, b_income;
+    Uri uriCategories, uriTransaction;
+
     public AddOrUpdateTransactionSimpleFragment(){};
 
     @Override
@@ -56,6 +59,17 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         super.onCreate(savedInstanceState);
 
         context = getActivity();
+
+        Bundle bundle = this.getArguments();
+        typeTransaction = bundle.getString(Tables.TYPE);
+        if(typeTransaction.equals(Tables.TYPE_EXPENSE)){
+            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+            uriTransaction = ExpensorContract.ExpenseEntry.CONTENT_URI;
+        } else {
+            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
+            uriTransaction = ExpensorContract.IncomeEntry.CONTENT_URI;
+        }
+        Log.e("", "type= " + typeTransaction);
     }
 
     @Override
@@ -66,7 +80,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rv = inflater.inflate(R.layout.fragment_expense, container, false);
+        View rv = inflater.inflate(R.layout.fragment_transacion_simple, container, false);
 
         bindButtonDate(rv);
         bindIVCategories(rv);
@@ -74,6 +88,11 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         e_comments = (EditText) rv.findViewById(R.id.et_comments);
         e_amount = (EditText) rv.findViewById(R.id.et_amount);
         lv_categories = (ListView) rv.findViewById(R.id.lv_categories);
+
+        b_expense = (Button) rv.findViewById(R.id.b_expense);
+        b_income = (Button) rv.findViewById(R.id.b_income);
+        setButtonExpense();
+        setButtonIncome();
 
         if (currentID >0)
         {
@@ -104,7 +123,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
     private void setCategories(){
         cursorCategories = context.getContentResolver().query(
-                ExpensorContract.CategoriesEntry.CONTENT_URI, null, null, null, null);
+                uriCategories, null, null, null, null);
         categoryRadioAdapter = new CategoryRadioAdapter(context, cursorCategories, 0);
         lv_categories.setAdapter(categoryRadioAdapter);
 
@@ -125,6 +144,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             public void onClick(View v) {
 
                 Intent intent = new Intent(getActivity(), ShowListActivity.class);
+                intent.putExtra(Tables.TYPE, typeTransaction);
                 startActivity(intent);
             }
         });
@@ -170,16 +190,16 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         values.put(Tables.AMOUNT, amount);
         values.put(Tables.CATEGORY_ID, categoryID);
         if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.ExpenseEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            context.getContentResolver().update(uriTransaction, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(ExpensorContract.ExpenseEntry.CONTENT_URI, values);
+            context.getContentResolver().insert(uriTransaction, values);
         }
     }
 
     @Override
     public void setValues() {
         Cursor tempCursor = context.getContentResolver().query(
-                ExpensorContract.ExpenseEntry.CONTENT_URI, null, Tables.ID + " = '" + currentID + "'", null, null);
+                uriTransaction, null, Tables.ID + " = '" + currentID + "'", null, null);
         tempCursor.moveToFirst();
 
         Log.d("TransactionSimpleFragment", "cursorCategories count= " + tempCursor.getCount() + ", columns= " + tempCursor.getColumnCount());
@@ -194,6 +214,36 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     @Override
     public void delete() {
         Log.d("TransactionSimpleFragment", "trying to delete ");
-        context.getContentResolver().delete(ExpensorContract.ExpenseEntry.CONTENT_URI, Tables.ID + " = '" + currentID + "'", null);
+        context.getContentResolver().delete(uriTransaction, Tables.ID + " = '" + currentID + "'", null);
+    }
+
+    public void setButtonExpense(){
+        b_expense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
+                    typeTransaction = Tables.TYPE_EXPENSE;
+                    uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+                    uriTransaction = ExpensorContract.ExpenseEntry.CONTENT_URI;
+                    Log.e("", "typeTransaction= " + typeTransaction);
+                    setCategories();
+                }
+            }
+        });
+    }
+
+    public void setButtonIncome(){
+        b_income.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!typeTransaction.equals(Tables.TYPE_INCOME)){
+                    typeTransaction = Tables.TYPE_INCOME;
+                    uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
+                    uriTransaction = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+                    Log.e("", "typeTransaction= " + typeTransaction);
+                    setCategories();
+                }
+            }
+        });
     }
 }

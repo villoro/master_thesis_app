@@ -35,7 +35,8 @@ public class ExpensorProvider extends ContentProvider {
     private static final int GRAPH_INCOME_ALL = 203;
 
     private static final int CATEGORIES_EXPENSE = 300;
-    private static final int CATEGORIES_EXPENSE_WITH_ID = 301;
+    private static final int CATEGORIES_INCOME = 301;
+    private static final int CATEGORIES_WITH_ID = 302;
 
     private static final int PEOPLE = 400;
     private static final int PEOPLE_WITH_ID = 401;
@@ -77,8 +78,9 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_EXPENSE + "/" + ALL + "/#/#", GRAPH_EXPENSE_ALL);
         matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_INCOME + "/" + ALL + "/#/#", GRAPH_INCOME_ALL);
 
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES, CATEGORIES_EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_EXPENSE_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/" + Tables.TYPE_EXPENSE, CATEGORIES_EXPENSE);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/" + Tables.TYPE_INCOME, CATEGORIES_INCOME);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/#", PEOPLE_WITH_ID);
@@ -122,7 +124,7 @@ public class ExpensorProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
-                        selection,
+                        Tables.TYPE + " = '" + Tables.TYPE_EXPENSE + "'",
                         selectionArgs,
                         null,
                         null,
@@ -131,6 +133,30 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case EXPENSE_WITH_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_TRANSACTION_SIMPLE,
+                        projection,
+                        Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
+                        null,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case INCOME: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_TRANSACTION_SIMPLE,
+                        projection,
+                        Tables.TYPE + " = '" + Tables.TYPE_INCOME + "'",
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case INCOME_WITH_ID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
@@ -182,7 +208,19 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
-            case CATEGORIES_EXPENSE_WITH_ID: {
+            case CATEGORIES_INCOME: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_CATEGORIES,
+                        projection,
+                        Tables.TYPE + " = '" + Tables.TYPE_INCOME + "'",
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case CATEGORIES_WITH_ID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
@@ -312,7 +350,9 @@ public class ExpensorProvider extends ContentProvider {
 
             case CATEGORIES_EXPENSE:
                 return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
-            case CATEGORIES_EXPENSE_WITH_ID:
+            case CATEGORIES_INCOME:
+                return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
+            case CATEGORIES_WITH_ID:
                 return ExpensorContract.CategoriesEntry.CONTENT_ITEM_TYPE;
 
             case PEOPLE:
@@ -394,6 +434,24 @@ public class ExpensorProvider extends ContentProvider {
                         Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
                         null, null, null, null).getCount() == 0) {
                     values.put(Tables.TYPE, Tables.TYPE_EXPENSE);
+                    long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
+                    if (_id > 0)
+                        returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
+                    else
+                        throw new SQLException("Failed to insert to row into " + uri);
+                } else {
+                    Log.e("", "ja hi ha un amb aquest nom");
+                    returnUri = uri;
+                }
+
+                break;
+            }
+            case CATEGORIES_INCOME: {
+                if (db.query(
+                        Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
+                        Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
+                        null, null, null, null).getCount() == 0) {
+                    values.put(Tables.TYPE, Tables.TYPE_INCOME);
                     long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
                     if (_id > 0)
                         returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
@@ -502,6 +560,9 @@ public class ExpensorProvider extends ContentProvider {
                 rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
             case CATEGORIES_EXPENSE:
+                rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
+                break;
+            case CATEGORIES_INCOME:
                 rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:

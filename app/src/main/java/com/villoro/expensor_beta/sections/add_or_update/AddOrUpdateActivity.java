@@ -45,19 +45,26 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         ID = extras.getLong(ID_OBJECT);
         Log.d("AddOrUpdateActivity", "id= " + ID);
 
+        Bundle output;
+
         if (savedInstanceState == null){
             switch (whichCase){
                 case CASE_EXPENSE:
                     transactionSimpleFragment = new AddOrUpdateTransactionSimpleFragment();
+
+                    output = new Bundle();
+                    output.putString(Tables.TYPE, extras.getString(Tables.TYPE));
+                    transactionSimpleFragment.setArguments(output);
+
                     transactionSimpleFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionSimpleFragment).commit();
                     break;
                 case CASE_CATEGORIES:
                     categoriesFragment = new AddOrUpdateCategoriesFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Tables.TYPE, extras.getString(Tables.TYPE));
-                    categoriesFragment.setArguments(bundle);
+                    output = new Bundle();
+                    output.putString(Tables.TYPE, extras.getString(Tables.TYPE));
+                    categoriesFragment.setArguments(output);
 
                     categoriesFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, categoriesFragment).commit();

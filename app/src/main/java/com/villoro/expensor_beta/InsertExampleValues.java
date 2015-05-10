@@ -24,19 +24,19 @@ public class InsertExampleValues {
         categoryValues.put(Tables.NAME, "Food");
         categoryValues.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         categoryValues.put(Tables.COLOR, 2);
-        insertSQL(categoryValues, ExpensorContract.CategoriesEntry.CONTENT_URI);
+        insertSQL(categoryValues, ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI);
 
         ContentValues categoryValues2 = new ContentValues();
         categoryValues2.put(Tables.NAME, "Transport");
         categoryValues2.put(Tables.TYPE, Tables.TYPE_EXPENSE);
         categoryValues2.put(Tables.COLOR, 37);
-        insertSQL(categoryValues2, ExpensorContract.CategoriesEntry.CONTENT_URI);
+        insertSQL(categoryValues2, ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI);
 
         ContentValues categoryValues3 = new ContentValues();
         categoryValues3.put(Tables.NAME, "Salari");
         categoryValues3.put(Tables.TYPE, Tables.TYPE_INCOME);
         categoryValues3.put(Tables.COLOR, 317);
-        insertSQL(categoryValues3, ExpensorContract.CategoriesEntry.CONTENT_URI);
+        insertSQL(categoryValues3, ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI);
 
         ContentValues expenseValues = new ContentValues();
         expenseValues.put(Tables.DATE, "2015_02_10");

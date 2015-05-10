@@ -48,7 +48,7 @@ public class ParseActivity extends ActionBarActivity {
 
     public void setList() {
         Cursor cursor = getContentResolver().query(
-                ExpensorContract.CategoriesEntry.CONTENT_URI, null,null, null, null);
+                ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, null,null, null, null);
         String[] aux = new String[cursor.getCount()];
 
         int i = 0;

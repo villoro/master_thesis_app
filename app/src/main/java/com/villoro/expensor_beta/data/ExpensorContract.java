@@ -109,8 +109,14 @@ public class ExpensorContract {
     public static final class CategoriesEntry {
         private static final String tableName = Tables.TABLENAME_CATEGORIES;
 
-        public static final Uri CONTENT_URI =
+        private static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
+
+        public static final Uri CATEGORIES_EXPENSE_URI =
+                CONTENT_URI.buildUpon().appendPath(Tables.TYPE_EXPENSE).build();
+
+        public static final Uri CATEGORIES_INCOME_URI =
+                CONTENT_URI.buildUpon().appendPath(Tables.TYPE_INCOME).build();
 
         public static final String CONTENT_TYPE =
                 DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;

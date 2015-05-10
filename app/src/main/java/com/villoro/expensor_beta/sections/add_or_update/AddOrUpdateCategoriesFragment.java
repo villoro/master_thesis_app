@@ -3,6 +3,7 @@ package com.villoro.expensor_beta.sections.add_or_update;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
     List<Integer> colors;
 
     String typeCategory;
+    Uri uriCategories;
 
     String name;
     int color;
@@ -48,6 +50,11 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
 
         Bundle bundle = this.getArguments();
         typeCategory = bundle.getString(Tables.TYPE);
+        if(typeCategory.equals(Tables.TYPE_EXPENSE)){
+            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+        } else {
+            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
+        }
         Log.e("", "type= " + typeCategory);
 
         int[] auxColors = getResources().getIntArray(R.array.categories_colors);
@@ -91,9 +98,9 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         values.put(Tables.COLOR, color);
 
         if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.CategoriesEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            context.getContentResolver().update(uriCategories, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CONTENT_URI, values);
+            context.getContentResolver().insert(uriCategories, values);
         }
     }
 
@@ -122,7 +129,7 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
 
     @Override
     public void delete() {
-        context.getContentResolver().delete(ExpensorContract.CategoriesEntry.CONTENT_URI, Tables.ID + " = '" + currentID + "'", null);
+        context.getContentResolver().delete(uriCategories, Tables.ID + " = '" + currentID + "'", null);
     }
 
     public void setSpinner(){
