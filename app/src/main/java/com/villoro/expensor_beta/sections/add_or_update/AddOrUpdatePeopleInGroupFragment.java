@@ -109,7 +109,7 @@ public class AddOrUpdatePeopleInGroupFragment extends Fragment implements AddOrU
     @Override
     public void setValues() {
         Cursor tempCursor = context.getContentResolver().query(
-                ExpensorContract.ExpenseEntry.CONTENT_URI, null, Tables.ID + " = '" + currentID + "'", null, null);
+                ExpensorContract.ExpenseEntry.EXPENSE_URI, null, Tables.ID + " = '" + currentID + "'", null, null); //TODO
         tempCursor.moveToFirst();
 
         int peopleID = tempCursor.getInt(tempCursor.getColumnIndex(Tables.PEOPLE_ID));

@@ -180,8 +180,6 @@ public class ParseActivity extends ActionBarActivity {
             }
         }*/
 
-        InsertExampleValues insertExampleValues = new InsertExampleValues(this);
-        insertExampleValues.insert();
     }
 
     public Date readLastUpdateDate(){

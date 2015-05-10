@@ -100,7 +100,7 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         if (currentID > 0){
             context.getContentResolver().update(uriCategories, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(uriCategories, values);
+            context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, values);
         }
     }
 

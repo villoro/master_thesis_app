@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import com.villoro.expensor_beta.Utility;
@@ -27,7 +28,7 @@ public class DialogDatePicker extends DialogFragment
         // Use the current date as the default date in the picker
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, date[2], date[1] - 1, date[0]);
+        return new DatePickerDialog(getActivity(), this, date[0], date[1] - 1, date[2]); //year, month, day
     }
 
     @Override
@@ -46,6 +47,7 @@ public class DialogDatePicker extends DialogFragment
     public void setPreviousDate(int[] date)
     {
         this.date = date;
+        Log.d("", "year= " + date[2] + ", month= " + date[1] + ", day= " + date[0]);
     }
 
     public interface CommDatePicker

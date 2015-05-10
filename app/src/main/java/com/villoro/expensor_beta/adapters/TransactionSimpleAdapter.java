@@ -42,5 +42,7 @@ public class TransactionSimpleAdapter extends CursorAdapter{
 
         tv_comments.setText(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)));
         tv_amount.setText(cursor.getString(cursor.getColumnIndex(Tables.AMOUNT)));
+
+
     }
 }

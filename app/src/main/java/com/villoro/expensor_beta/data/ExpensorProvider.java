@@ -23,11 +23,8 @@ public class ExpensorProvider extends ContentProvider {
     private static final String ALL = ExpensorContract.GraphEntry.ALL;
 
     //what I need to retrive
-    private static final int EXPENSE = 100;
-    private static final int EXPENSE_WITH_ID = 101;
-
-    private static final int INCOME = 150;
-    private static final int INCOME_WITH_ID = 151;
+    private static final int TRANSACTION_SIMPLE = 100;
+    private static final int TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH = 101;
 
     private static final int GRAPH_EXPENSE = 200;
     private static final int GRAPH_INCOME = 201;
@@ -67,11 +64,9 @@ public class ExpensorProvider extends ContentProvider {
         final String authority = ExpensorContract.CONTENT_AUTHORITY_EXPENSOR;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_EXPENSE, EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_EXPENSE + "/#", EXPENSE_WITH_ID);
-
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME, INCOME);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_INCOME + "/#", INCOME_WITH_ID);
+        //matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_EXPENSE, EXPENSE);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/#", TRANSACTION_SIMPLE);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/#/#/#", TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH);
 
         matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_EXPENSE + "/#/#", GRAPH_EXPENSE);
         matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_INCOME + "/#/#", GRAPH_INCOME);
@@ -120,8 +115,8 @@ public class ExpensorProvider extends ContentProvider {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             // "expense"
-            case EXPENSE: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
+            case TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH: {
+                /*retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
                         Tables.TYPE + " = '" + Tables.TYPE_EXPENSE + "'",
@@ -129,10 +124,13 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
-                );
+                );*/
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryExpenseMonth(
+                        ExpensorContract.TransactionSimple.getYearFromUriAll(uri),
+                        ExpensorContract.TransactionSimple.getMonthFromUriAll(uri)), null);
                 break;
             }
-            case EXPENSE_WITH_ID: {
+            /*case EXPENSE_WITH_ID: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
@@ -143,37 +141,14 @@ public class ExpensorProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
-            }
-            case INCOME: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_TRANSACTION_SIMPLE,
-                        projection,
-                        Tables.TYPE + " = '" + Tables.TYPE_INCOME + "'",
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
-            case INCOME_WITH_ID: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_TRANSACTION_SIMPLE,
-                        projection,
-                        Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
-                        null,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
+            }*/
             case GRAPH_EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
                         ExpensorQueries.queryGraphExpense(
                                 ExpensorContract.GraphEntry.getYearFromUri(uri),
                                 ExpensorContract.GraphEntry.getMonthFromUri(uri)
                         ), null);
+                break;
             }
             case GRAPH_INCOME: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
@@ -181,6 +156,7 @@ public class ExpensorProvider extends ContentProvider {
                                 ExpensorContract.GraphEntry.getYearFromUri(uri),
                                 ExpensorContract.GraphEntry.getMonthFromUri(uri)
                         ), null);
+                break;
             }
             case GRAPH_EXPENSE_ALL: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
@@ -188,6 +164,7 @@ public class ExpensorProvider extends ContentProvider {
                                 ExpensorContract.GraphEntry.getYearFromUriAll(uri),
                                 ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
                         ), null);
+                break;
             }
             case GRAPH_INCOME_ALL: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
@@ -195,6 +172,7 @@ public class ExpensorProvider extends ContentProvider {
                                 ExpensorContract.GraphEntry.getYearFromUriAll(uri),
                                 ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
                         ), null);
+                break;
             }
             case CATEGORIES_EXPENSE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -329,15 +307,10 @@ public class ExpensorProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
-            case EXPENSE:
+            case TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH:
                 return ExpensorContract.ExpenseEntry.CONTENT_TYPE;
-            case EXPENSE_WITH_ID:
+            case TRANSACTION_SIMPLE:
                 return ExpensorContract.ExpenseEntry.CONTENT_ITEM_TYPE;
-
-            case INCOME:
-                return ExpensorContract.IncomeEntry.CONTENT_TYPE;
-            case INCOME_WITH_ID:
-                return ExpensorContract.IncomeEntry.CONTENT_ITEM_TYPE;
 
             case GRAPH_EXPENSE:
                 return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
@@ -410,17 +383,8 @@ public class ExpensorProvider extends ContentProvider {
         Log.e("", "insertant= " + values.toString());
 
         switch (match) {
-            case EXPENSE: {
-                values.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-                long _id = db.insert(Tables.TABLENAME_TRANSACTION_SIMPLE, null, values);
-                if (_id > 0)
-                    returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
-                else
-                    throw new SQLException("Failed to insert to row into " + uri);
-                break;
-            }
-            case INCOME: {
-                values.put(Tables.TYPE, Tables.TYPE_INCOME);
+            case TRANSACTION_SIMPLE: {
+                values.put(Tables.TYPE, ExpensorContract.TransactionSimple.getTypeTransaction(uri));
                 long _id = db.insert(Tables.TABLENAME_TRANSACTION_SIMPLE, null, values);
                 if (_id > 0)
                     returnUri = ExpensorContract.ExpenseEntry.buildExpenseUri(_id);
@@ -553,10 +517,7 @@ public class ExpensorProvider extends ContentProvider {
         }
 
         switch (match) {
-            case EXPENSE:
-                rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
-                break;
-            case INCOME:
+            case TRANSACTION_SIMPLE:
                 rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
             case CATEGORIES_EXPENSE:
@@ -613,10 +574,7 @@ public class ExpensorProvider extends ContentProvider {
         }
 
         switch (match) {
-            case EXPENSE:
-                rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
-                break;
-            case INCOME:
+            case TRANSACTION_SIMPLE:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
             case CATEGORIES_EXPENSE:

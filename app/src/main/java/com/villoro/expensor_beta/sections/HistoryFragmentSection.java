@@ -70,7 +70,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         context = getActivity();
 
         typeTransaction = Tables.TYPE_EXPENSE;
-        uri = ExpensorContract.ExpenseEntry.CONTENT_URI;
+        uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
         Log.e("", "typeTransaction= " + typeTransaction);
     }
 
@@ -124,7 +124,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         if(typeTransaction.equals(Tables.TYPE_INCOME)){
             uri = ExpensorContract.IncomeEntry.CONTENT_URI;
         } else {
-            uri = ExpensorContract.ExpenseEntry.CONTENT_URI;
+            uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
         }
 
         Cursor cursor = getActivity().getContentResolver().query(
@@ -135,8 +135,8 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO when using cursorAdapter delete the "1"
-                showLongClickList(id + 1);
+                showLongClickList(id);
+                Log.d("HistoryFragmentSection", "id= " + id);
                 return true;
             }
         });
@@ -156,6 +156,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
             Intent intent = new Intent(context, AddOrUpdateActivity.class);
             intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
             intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+            intent.putExtra(Tables.TYPE, typeTransaction);
 
             startActivity(intent);
         }
@@ -171,7 +172,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     @Override
     public void ifOkDo(boolean ok, int whichCase) {
         if(ok){
-            Log.d("TransactionSimpleFragment", "trying to delete id= " + listID);
+            Log.d("HistoryFragmentSection", "trying to delete id= " + listID);
             context.getContentResolver().delete(uri, Tables.ID + " = '" + listID + "'", null);
             setListView();
         }
@@ -183,8 +184,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
             public void onClick(View v) {
                 if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
                     typeTransaction = Tables.TYPE_EXPENSE;
-                    uri = ExpensorContract.ExpenseEntry.CONTENT_URI;
-                    Log.e("", "typeTransaction= " + typeTransaction);
+                    uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
                     setListView();
                 }
             }
@@ -198,7 +198,6 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
                 if(!typeTransaction.equals(Tables.TYPE_INCOME)){
                     typeTransaction = Tables.TYPE_INCOME;
                     uri = ExpensorContract.IncomeEntry.CONTENT_URI;
-                    Log.e("", "typeTransaction= " + typeTransaction);
                     setListView();
                 }
             }

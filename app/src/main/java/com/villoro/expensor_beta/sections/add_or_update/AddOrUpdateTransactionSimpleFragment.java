@@ -64,7 +64,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         typeTransaction = bundle.getString(Tables.TYPE);
         if(typeTransaction.equals(Tables.TYPE_EXPENSE)){
             uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
-            uriTransaction = ExpensorContract.ExpenseEntry.CONTENT_URI;
+            uriTransaction = ExpensorContract.ExpenseEntry.EXPENSE_URI;
         } else {
             uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
             uriTransaction = ExpensorContract.IncomeEntry.CONTENT_URI;
@@ -142,10 +142,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         iv_categories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(getActivity(), ShowListActivity.class);
-                intent.putExtra(Tables.TYPE, typeTransaction);
-                startActivity(intent);
+                showCategories();
             }
         });
     }
@@ -189,6 +186,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         values.put(Tables.COMMENTS, comments);
         values.put(Tables.AMOUNT, amount);
         values.put(Tables.CATEGORY_ID, categoryID);
+
+        Log.d("", "current id= " + currentID);
         if (currentID > 0){
             context.getContentResolver().update(uriTransaction, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
@@ -202,11 +201,13 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                 uriTransaction, null, Tables.ID + " = '" + currentID + "'", null, null);
         tempCursor.moveToFirst();
 
+
         Log.d("TransactionSimpleFragment", "cursorCategories count= " + tempCursor.getCount() + ", columns= " + tempCursor.getColumnCount());
 
-        //TODO b_date.setText();
+        date = Utility.dateFromString(tempCursor.getString(tempCursor.getColumnIndex(Tables.DATE)));
+        b_date.setText( Utility.getFancyDate(date) );
         int categoryID = tempCursor.getInt(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
-        //TODO sp_categories.setSelection(categoryID);
+        lv_categories.setSelection(categoryID);
         e_amount.setText("" + tempCursor.getDouble(tempCursor.getColumnIndex(Tables.AMOUNT)));
         e_comments.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.COMMENTS)));
     }
@@ -224,8 +225,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                 if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
                     typeTransaction = Tables.TYPE_EXPENSE;
                     uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
-                    uriTransaction = ExpensorContract.ExpenseEntry.CONTENT_URI;
-                    Log.e("", "typeTransaction= " + typeTransaction);
+                    uriTransaction = ExpensorContract.ExpenseEntry.EXPENSE_URI;
                     setCategories();
                 }
             }
@@ -240,10 +240,15 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                     typeTransaction = Tables.TYPE_INCOME;
                     uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
                     uriTransaction = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
-                    Log.e("", "typeTransaction= " + typeTransaction);
                     setCategories();
                 }
             }
         });
+    }
+
+    public void showCategories(){
+        Intent intent = new Intent(getActivity(), ShowListActivity.class);
+        intent.putExtra(Tables.TYPE, typeTransaction);
+        startActivity(intent);
     }
 }
