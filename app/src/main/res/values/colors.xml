@@ -12,10 +12,14 @@
     <item name="dark_orange" type="color">#FFFF8800</item>
     <item name="dark_red" type="color">#FFCC0000</item>
 
+    <item name="black" type="color">#000000</item>
+
     <color name="lighter_gray">#ddd</color>
     <color name="darker_gray">#aaa</color>
 
+    <item name="text_color" type="color">#424242</item>
     <item name="section_divider" type="color">@color/blue</item>
+    <item name="expensor_blue" type="color">#2196F3</item>
     <item name="divider" type="color">@color/lighter_gray</item>
 
     <array name="categories_colors">

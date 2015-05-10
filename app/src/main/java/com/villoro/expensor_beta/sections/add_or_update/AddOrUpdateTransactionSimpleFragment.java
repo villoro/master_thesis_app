@@ -93,7 +93,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                dialogDate.setPreviousDate((String) b_date.getText());
+                dialogDate.setPreviousDate(date);
                 dialogDate.show(getFragmentManager(), "datePicker");
             }
         });

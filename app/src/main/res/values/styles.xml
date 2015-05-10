@@ -2,10 +2,18 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Expensor</item>
+    </style>
+
+    <!-- ActionBar style -->
+    <style name="ActionBar.Solid.Expensor"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@color/expensor_blue</item>
     </style>
 
     <style name="sectionHeader" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:drawableBottom">@drawable/section_header</item>
         <item name="android:drawablePadding">4dp</item>
         <item name="android:layout_marginTop">8dp</item>
@@ -13,6 +21,102 @@
         <item name="android:textColor">@color/section_divider</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+
+    <style name="textView_input_title" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="editText_input" parent="android:Widget.Holo.Light.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness_with_margin_simple</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:ems">10</item>
+    </style>
+
+    <style name="button_input" parent="android:Widget.Holo.Light.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness_with_margin_simple</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:ems">10</item>
+    </style>
+
+    <style name="spinner_input" parent="android:Widget.Holo.Light.Spinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness_with_margin_simple</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="linearLayout_input">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="linearLayout_main_container">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/fragment_margin</item>
+    </style>
+
+    <style name="icon">
+        <item name="android:layout_width">@dimen/row_icon_size</item>
+        <item name="android:layout_height">@dimen/row_icon_size</item>
+        <item name="android:padding">@dimen/margin_simple</item>
+    </style>
+
+    <style name="big_bar_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="big_bar_value">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginTop">24dp</item>
+    </style>
+
+    <style name="big_bar_relative_layout">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_weight">2</item>
+    </style>
+
+    <style name="big_bar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/bar_big</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">@dimen/bar_big_margin</item>
+    </style>
+
+    <style name="slim_bar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/bar_slim</item>
     </style>
 
 </resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/row_thickness">
+
+    <TextView
+        android:id="@+id/row_grapgh_categories_name"
+        android:text="patata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="4dp"
+        android:layout_alignParentLeft="true" />
+
+    <View android:background="#d3d3d3"
+        android:id="@+id/row_graph_categories_line"
+        android:layout_width = "fill_parent"
+        android:layout_height="@dimen/bar_slim"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="26dp"
+        android:layout_alignParentLeft="true" />
+
+</RelativeLayout>

@@ -21,4 +21,8 @@
     <dimen name="row_icon_margin">8dp</dimen>
     <dimen name="margin_number">10dp</dimen>
     <dimen name="divider">1dp</dimen>
+
+    <dimen name="bar_slim">8dp</dimen>
+    <dimen name="bar_big">24dp</dimen>
+    <dimen name="bar_big_margin">12dp</dimen>
 </resources>

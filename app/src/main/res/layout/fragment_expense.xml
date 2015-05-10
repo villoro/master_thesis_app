@@ -2,15 +2,10 @@
     android:layout_width="fill_parent" android:layout_height="fill_parent" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/fragment_margin"
-        android:orientation="vertical" >
+        style="@style/linearLayout_main_container">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/row_thickness"
-            android:orientation="horizontal" >
+            style="@style/linearLayout_input" >
 
             <Button
                 android:layout_width="wrap_content"
@@ -30,31 +25,20 @@
         </LinearLayout>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PAYMENT INFO"
+            android:text="Payment info"
             style="@style/sectionHeader" />
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/row_thickness"
-            android:orientation="horizontal" >
+            style="@style/linearLayout_input" >
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/row_thickness"
-                android:gravity="center_vertical"
-                android:text="Amount"
-                android:layout_weight="2"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                style="@style/textView_input_title"
+                android:text="Amount"/>
 
             <EditText
+                style="@style/editText_input"
                 android:id="@+id/et_amount"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/row_thickness_with_margin_simple"
-                android:ems="10"
                 android:hint="Amount"
-                android:layout_weight="1"
                 android:inputType="numberDecimal" >
                 <requestFocus />
             </EditText>
@@ -65,8 +49,6 @@
             android:layout_height="@dimen/row_thickness" >
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_double"
                 android:layout_toLeftOf="@+id/iv_edit_categories"
                 android:layout_marginRight="@dimen/margin_simple"
@@ -91,54 +73,32 @@
             android:id="@+id/lv_categories"/>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_double"
             android:text="ADITIONAL INFO"
             style="@style/sectionHeader" />
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/row_thickness"
-            android:orientation="horizontal" >
+            style="@style/linearLayout_input" >
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/row_thickness"
-                android:gravity="center_vertical"
-                android:text="Date"
-                android:layout_weight="2"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                style="@style/textView_input_title"
+                android:text="Date" />
 
             <Button
-                android:id="@+id/b_date"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/row_thickness_with_margin_simple"
-                android:gravity="center_vertical"
-                android:layout_weight="1"
-                android:ems="10" />
+                style="@style/button_input"
+                android:id="@+id/b_date"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/row_thickness"
-            android:orientation="horizontal" >
+            style="@style/linearLayout_input" >
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/row_thickness"
-                android:gravity="center_vertical"
-                android:text="Comments"
-                android:layout_weight="2"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                style="@style/textView_input_title"
+                android:text="Comments" />
 
             <EditText
+                style="@style/editText_input"
                 android:id="@+id/et_comments"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/row_thickness_with_margin_simple"
-                android:gravity="center_vertical"
-                android:ems="10"
-                android:layout_weight="1"
                 android:hint="Comments (Optional)" />
         </LinearLayout>
 

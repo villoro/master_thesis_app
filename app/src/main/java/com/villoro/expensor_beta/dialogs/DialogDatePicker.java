@@ -15,7 +15,6 @@ public class DialogDatePicker extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
     CommDatePicker comm;
-    String oldDate;
     int[] date; //{yyyy, mm, dd, hh, mm, ss}
 
     public DialogDatePicker() {
@@ -26,8 +25,6 @@ public class DialogDatePicker extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
-
-        date = Utility.dateFromString(oldDate);
 
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), this, date[2], date[1] - 1, date[0]);
@@ -46,9 +43,9 @@ public class DialogDatePicker extends DialogFragment
 
     }
 
-    public void setPreviousDate(String date)
+    public void setPreviousDate(int[] date)
     {
-        this.oldDate = date;
+        this.date = date;
     }
 
     public interface CommDatePicker
