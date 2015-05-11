@@ -239,7 +239,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                 if(!typeTransaction.equals(Tables.TYPE_INCOME)){
                     typeTransaction = Tables.TYPE_INCOME;
                     uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
-                    uriTransaction = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+                    uriTransaction = ExpensorContract.IncomeEntry.INCOME_URI;
                     setCategories();
                 }
             }

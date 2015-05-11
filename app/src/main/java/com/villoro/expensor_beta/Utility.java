@@ -141,6 +141,36 @@ public class Utility {
         return completeDateToString(output);
     }
 
+    public static int[] reduceMonth(int[] date){
+        int[] output = date;
+        if(date[1] == 1){
+            date[1] = 12;
+            date[0]--;
+        } else {
+            date[1]--;
+        }
+        return output;
+    }
+
+    public static int[] incrementMonth(int[] date){
+        int[] output = date;
+        if(date[1] == 12){
+            date[1] = 1;
+            date[0]++;
+        } else {
+            date[1]++;
+        }
+        return output;
+    }
+
+    public static String setFancyMonthName(int[] date){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(date[1]).append(" - ").append(date[0]); //TODO
+
+        return sb.toString();
+    }
+
 
     //TODO improve that
     public static String formatDoubleToSQLite(String amount)

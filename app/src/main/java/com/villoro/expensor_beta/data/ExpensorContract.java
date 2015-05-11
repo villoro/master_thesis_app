@@ -40,8 +40,8 @@ public class ExpensorContract {
             return ContentUris.withAppendedId(EXPENSE_URI, id);
         }
 
-        public static Uri buildExpenseUri(String year, String month){
-            return EXPENSE_URI.buildUpon().appendPath(year).appendPath(month).build();
+        public static Uri buildExpenseUri(int year, int month){
+            return EXPENSE_URI.buildUpon().appendPath(""+year).appendPath(""+month).build();
         }
     }
 
@@ -75,8 +75,8 @@ public class ExpensorContract {
             return ContentUris.withAppendedId(INCOME_URI, id);
         }
 
-        public static Uri buildIncomeUri(String year, String month){
-            return INCOME_URI.buildUpon().appendPath(year).appendPath(month).build();
+        public static Uri buildIncomeUri(int year, int month){
+            return INCOME_URI.buildUpon().appendPath(""+year).appendPath(""+month).build();
         }
     }
 

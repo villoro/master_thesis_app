@@ -11,6 +11,9 @@ public class ExpensorQueries {
     private static final String SELECT_ALL_FROM = "SELECT * FROM ";
     private static final String FROM = " FROM ";
     private static final String GROUP_BY = " GROUP BY ";
+    private static final String ORDER_BY = " ORDER BY ";
+    private static final String ASC = " ASC ";
+    private static final String DESC = " DESC ";
     private static final String JOIN = " JOIN ";
     private static final String LEFT_JOIN = " LEFT OUTER JOIN ";
     private static final String ON = " ON ";
@@ -90,7 +93,8 @@ public class ExpensorQueries {
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_CATEGORIES);
         sb.append(ON).append(AUX).append(".").append(Tables.CATEGORY_ID).append(EQUAL);
         sb.append(Tables.TABLENAME_CATEGORIES).append(".").append(Tables.ID);
-        sb.append(WHERE).append(whereNoDeleted()).append(CLOSE);
+        sb.append(WHERE).append(whereNoDeleted());
+        sb.append(ORDER_BY).append(Tables.SUM_AMOUNT).append(DESC).append(CLOSE);
 
         return sb.toString();
     }
@@ -115,7 +119,8 @@ public class ExpensorQueries {
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(ON).append(AUX).append(".").append(AUX_ID).append(EQUAL).append(Tables.CATEGORY_ID);
         sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereDate(year, month));
-        sb.append(AND).append(whereNoDeleted()).append(CLOSE);
+        sb.append(AND).append(whereNoDeleted());
+        sb.append(ORDER_BY).append(Tables.DATE).append(ASC).append(CLOSE);
 
         return sb.toString();
     }

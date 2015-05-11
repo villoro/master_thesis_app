@@ -14,13 +14,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
+        style="@style/textView_single_text"
         android:id="@+id/row_category_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_double"
-        android:layout_alignTop="@+id/row_category_color"
-        android:layout_toRightOf="@+id/row_category_color"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_toRightOf="@+id/row_category_color"/>
 
     <RadioButton
         android:layout_width="wrap_content"

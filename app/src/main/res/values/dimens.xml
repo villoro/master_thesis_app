@@ -10,6 +10,7 @@
     <!-- Standard generic dimens -->
     <dimen name="row_thickness">48dp</dimen>
     <dimen name="row_thickness_with_margin_simple">40dp</dimen>
+    <dimen name="row_my_navigation_bars">38dp</dimen>
     <dimen name="fragment_margin">16dp</dimen>
 
     <dimen name="margin_simple">4dp</dimen>

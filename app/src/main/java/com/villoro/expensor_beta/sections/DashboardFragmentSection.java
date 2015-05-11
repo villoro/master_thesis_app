@@ -139,7 +139,7 @@ public class DashboardFragmentSection extends Fragment{
         return rootView;
     }
 
-    public double getAvailableWidth(){
+    private double getAvailableWidth(){
         DisplayMetrics metrics = new DisplayMetrics();
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(metrics);
@@ -151,7 +151,7 @@ public class DashboardFragmentSection extends Fragment{
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 
-    public void setWidth(View view, double percentage){
+    private void setWidth(View view, double percentage){
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.width = (int) Math.round(maxWidth * percentage);
 
@@ -161,13 +161,25 @@ public class DashboardFragmentSection extends Fragment{
     public void setLists(){
         Cursor cursorExpense = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildExpenseGraphAllUri("2015", "5"),
                 null, null, null, null);
-        CategoryGraphAdapter expenseAdapter = new CategoryGraphAdapter(context, cursorExpense, 0, maxWidth);
+        double maxExpense = 0;
+        cursorExpense.moveToFirst();
+        do{
+            if(cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT)) > maxExpense)
+                maxExpense = cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT));
+        } while (cursorExpense.moveToNext());
+        CategoryGraphAdapter expenseAdapter = new CategoryGraphAdapter(context, cursorExpense, 0, maxWidth, maxExpense);
         lv_expense.setAdapter(expenseAdapter);
         Utility.setListViewHeightBasedOnChildren(lv_expense);
 
         Cursor cursorIncome = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildIncomeGraphAllUri("2015", "5"),
                 null, null, null, null);
-        CategoryGraphAdapter incomeAdapter = new CategoryGraphAdapter(context, cursorIncome, 0, maxWidth);
+        double maxIncome = 0;
+        cursorExpense.moveToFirst();
+        do{
+            if(cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT)) > maxIncome)
+                maxIncome = cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT));
+        } while (cursorExpense.moveToNext());
+        CategoryGraphAdapter incomeAdapter = new CategoryGraphAdapter(context, cursorIncome, 0, maxWidth, maxIncome);
         lv_income.setAdapter(incomeAdapter);
         Utility.setListViewHeightBasedOnChildren(lv_income);
     }

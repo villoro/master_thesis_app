@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,9 +19,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utility;
 import com.villoro.expensor_beta.adapters.TransactionSimpleAdapter;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 import com.villoro.expensor_beta.data.ExpensorContract;
@@ -40,7 +45,14 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
 
     String typeTransaction;
     Button b_expense, b_income;
+    ImageView b_previous, b_next;
+    int[] date;
+    TextView tv_month;
+    RelativeLayout month_container;
+
+    int colorGreen, colorRed;
     Uri uri;
+
 
     TransactionSimpleAdapter transactionSimpleAdapter;
 
@@ -70,7 +82,10 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         context = getActivity();
 
         typeTransaction = Tables.TYPE_EXPENSE;
-        uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
+        date = Utility.getDate();
+        uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
+        colorGreen = context.getResources().getColor(R.color.green_income);
+        colorGreen = context.getResources().getColor(R.color.red_expense);
         Log.e("", "typeTransaction= " + typeTransaction);
     }
 
@@ -115,16 +130,32 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         setButtonExpense();
         setButtonIncome();
 
+        b_previous = (ImageView) rootView.findViewById(R.id.iv_previous);
+        b_next = (ImageView) rootView.findViewById(R.id.iv_next);
+
+        setButtonPreviousNext();
+
+        tv_month = (TextView) rootView.findViewById(R.id.tv_month);
+        month_container = (RelativeLayout) rootView.findViewById(R.id.month_container);
+
         setListView();
         return rootView;
     }
 
     public void setListView(){
+        tv_month.setText(Utility.setFancyMonthName(date));
+
         Uri uri;
         if(typeTransaction.equals(Tables.TYPE_INCOME)){
-            uri = ExpensorContract.IncomeEntry.buildIncomeUri("2015", "05"); //TODO
+            uri = ExpensorContract.IncomeEntry.buildIncomeUri(date[0], date[1]);
+            month_container.setBackgroundColor(Color.GREEN);
+            Log.e("HistoryFragment", "trying to put color(green)= " + colorGreen);
+ //TODO NEEEEEEEEEEDS WOOOOOOOOOOOOOOOOOORK
         } else {
-            uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
+            uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
+            month_container.setBackgroundColor(Color.RED);
+            Log.e("HistoryFragment", "trying to put color(red)= " + colorRed);
+ //TODO NEEEEEEEEEEDS WOOOOOOOOOOOOOOOOOORK
         }
 
         Cursor cursor = getActivity().getContentResolver().query(
@@ -184,7 +215,6 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
             public void onClick(View v) {
                 if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
                     typeTransaction = Tables.TYPE_EXPENSE;
-                    uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
                     setListView();
                 }
             }
@@ -197,9 +227,26 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
             public void onClick(View v) {
                 if(!typeTransaction.equals(Tables.TYPE_INCOME)){
                     typeTransaction = Tables.TYPE_INCOME;
-                    uri = ExpensorContract.IncomeEntry.buildIncomeUri("2015", "05"); //TODO
                     setListView();
                 }
+            }
+        });
+    }
+
+    public void setButtonPreviousNext(){
+        b_previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                date = Utility.reduceMonth(date);
+                setListView();
+            }
+        });
+
+        b_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                date = Utility.incrementMonth(date);
+                setListView();
             }
         });
     }

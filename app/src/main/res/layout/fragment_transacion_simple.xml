@@ -3,22 +3,14 @@
     style="@style/linearLayout_main_container_without_padding">
 
     <LinearLayout
-        style="@style/linearLayout_input" >
+        style="@style/linearLayout_expense_income" >
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/row_thickness"
-            android:text="Expense"
-            android:background="@color/red_expense"
-            android:layout_weight="1"
-            android:id="@+id/b_expense" />
+            style="@style/button_expense"
+            android:id="@+id/b_expense"/>
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/row_thickness"
-            android:text="Income"
-            android:background="@color/green_income"
-            android:layout_weight="1"
+            style="@style/button_income"
             android:id="@+id/b_income" />
     </LinearLayout>
 

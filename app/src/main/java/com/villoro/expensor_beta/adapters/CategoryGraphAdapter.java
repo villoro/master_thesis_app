@@ -2,7 +2,9 @@ package com.villoro.expensor_beta.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,6 @@ import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.Tables;
-import com.villoro.expensor_beta.sections.DashboardFragmentSection;
 
 /**
  * Created by Arnau on 11/05/2015.
@@ -18,20 +19,14 @@ import com.villoro.expensor_beta.sections.DashboardFragmentSection;
 public class CategoryGraphAdapter extends CursorAdapter{
 
     private LayoutInflater mInflater;
-    double maxWidth;
+    double maxWidth, higherValue;
 
-    View[] lines;
-    double[] sum_amounts;
-    double maxValue;
-
-    public CategoryGraphAdapter(Context context, Cursor c, int flags, double maxWidth) {
+    public CategoryGraphAdapter(Context context, Cursor c, int flags, double maxWidth, double higherValue) {
         super(context, c, flags);
 
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.maxWidth = maxWidth;
-        lines = new View[c.getCount()];
-        sum_amounts = new double[c.getCount()];
-        maxValue = 0;
+        this.higherValue = higherValue;
     }
 
     @Override
@@ -41,21 +36,26 @@ public class CategoryGraphAdapter extends CursorAdapter{
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tv_name = (TextView) view.findViewById(R.id.row_grapgh_categories_name);
-        lines[cursor.getPosition()] = view.findViewById(R.id.row_graph_categories_line);
 
-        tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
+        TextView tv_name = (TextView) view.findViewById(R.id.row_grapgh_categories_name);
+        View line = view.findViewById(R.id.row_graph_categories_line);
+
+        double amount = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
+
+        tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)) +
+        " " + amount + " €");
         tv_name.setTextColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
 
-        int position = cursor.getPosition();
+        line.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
+        setWidth(line, amount / higherValue);
 
-        lines[position].setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
+    }
 
-        sum_amounts[position] = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
+    private void setWidth(View view, double percentage){
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.width = (int) Math.round(maxWidth * percentage);
 
-        if(sum_amounts[position] > maxValue){
-            maxValue = sum_amounts[position];
-        }
+        view.setLayoutParams(params);
     }
 
 }
