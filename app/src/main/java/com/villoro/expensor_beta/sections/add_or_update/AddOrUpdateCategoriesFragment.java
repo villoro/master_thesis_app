@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -37,6 +38,7 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
 
     String typeCategory;
     Uri uriCategories;
+    Button b_expense, b_income;
 
     String name;
     int color;
@@ -55,7 +57,7 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         } else {
             uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
         }
-        Log.e("", "type= " + typeCategory);
+        Log.e("AddOrUpdateCategory", "type= " + typeCategory);
 
         int[] auxColors = getResources().getIntArray(R.array.categories_colors);
         colors = new ArrayList<>();
@@ -78,6 +80,11 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         setSpinner();
         et_name = (EditText) rv.findViewById(R.id.et_categories_name);
 
+        b_expense = (Button) rv.findViewById(R.id.b_expense);
+        b_income = (Button) rv.findViewById(R.id.b_income);
+        setButtonExpense();
+        setButtonIncome();
+
         if (currentID >0)
         {
             setValues();
@@ -94,13 +101,14 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         color = colors.get( sp_color.getSelectedItemPosition() );
         ContentValues values = new ContentValues();
         values.put(Tables.NAME, name);
-        values.put(Tables.TYPE, typeCategory);
         values.put(Tables.COLOR, color);
+
+        Log.d("addCategory", "type= " + typeCategory);
 
         if (currentID > 0){
             context.getContentResolver().update(uriCategories, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, values);
+            context.getContentResolver().insert(uriCategories, values);
         }
     }
 
@@ -136,6 +144,32 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
 
         ColorAdapter colorAdapter = new ColorAdapter(context, 0, colors);
         sp_color.setAdapter(colorAdapter);
+    }
+
+    public void setButtonExpense(){
+        b_expense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!typeCategory.equals(Tables.TYPE_EXPENSE)){
+                    typeCategory = Tables.TYPE_EXPENSE;
+                    uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+                    Log.e("AddOrUpdateCategory", "typeTransaction= " + typeCategory);
+                }
+            }
+        });
+    }
+
+    public void setButtonIncome(){
+        b_income.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!typeCategory.equals(Tables.TYPE_INCOME)){
+                    typeCategory = Tables.TYPE_INCOME;
+                    uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
+                    Log.e("AddOrUpdateCategory", "typeTransaction= " + typeCategory);
+                }
+            }
+        });
     }
 
     private class ColorAdapter extends ArrayAdapter<Integer>{

@@ -133,10 +133,20 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case CATEGORIES: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
+                Log.e("ExpensorProvider querying", "type= " + ExpensorContract.CategoriesEntry.getType(uri));
+                /*retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
                         ExpensorQueries.whereType(selection, ExpensorContract.CategoriesEntry.getType(uri)),
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );*/
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_CATEGORIES,
+                        projection,
+                        Tables.TYPE + " = '" + ExpensorContract.CategoriesEntry.getType(uri) + "'",
                         selectionArgs,
                         null,
                         null,
@@ -305,21 +315,12 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case CATEGORIES: {
-                if (db.query(
-                        Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
-                        Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
-                        null, null, null, null).getCount() == 0) {
-                    values.put(Tables.TYPE, ExpensorContract.CategoriesEntry.getType(uri));
-                    long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
-                    if (_id > 0)
-                        returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
-                    else
-                        throw new SQLException("Failed to insert to row into " + uri);
-                } else {
-                    Log.e("", "ja hi ha un amb aquest nom");
-                    returnUri = uri;
-                }
-
+                values.put(Tables.TYPE, ExpensorContract.CategoriesEntry.getType(uri));
+                long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
             case PEOPLE: {

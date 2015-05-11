@@ -122,7 +122,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     public void setListView(){
         Uri uri;
         if(typeTransaction.equals(Tables.TYPE_INCOME)){
-            uri = ExpensorContract.IncomeEntry.CONTENT_URI;
+            uri = ExpensorContract.IncomeEntry.buildIncomeUri("2015", "05"); //TODO
         } else {
             uri = ExpensorContract.ExpenseEntry.buildExpenseUri("2015", "05"); //TODO
         }
@@ -197,7 +197,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
             public void onClick(View v) {
                 if(!typeTransaction.equals(Tables.TYPE_INCOME)){
                     typeTransaction = Tables.TYPE_INCOME;
-                    uri = ExpensorContract.IncomeEntry.CONTENT_URI;
+                    uri = ExpensorContract.IncomeEntry.buildIncomeUri("2015", "05"); //TODO
                     setListView();
                 }
             }

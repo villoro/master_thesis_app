@@ -31,6 +31,7 @@ public class ExpensorQueries {
     private static final String AS = " AS ";
     private static final String AND = " AND ";
     private static final String AUX = "aux";
+    private static final String AUX_ID = "auxID";
     private static final String AUX0 = "aux0";
     private static final String IS_NULL = " IS NULL ";
     private static final String DATETIME = "Datetime('";
@@ -39,11 +40,16 @@ public class ExpensorQueries {
     public static final String queryGraph(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(SELECT).append(sumAmount());
+        /*sb.append(SELECT).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
         sb.append(AND).append(whereDate(year, month));
-        sb.append(AND).append(whereNoDeleted()).append(CLOSE);
+        sb.append(AND).append(whereNoDeleted()).append(CLOSE);*/
+
+        sb.append(SELECT).append(Tables.TYPE).append(COMA).append(sumAmount());
+        sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
+        sb.append(WHERE).append(whereDate(year, month));
+        sb.append(GROUP_BY).append(Tables.TYPE);
 
         return sb.toString();
     }
@@ -100,19 +106,14 @@ public class ExpensorQueries {
 
         sb.append(SELECT_ALL_FROM);
         sb.append(PARENTHESIS_OPEN).append(SELECT);
-        sb.append(Tables.ID).append(COMA).append(Tables.COLOR).append(COMA).append(Tables.NAME);
+        sb.append(Tables.ID).append(AS).append(AUX_ID).append(COMA).append(Tables.COLOR).append(COMA).append(Tables.NAME);
         sb.append(FROM).append(Tables.TABLENAME_CATEGORIES);
         sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
-        sb.append(ON).append(AUX).append(".").append(Tables.ID).append(EQUAL).append(Tables.CATEGORY_ID);
+        sb.append(ON).append(AUX).append(".").append(AUX_ID).append(EQUAL).append(Tables.CATEGORY_ID);
         sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereDate(year, month));
         sb.append(AND).append(whereNoDeleted()).append(CLOSE);
 
-/*        sb.append(SELECT_ALL_FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
-        sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
-        sb.append(AND).append(whereDate(year, month)).append(AND).append(whereNoDeleted());
-        sb.append(CLOSE);
-*/
         return sb.toString();
     }
 

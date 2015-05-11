@@ -142,7 +142,6 @@ public class Utility {
     }
 
 
-
     //TODO improve that
     public static String formatDoubleToSQLite(String amount)
     {

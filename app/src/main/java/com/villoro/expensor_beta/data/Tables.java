@@ -114,7 +114,7 @@ public class Tables {
                 columns = new String[]{NAME, TYPE, COLOR};
                 origin = new String[]{null, null, null};
                 types = new String[]{TYPE_TEXT, TYPE_TEXT, TYPE_INT};
-                unique = new boolean[]{true, false, false};
+                unique = new boolean[]{false, false, false};
                 lastPrivateColumn = 3;
                 acl = ACL_INDIVIDUAL;
                 break;

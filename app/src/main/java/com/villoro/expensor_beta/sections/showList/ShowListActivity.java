@@ -100,7 +100,8 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
                 if(!typeCategory.equals(Tables.TYPE_EXPENSE)){
                     typeCategory = Tables.TYPE_EXPENSE;
                     uri = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
-                    Log.e("", "typeTransaction= " + typeCategory);;
+                    Log.e("", "typeTransaction= " + typeCategory);
+                    Log.e("", uri.toString());
                     setList();
                 }
             }
@@ -115,6 +116,7 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
                     typeCategory = Tables.TYPE_INCOME;
                     uri = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
                     Log.e("", "typeTransaction= " + typeCategory);
+                    Log.e("", uri.toString());
                     setList();
                 }
             }

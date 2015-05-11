@@ -3,6 +3,7 @@ package com.villoro.expensor_beta.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,5 +47,6 @@ public class TransactionSimpleAdapter extends CursorAdapter{
 
         tv_category.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
         tv_category.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)).substring(0,1));
+
     }
 }

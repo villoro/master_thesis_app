@@ -63,7 +63,7 @@ public class ExpensorContract {
         private static final String tableName = Tables.TABLENAME_TRANSACTION_SIMPLE;
         private static final String type = Tables.TYPE_INCOME;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri INCOME_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).appendPath(type).build();
 
         public static final String CONTENT_TYPE =
@@ -72,7 +72,11 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName + "/" + type;
 
         public static Uri buildExpenseUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(INCOME_URI, id);
+        }
+
+        public static Uri buildIncomeUri(String year, String month){
+            return INCOME_URI.buildUpon().appendPath(year).appendPath(month).build();
         }
     }
 

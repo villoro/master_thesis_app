@@ -67,7 +67,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             uriTransaction = ExpensorContract.ExpenseEntry.EXPENSE_URI;
         } else {
             uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
-            uriTransaction = ExpensorContract.IncomeEntry.CONTENT_URI;
+            uriTransaction = ExpensorContract.IncomeEntry.INCOME_URI;
         }
         Log.e("", "type= " + typeTransaction);
     }
