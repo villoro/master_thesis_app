@@ -9,7 +9,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/row_thickness"
             android:text="Expense"
-            android:background="@color/red"
+            android:background="@color/red_expense"
             android:layout_weight="1"
             android:id="@+id/b_expense" />
 
@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/row_thickness"
             android:text="Income"
-            android:background="@color/green"
+            android:background="@color/green_income"
             android:layout_weight="1"
             android:id="@+id/b_income" />
     </LinearLayout>

@@ -77,13 +77,16 @@ public class ExpensorQueries {
     public static final String queryGraphAll(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(SELECT).append(Tables.NAME).append(COMA).append(Tables.SUM_AMOUNT).append(FROM);
+        sb.append(SELECT).append(Tables.ID).append(COMA).append(Tables.NAME).append(COMA);
+        sb.append(Tables.COLOR).append(COMA).append(Tables.SUM_AMOUNT);
+        sb.append(FROM);
         sb.append(PARENTHESIS_OPEN).append(SELECT);
         sb.append(Tables.CATEGORY_ID).append(COMA).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
         sb.append(AND).append(whereDate(year, month));
-        sb.append(AND).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
+        sb.append(AND).append(whereNoDeleted());
+        sb.append(GROUP_BY).append(Tables.CATEGORY_ID).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_CATEGORIES);
         sb.append(ON).append(AUX).append(".").append(Tables.CATEGORY_ID).append(EQUAL);
         sb.append(Tables.TABLENAME_CATEGORIES).append(".").append(Tables.ID);

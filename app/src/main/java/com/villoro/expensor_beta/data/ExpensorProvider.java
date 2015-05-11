@@ -60,7 +60,8 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/*/#/#", TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH);
 
         matcher.addURI(authority, GRAPH + "/*/#/#", GRAPHIC);
-        matcher.addURI(authority, GRAPH + "/" +  ALL + "/*/#/#", GRAPHIC_ALL);
+        //matcher.addURI(authority, GRAPH + "/" +  ALL + "/*/#/#", GRAPHIC_ALL); //TODO
+        matcher.addURI(authority, GRAPH + "/*/*/#/#", GRAPHIC_ALL);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/*", CATEGORIES);
 
@@ -93,6 +94,8 @@ public class ExpensorProvider extends ContentProvider {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
         Cursor retCursor;
+        Log.d("ExpensorProvider", "uri= " + uri.toString());
+        Log.d("ExpensorProvider", "uriMatcher= " + sUriMatcher.match(uri));
         switch (sUriMatcher.match(uri)) {
             case TRANSACTION_SIMPLE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -134,7 +137,7 @@ public class ExpensorProvider extends ContentProvider {
             }
             case CATEGORIES: {
                 Log.e("ExpensorProvider querying", "type= " + ExpensorContract.CategoriesEntry.getType(uri));
-                /*retCursor = mOpenHelper.getReadableDatabase().query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
                         ExpensorQueries.whereType(selection, ExpensorContract.CategoriesEntry.getType(uri)),
@@ -142,7 +145,7 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
-                );*/
+                );/*
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
@@ -151,7 +154,7 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
-                );
+                );*/
                 break;
             }
             case PEOPLE: {

@@ -28,7 +28,7 @@
             <View
                 style="@style/big_bar"
                 android:id="@+id/bar_income"
-                android:background="@color/green"/>
+                android:background="@color/green_income"/>
 
         </LinearLayout>
 
@@ -51,7 +51,7 @@
             <View
                 style="@style/big_bar"
                 android:id="@+id/bar_expense"
-                android:background="@color/red"/>
+                android:background="@color/red_expense"/>
         </LinearLayout>
 
         <View
@@ -103,7 +103,7 @@
             <View
                 style="@style/big_bar"
                 android:id="@+id/bar_friends_deuen"
-                android:background="@color/green"/>
+                android:background="@color/green_income"/>
 
         </LinearLayout>
 
@@ -126,7 +126,7 @@
             <View
                 style="@style/big_bar"
                 android:id="@+id/bar_friends_dec"
-                android:background="@color/red"/>
+                android:background="@color/red_expense"/>
         </LinearLayout>
 
 

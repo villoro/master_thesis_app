@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,9 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utility;
+import com.villoro.expensor_beta.adapters.CategoryGraphAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.Tables;
 
 import java.lang.Override;
 
@@ -29,6 +33,11 @@ public class DashboardFragmentSection extends Fragment{
 
     Context context;
     double maxWidth;
+
+    View g_income, g_expense, g_result;
+    TextView tv_income, tv_expense, tv_result;
+
+    ListView lv_expense, lv_income;
 
     public DashboardFragmentSection(){};
 
@@ -78,13 +87,54 @@ public class DashboardFragmentSection extends Fragment{
 
         View rootView = inflater.inflate(R.layout.fragment_section_dashboard, container, false);
 
-        View l_income = rootView.findViewById(R.id.bar_income);
-        View l_expense = rootView.findViewById(R.id.bar_expense);
+        g_income = rootView.findViewById(R.id.bar_income);
+        g_expense = rootView.findViewById(R.id.bar_expense);
+        g_result = rootView.findViewById(R.id.bar_result);
+
+        tv_income = (TextView) rootView.findViewById(R.id.tv_income_value);
+        tv_expense = (TextView) rootView.findViewById(R.id.tv_expense_value);
+        tv_result = (TextView) rootView.findViewById(R.id.tv_result_value);
+
+        lv_expense = (ListView) rootView.findViewById(R.id.lv_expenses);
+        lv_income = (ListView) rootView.findViewById(R.id.lv_incomes);
 
         Cursor cursor = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildExpenseGraphUri("2015", "5"),
                 null, null, null, null);
+        cursor.moveToFirst();
+        double expense= 0;
+        double income = 0;
+        double result = 0;
+        do{
+            String type = cursor.getString(cursor.getColumnIndex(Tables.TYPE));
+            if(type.equals(Tables.TYPE_EXPENSE)){
+                expense = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
+            } else if (type.equals(Tables.TYPE_INCOME)) {
+                income = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
+            }
 
-        Log.d("Dashboard Section", "cursor count= " + cursor.getCount());
+        } while (cursor.moveToNext());
+
+        double max = Math.max(expense, income);
+        result = income - expense;
+        setWidth(g_expense, expense/max);
+        setWidth(g_income, income/max);
+        setWidth(g_result,  Math.abs(result)/ max);
+
+        if(expense > income) {
+            int colorRed = getResources().getColor(R.color.red_expense);
+            g_result.setBackgroundColor(colorRed);
+            tv_result.setTextColor(colorRed);
+        } else {
+            int colorGreen = getResources().getColor(R.color.green_income);
+            g_result.setBackgroundColor(colorGreen);
+            tv_result.setTextColor(colorGreen);
+        }
+
+        tv_expense.setText(expense + " €");
+        tv_income.setText(income + " €");
+        tv_result.setText(result + " €");
+
+        setLists();
 
         return rootView;
     }
@@ -106,6 +156,20 @@ public class DashboardFragmentSection extends Fragment{
         params.width = (int) Math.round(maxWidth * percentage);
 
         view.setLayoutParams(params);
+    }
+
+    public void setLists(){
+        Cursor cursorExpense = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildExpenseGraphAllUri("2015", "5"),
+                null, null, null, null);
+        CategoryGraphAdapter expenseAdapter = new CategoryGraphAdapter(context, cursorExpense, 0, maxWidth);
+        lv_expense.setAdapter(expenseAdapter);
+        Utility.setListViewHeightBasedOnChildren(lv_expense);
+
+        Cursor cursorIncome = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildIncomeGraphAllUri("2015", "5"),
+                null, null, null, null);
+        CategoryGraphAdapter incomeAdapter = new CategoryGraphAdapter(context, cursorIncome, 0, maxWidth);
+        lv_income.setAdapter(incomeAdapter);
+        Utility.setListViewHeightBasedOnChildren(lv_income);
     }
 
     //TODO probably I'll use a loader
