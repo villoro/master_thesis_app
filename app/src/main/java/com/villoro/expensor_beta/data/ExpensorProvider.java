@@ -1,7 +1,6 @@
 package com.villoro.expensor_beta.data;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -26,35 +25,25 @@ public class ExpensorProvider extends ContentProvider {
     private static final int TRANSACTION_SIMPLE = 100;
     private static final int TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH = 101;
 
-    private static final int GRAPH_EXPENSE = 200;
-    private static final int GRAPH_INCOME = 201;
-    private static final int GRAPH_EXPENSE_ALL = 202;
-    private static final int GRAPH_INCOME_ALL = 203;
+    private static final int GRAPHIC = 200;
+    private static final int GRAPHIC_ALL = 201;
 
-    private static final int CATEGORIES_EXPENSE = 300;
-    private static final int CATEGORIES_INCOME = 301;
-    private static final int CATEGORIES_WITH_ID = 302;
+    private static final int CATEGORIES = 300;
 
     private static final int PEOPLE = 400;
-    private static final int PEOPLE_WITH_ID = 401;
 
     private static final int PEOPLE_IN_GROUP = 450;
-    private static final int PEOPLE_IN_GROUP_WITH_ID = 451;
 
-    private static final int GROUPS = 500;
-    private static final int GROUPS_WITH_ID = 501;
-
-    private static final int TRANSACTIONS_GROUP = 600;
-    private static final int TRANSACTIONS_GROUP_WITH_ID = 601;
+    private static final int GROUPS = 600;
 
     private static final int TRANSACTIONS_PEOPLE = 700;
-    private static final int TRANSACTIONS_PEOPLE_WITH_ID = 701;
 
-    private static final int WHO_PAID_SPENT = 800;
-    private static final int WHO_PAID_SPENT_WITH_ID = 801;
+    private static final int TRANSACTIONS_GROUP = 800;
+
+    private static final int WHO_PAID_SPENT = 850;
 
     private static final int HOW_TO_SETTLE = 900;
-    private static final int HOW_TO_SETTLE_WITH_ID = 901;
+
 
     public static UriMatcher buildUriMatcher() {
         // All paths added to the UriMatcher have a corresponding code to return when a match is
@@ -63,40 +52,31 @@ public class ExpensorProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = ExpensorContract.CONTENT_AUTHORITY_EXPENSOR;
 
+        //              * -> String               # -> Number
+
         // For each type of URI you want to add, create a corresponding code.
         //matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/" + Tables.TYPE_EXPENSE, EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/#", TRANSACTION_SIMPLE);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/#/#/#", TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/*", TRANSACTION_SIMPLE);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/*/#/#", TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH);
 
-        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_EXPENSE + "/#/#", GRAPH_EXPENSE);
-        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_INCOME + "/#/#", GRAPH_INCOME);
-        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_EXPENSE + "/" + ALL + "/#/#", GRAPH_EXPENSE_ALL);
-        matcher.addURI(authority, GRAPH + "/" + Tables.TYPE_INCOME + "/" + ALL + "/#/#", GRAPH_INCOME_ALL);
+        matcher.addURI(authority, GRAPH + "/*/#/#", GRAPHIC);
+        matcher.addURI(authority, GRAPH + "/" +  ALL + "/*/#/#", GRAPHIC_ALL);
 
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/" + Tables.TYPE_EXPENSE, CATEGORIES_EXPENSE);
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/" + Tables.TYPE_INCOME, CATEGORIES_INCOME);
-        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/#", CATEGORIES_WITH_ID);
+        matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/*", CATEGORIES);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
-        matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/#", PEOPLE_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
-        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#", PEOPLE_IN_GROUP_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
-        matcher.addURI(authority, Tables.TABLENAME_GROUPS + "/#", GROUPS_WITH_ID);
-
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP, TRANSACTIONS_GROUP);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP + "/#", TRANSACTIONS_GROUP_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE, TRANSACTIONS_PEOPLE);
-        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/#", TRANSACTIONS_PEOPLE_WITH_ID);
+
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP, TRANSACTIONS_GROUP);
 
         matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT, WHO_PAID_SPENT);
-        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT + "/#", WHO_PAID_SPENT_WITH_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE, HOW_TO_SETTLE);
-        matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE + "/#", HOW_TO_SETTLE_WITH_ID);
 
         return matcher;
     }
@@ -114,96 +94,50 @@ public class ExpensorProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "expense"
-            case TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH: {
-                /*retCursor = mOpenHelper.getReadableDatabase().query(
+            case TRANSACTION_SIMPLE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_TRANSACTION_SIMPLE,
                         projection,
-                        Tables.TYPE + " = '" + Tables.TYPE_EXPENSE + "'",
+                        ExpensorQueries.whereType(selection,
+                                ExpensorContract.TransactionSimple.getTypeTransaction(uri)),
                         selectionArgs,
                         null,
                         null,
                         sortOrder
-                );*/
-                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryExpenseMonth(
+                );
+                break;
+            }
+            case TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryTransactionSimpleMonth(
+                        ExpensorContract.TransactionSimple.getTypeTransaction(uri),
                         ExpensorContract.TransactionSimple.getYearFromUriAll(uri),
                         ExpensorContract.TransactionSimple.getMonthFromUriAll(uri)), null);
                 break;
             }
-            /*case EXPENSE_WITH_ID: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_TRANSACTION_SIMPLE,
-                        projection,
-                        Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
-                        null,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }*/
-            case GRAPH_EXPENSE: {
+            case GRAPHIC: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        ExpensorQueries.queryGraphExpense(
+                        ExpensorQueries.queryGraph(
+                                ExpensorContract.GraphEntry.getType(uri),
                                 ExpensorContract.GraphEntry.getYearFromUri(uri),
                                 ExpensorContract.GraphEntry.getMonthFromUri(uri)
                         ), null);
                 break;
             }
-            case GRAPH_INCOME: {
+            case GRAPHIC_ALL: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        ExpensorQueries.queryGraphExpense(
-                                ExpensorContract.GraphEntry.getYearFromUri(uri),
-                                ExpensorContract.GraphEntry.getMonthFromUri(uri)
-                        ), null);
-                break;
-            }
-            case GRAPH_EXPENSE_ALL: {
-                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        ExpensorQueries.queryGraphExpense(
+                        ExpensorQueries.queryGraphAll(
+                                ExpensorContract.GraphEntry.getTypeAll(uri),
                                 ExpensorContract.GraphEntry.getYearFromUriAll(uri),
                                 ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
                         ), null);
                 break;
             }
-            case GRAPH_INCOME_ALL: {
-                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
-                        ExpensorQueries.queryGraphExpense(
-                                ExpensorContract.GraphEntry.getYearFromUriAll(uri),
-                                ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
-                        ), null);
-                break;
-            }
-            case CATEGORIES_EXPENSE: {
+            case CATEGORIES: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_CATEGORIES,
                         projection,
-                        Tables.TYPE + " = '" + Tables.TYPE_EXPENSE + "'",
+                        ExpensorQueries.whereType(selection, ExpensorContract.CategoriesEntry.getType(uri)),
                         selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
-            case CATEGORIES_INCOME: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_CATEGORIES,
-                        projection,
-                        Tables.TYPE + " = '" + Tables.TYPE_INCOME + "'",
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
-            case CATEGORIES_WITH_ID: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Tables.TABLENAME_CATEGORIES,
-                        projection,
-                        Tables.ID + " = '" + ContentUris.parseId(uri) + "'",
-                        null,
                         null,
                         null,
                         sortOrder
@@ -312,56 +246,34 @@ public class ExpensorProvider extends ContentProvider {
             case TRANSACTION_SIMPLE:
                 return ExpensorContract.ExpenseEntry.CONTENT_ITEM_TYPE;
 
-            case GRAPH_EXPENSE:
-                return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
-            case GRAPH_INCOME:
-                return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
-            case GRAPH_EXPENSE_ALL:
+            case GRAPHIC:
                 return ExpensorContract.GraphEntry.CONTENT_TYPE;
-            case GRAPH_INCOME_ALL:
-                return ExpensorContract.GraphEntry.CONTENT_TYPE;
+            case GRAPHIC_ALL:
+                return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
 
-            case CATEGORIES_EXPENSE:
+            case CATEGORIES:
                 return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
-            case CATEGORIES_INCOME:
-                return ExpensorContract.CategoriesEntry.CONTENT_TYPE;
-            case CATEGORIES_WITH_ID:
-                return ExpensorContract.CategoriesEntry.CONTENT_ITEM_TYPE;
 
             case PEOPLE:
                 return ExpensorContract.PeopleEntry.CONTENT_TYPE;
-            case PEOPLE_WITH_ID:
-                return ExpensorContract.PeopleEntry.CONTENT_ITEM_TYPE;
 
             case PEOPLE_IN_GROUP:
                 return ExpensorContract.PeopleInGroupEntry.CONTENT_TYPE;
-            case PEOPLE_IN_GROUP_WITH_ID:
-                return ExpensorContract.PeopleInGroupEntry.CONTENT_ITEM_TYPE;
 
             case GROUPS:
                 return ExpensorContract.GroupEntry.CONTENT_TYPE;
-            case GROUPS_WITH_ID:
-                return ExpensorContract.GroupEntry.CONTENT_ITEM_TYPE;
 
             case TRANSACTIONS_PEOPLE:
                 return ExpensorContract.TransactionPeopleEntry.CONTENT_TYPE;
-            case TRANSACTIONS_PEOPLE_WITH_ID:
-                return ExpensorContract.TransactionPeopleEntry.CONTENT_ITEM_TYPE;
 
             case TRANSACTIONS_GROUP:
                 return ExpensorContract.TransactionGroupEntry.CONTENT_TYPE;
-            case TRANSACTIONS_GROUP_WITH_ID:
-                return ExpensorContract.TransactionGroupEntry.CONTENT_ITEM_TYPE;
 
             case WHO_PAID_SPENT:
                 return ExpensorContract.WhoPaidSpentEntry.CONTENT_TYPE;
-            case WHO_PAID_SPENT_WITH_ID:
-                return ExpensorContract.WhoPaidSpentEntry.CONTENT_ITEM_TYPE;
 
             case HOW_TO_SETTLE:
                 return ExpensorContract.HowToSettleEntry.CONTENT_TYPE;
-            case HOW_TO_SETTLE_WITH_ID:
-                return ExpensorContract.HowToSettleEntry.CONTENT_ITEM_TYPE;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -392,30 +304,12 @@ public class ExpensorProvider extends ContentProvider {
                     throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
-            case CATEGORIES_EXPENSE: {
+            case CATEGORIES: {
                 if (db.query(
                         Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
                         Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
                         null, null, null, null).getCount() == 0) {
-                    values.put(Tables.TYPE, Tables.TYPE_EXPENSE);
-                    long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
-                    if (_id > 0)
-                        returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
-                    else
-                        throw new SQLException("Failed to insert to row into " + uri);
-                } else {
-                    Log.e("", "ja hi ha un amb aquest nom");
-                    returnUri = uri;
-                }
-
-                break;
-            }
-            case CATEGORIES_INCOME: {
-                if (db.query(
-                        Tables.TABLENAME_CATEGORIES, new String[]{Tables.NAME},
-                        Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
-                        null, null, null, null).getCount() == 0) {
-                    values.put(Tables.TYPE, Tables.TYPE_INCOME);
+                    values.put(Tables.TYPE, ExpensorContract.CategoriesEntry.getType(uri));
                     long _id = db.insert(Tables.TABLENAME_CATEGORIES, null, values);
                     if (_id > 0)
                         returnUri = ExpensorContract.CategoriesEntry.buildCategoriesUri(_id);
@@ -520,10 +414,7 @@ public class ExpensorProvider extends ContentProvider {
             case TRANSACTION_SIMPLE:
                 rowsDeleted = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
-            case CATEGORIES_EXPENSE:
-                rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
-                break;
-            case CATEGORIES_INCOME:
+            case CATEGORIES:
                 rowsDeleted = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:
@@ -577,7 +468,7 @@ public class ExpensorProvider extends ContentProvider {
             case TRANSACTION_SIMPLE:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, selection, selectionArgs);
                 break;
-            case CATEGORIES_EXPENSE:
+            case CATEGORIES:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
                 break;
             case PEOPLE:

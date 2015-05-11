@@ -28,6 +28,7 @@
         android:id="@+id/row_category_radio_button"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:focusable="false"/>
+        android:focusable="false"
+        android:clickable="false"/>
 
 </RelativeLayout>

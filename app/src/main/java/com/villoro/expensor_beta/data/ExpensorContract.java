@@ -91,15 +91,19 @@ public class ExpensorContract {
         public static final Uri EXPENSE_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_EXPENSE).build();
         public static final Uri INCOME_ALL_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_INCOME).appendPath(ALL).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(ALL).appendPath(Tables.TYPE_INCOME).build();
         public static final Uri EXPENSE_ALL_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_EXPENSE).appendPath(ALL).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(ALL).appendPath(Tables.TYPE_EXPENSE).build();
 
         public static Uri buildIncomeGraphUri(String year, String month){
             return INCOME_URI.buildUpon().appendPath(year).appendPath(month).build();
         }
         public static Uri buildExpenseGraphUri(String year, String month){
             return EXPENSE_URI.buildUpon().appendPath(year).appendPath(month).build();
+        }
+
+        public static String getType(Uri uri){
+            return uri.getPathSegments().get(1);
         }
 
         public static int getYearFromUri(Uri uri){
@@ -114,6 +118,10 @@ public class ExpensorContract {
         }
         public static Uri buildExpenseGraphAllUri(String year, String month){
             return EXPENSE_ALL_URI.buildUpon().appendPath(year).appendPath(month).build();
+        }
+
+        public static String getTypeAll(Uri uri){
+            return uri.getPathSegments().get(2);
         }
 
         public static int getYearFromUriAll(Uri uri){
@@ -143,6 +151,10 @@ public class ExpensorContract {
 
         public static Uri buildCategoriesUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static String getType(Uri uri){
+            return uri.getPathSegments().get(1);
         }
     }
 

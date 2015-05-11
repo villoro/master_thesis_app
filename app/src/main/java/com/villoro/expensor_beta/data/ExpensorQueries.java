@@ -2,9 +2,6 @@ package com.villoro.expensor_beta.data;
 
 import com.villoro.expensor_beta.Utility;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 /**
  * Created by Arnau on 10/05/2015.
  */
@@ -39,21 +36,14 @@ public class ExpensorQueries {
     private static final String DATETIME = "Datetime('";
     private static final String CLOSE_DATE = "')";
 
-    public static final String queryGraphExpense(int year, int month){
-        return queryGraph(Tables.TYPE_EXPENSE, year, month);
-    }
-
-    public static final String queryGraphIncome(int year, int month){
-        return queryGraph(Tables.TYPE_EXPENSE, year, month);
-    }
-
-    private static final String queryGraph(String type, int year, int month){
+    public static final String queryGraph(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
         sb.append(SELECT).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
-        sb.append(AND).append(whereDate(year, month)).append(CLOSE);
+        sb.append(AND).append(whereDate(year, month));
+        sb.append(AND).append(whereNoDeleted()).append(CLOSE);
 
         return sb.toString();
     }
@@ -69,15 +59,16 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
-    public static final String queryGraphExpenseAll(int year, int month){
-        return queryGraphAll(Tables.TYPE_EXPENSE, year, month);
+    private static final String whereNoDeleted(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(Tables.DELETED).append(EQUAL).append("'");
+        sb.append(Tables.FALSE).append("'");
+
+        return sb.toString();
     }
 
-    public static final String queryGraphIncomeAll(int year, int month){
-        return queryGraphAll(Tables.TYPE_EXPENSE, year, month);
-    }
-
-    private static final String queryGraphAll(String type, int year, int month){
+    public static final String queryGraphAll(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
         sb.append(SELECT).append(Tables.NAME).append(COMA).append(Tables.SUM_AMOUNT).append(FROM);
@@ -85,10 +76,12 @@ public class ExpensorQueries {
         sb.append(Tables.CATEGORY_ID).append(COMA).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
-        sb.append(AND).append(whereDate(year, month)).append(PARENTHESIS_CLOSE);
+        sb.append(AND).append(whereDate(year, month));
+        sb.append(AND).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_CATEGORIES);
         sb.append(ON).append(AUX).append(".").append(Tables.CATEGORY_ID).append(EQUAL);
-        sb.append(Tables.TABLENAME_CATEGORIES).append(".").append(Tables.ID).append(CLOSE);
+        sb.append(Tables.TABLENAME_CATEGORIES).append(".").append(Tables.ID);
+        sb.append(WHERE).append(whereNoDeleted()).append(CLOSE);
 
         return sb.toString();
     }
@@ -102,20 +95,34 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
-    public static final String queryIncomeMonth(int year, int month){
-        return queryTransactionSimpleMonth(Tables.TYPE_INCOME, year, month);
-    }
-
-    public static final String queryExpenseMonth(int year, int month){
-        return queryTransactionSimpleMonth(Tables.TYPE_EXPENSE, year, month);
-    }
-
-    private static final String queryTransactionSimpleMonth(String type, int year, int month){
+    public static final String queryTransactionSimpleMonth(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(SELECT_ALL_FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
+        sb.append(SELECT_ALL_FROM);
+        sb.append(PARENTHESIS_OPEN).append(SELECT);
+        sb.append(Tables.ID).append(COMA).append(Tables.COLOR).append(COMA).append(Tables.NAME);
+        sb.append(FROM).append(Tables.TABLENAME_CATEGORIES);
+        sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
+        sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
+        sb.append(ON).append(AUX).append(".").append(Tables.ID).append(EQUAL).append(Tables.CATEGORY_ID);
+        sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereDate(year, month));
+        sb.append(AND).append(whereNoDeleted()).append(CLOSE);
+
+/*        sb.append(SELECT_ALL_FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
-        sb.append(AND).append(whereDate(year, month)).append(CLOSE);
+        sb.append(AND).append(whereDate(year, month)).append(AND).append(whereNoDeleted());
+        sb.append(CLOSE);
+*/
+        return sb.toString();
+    }
+
+    public static final String whereType(String where, String type){
+        StringBuilder sb = new StringBuilder();
+
+        if(where != null){
+            sb.append(where).append(AND);
+        }
+        sb.append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
 
         return sb.toString();
     }

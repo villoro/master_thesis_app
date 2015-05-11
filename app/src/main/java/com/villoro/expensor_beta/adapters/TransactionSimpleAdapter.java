@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utility;
+import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 
 /**
@@ -43,6 +44,7 @@ public class TransactionSimpleAdapter extends CursorAdapter{
         tv_comments.setText(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)));
         tv_amount.setText(cursor.getString(cursor.getColumnIndex(Tables.AMOUNT)));
 
-
+        tv_category.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
+        tv_category.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)).substring(0,1));
     }
 }

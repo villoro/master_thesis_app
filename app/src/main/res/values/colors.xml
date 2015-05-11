@@ -22,6 +22,7 @@
     <item name="expensor_blue" type="color">#2196F3</item>
     <item name="divider" type="color">@color/lighter_gray</item>
 
+    <!--
     <array name="categories_colors">
         <item>@color/blue</item>
         <item>@color/dark_blue</item>
@@ -33,6 +34,81 @@
         <item>@color/dark_orange</item>
         <item>@color/red</item>
         <item>@color/dark_red</item>
+    </array> -->
+
+    <array name="categories_colors">
+        <!-- Red -->
+        <item>#E57373</item>
+        <item>#F44336</item>
+        <item>#D32F2F</item>
+        <!-- Pink -->
+        <item>#F06292</item>
+        <item>#E91E63</item>
+        <item>#C2185B</item>
+        <!-- Purple -->
+        <item>#BA68C8</item>
+        <item>#9C27B0</item>
+        <item>#7B1FA2</item>
+        <!-- Deep Purple -->
+        <item>#9575CD</item>
+        <item>#673AB7</item>
+        <item>#512DA8</item>
+        <!-- Indigo -->
+        <item>#7986CB</item>
+        <item>#3F51B5</item>
+        <item>#303F9F</item>
+        <!-- Blue -->
+        <item>#64B5F6</item>
+        <item>#2196F3</item>
+        <item>#1976D2</item>
+        <!-- Light Blue -->
+        <item>#4FC3F7</item>
+        <item>#03A9F4</item>
+        <item>#0288D1</item>
+        <!-- Cyan -->
+        <item>#4DD0E1</item>
+        <item>#00BCD4</item>
+        <item>#0097A7</item>
+        <!-- Teal -->
+        <item>#4DB6AC</item>
+        <item>#009688</item>
+        <item>#00796B</item>
+        <!-- Green -->
+        <item>#81C784</item>
+        <item>#4CAF50</item>
+        <item>#388E3C</item>
+        <!-- Light Green -->
+        <item>#AED581</item>
+        <item>#8BC34A</item>
+        <item>#689F38</item>
+        <!-- Lime -->
+        <item>#DCE775</item>
+        <item>#CDDC39</item>
+        <item>#AFB42B</item>
+        <!-- Yellow -->
+        <item>#FFF176</item>
+        <item>#FFEB3B</item>
+        <item>#FBC02D</item>
+        <!-- Amber -->
+        <item>#FFD54F</item>
+        <item>#FFC107</item>
+        <item>#FFA000</item>
+        <!-- Orange -->
+        <item>#FFB74D</item>
+        <item>#FF9800</item>
+        <item>#F57C00</item>
+        <!-- Deep Orange -->
+        <item>#FF8A65</item>
+        <item>#FF5722</item>
+        <item>#E64A19</item>
+        <!-- Brown -->
+        <item>#A1887F</item>
+        <item>#795548</item>
+        <item>#5D4037</item>
+        <!-- Grey -->
+        <item>#E0E0E0</item>
+        <item>#9E9E9E</item>
+        <item>#616161</item>
     </array>
 
 </resources>
