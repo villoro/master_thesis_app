@@ -2,6 +2,7 @@ package com.villoro.expensor_beta.sections.mainSections;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +27,7 @@ import com.villoro.expensor_beta.adapters.CategoryGraphAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sections.MainActivity;
+import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 
 import java.lang.Override;
 
@@ -36,6 +38,8 @@ public class DashboardFragmentSection extends Fragment{
 
     public static final double EPSILON = 0.000001;
 
+    CommDashboard comm;
+
     Context context;
     double maxWidth;
 
@@ -44,6 +48,7 @@ public class DashboardFragmentSection extends Fragment{
 
     ListView lv_expense, lv_income;
 
+    String typeTransaction;
     ImageView b_previous, b_next;
     int[] date;
     TextView tv_month;
@@ -72,6 +77,7 @@ public class DashboardFragmentSection extends Fragment{
         setHasOptionsMenu(true);
         context = getActivity();
 
+        typeTransaction = Tables.TYPE_EXPENSE;
         maxWidth = getAvailableWidth();
         date = UtilitiesDates.getDate();
     }
@@ -88,7 +94,15 @@ public class DashboardFragmentSection extends Fragment{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        switch (id){
+            case R.id.action_add_transaction:
+                Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_SIMPLE);
+                intent.putExtra(Tables.TYPE, typeTransaction);
+                startActivity(intent);
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -112,6 +126,21 @@ public class DashboardFragmentSection extends Fragment{
         b_next = (ImageView) rootView.findViewById(R.id.iv_next);
 
         tv_month = (TextView) rootView.findViewById(R.id.tv_month);
+
+        g_income.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                comm.goToSection(MainActivity.SECTION_HISTORY, Tables.TYPE_INCOME);
+
+            }
+        });
+        g_expense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                comm.goToSection(MainActivity.SECTION_HISTORY, Tables.TYPE_EXPENSE);
+
+            }
+        });
 
         setMainGraphs();
         setButtonPreviousNext();
@@ -230,6 +259,16 @@ public class DashboardFragmentSection extends Fragment{
                 setMainGraphs();
             }
         });
+    }
+
+    public void setCommunicator(CommDashboard comm)
+    {
+        this.comm = comm;
+
+    }
+
+    public interface CommDashboard {
+        public void goToSection(int position, String typeTransaction);
     }
 
     //TODO probably I'll use a loader

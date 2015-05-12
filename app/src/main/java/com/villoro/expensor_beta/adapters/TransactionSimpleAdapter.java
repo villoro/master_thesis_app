@@ -39,7 +39,7 @@ public class TransactionSimpleAdapter extends CursorAdapter{
         TextView tv_amount = (TextView) view.findViewById(R.id.row_expense_amount);
 
         String aux_date = cursor.getString(cursor.getColumnIndex(Tables.DATE));
-        tv_date.setText(UtilitiesDates.getFancyDate(aux_date));
+        tv_date.setText(UtilitiesDates.getFancyDate(aux_date) + " id=" + cursor.getLong(cursor.getColumnIndex(Tables.ID)));
 
         tv_comments.setText(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)));
         tv_amount.setText(UtilitiesNumbers.getFancyDouble(cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT))));

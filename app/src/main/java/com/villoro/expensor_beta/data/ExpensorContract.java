@@ -71,9 +71,6 @@ public class ExpensorContract {
         public static final String CONTENT_ITEM_TYPE =
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName + "/" + type;
 
-        public static Uri buildExpenseUri(long id) {
-            return ContentUris.withAppendedId(INCOME_URI, id);
-        }
 
         public static Uri buildIncomeUri(int year, int month){
             return INCOME_URI.buildUpon().appendPath(""+year).appendPath(""+month).build();
@@ -99,9 +96,6 @@ public class ExpensorContract {
         public static final Uri EXPENSE_ALL_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(ALL).appendPath(Tables.TYPE_EXPENSE).build();
 
-        public static Uri buildIncomeGraphUri(int year, int month){
-            return INCOME_URI.buildUpon().appendPath(""+year).appendPath(""+month).build();
-        }
         public static Uri buildExpenseGraphUri(int year, int month){
             return EXPENSE_URI.buildUpon().appendPath(""+year).appendPath(""+month).build();
         }

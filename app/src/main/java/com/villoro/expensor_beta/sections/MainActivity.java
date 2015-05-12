@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
@@ -28,18 +29,18 @@ import java.lang.String;
 
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, DashboardFragmentSection.CommDashboard {
 
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String ARG_SECTION_NUMBER = "section_number";
-    private static final int SECTION_DASHBOARD = 0;
-    private static final int SECTION_HISTORY = 1;
-    private static final int SECTION_PEOPLE = 2;
-    private static final int SECTION_GROUPS = 3;
-    private static final int SECTION_SETTINGS = 4;
+    public static final int SECTION_DASHBOARD = 0;
+    public static final int SECTION_HISTORY = 1;
+    public static final int SECTION_PEOPLE = 2;
+    public static final int SECTION_GROUPS = 3;
+    public static final int SECTION_SETTINGS = 4;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -68,33 +69,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        //decide which fragment is needed
-        switch (position){
-            case SECTION_DASHBOARD:
-                fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragmentSection.newDashboardFragment(position)).commit();
-                break;
-            case SECTION_HISTORY:
-                fragmentManager.beginTransaction().
-                        replace(R.id.container, HistoryFragmentSection.newHistoryFragment(position)).commit();
-                break;
-            case SECTION_PEOPLE:
-                fragmentManager.beginTransaction().
-                        replace(R.id.container, PeopleFragmentSection.newPeopleFragment(position)).commit();
-                break;
-            case SECTION_GROUPS:
-                fragmentManager.beginTransaction().
-                        replace(R.id.container, GroupFragmentSection.newGroupFragment(position)).commit();
-                break;
-            case SECTION_SETTINGS:
-                /*fragmentManager.beginTransaction().
-                        replace(R.id.container, DashboardFragment.newDashboardFragment(position)).commit();*/
-                break;
-        }
-
+        goToSection(position, null);
     }
 
     public void onSectionAttached(int number) {
@@ -167,5 +142,37 @@ public class MainActivity extends ActionBarActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void goToSection(int position, String typeTransaction) {
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        //decide which fragment is needed
+        switch (position){
+            case SECTION_DASHBOARD:
+                DashboardFragmentSection dashboardFragmentSection = DashboardFragmentSection.newDashboardFragment(position);
+                dashboardFragmentSection.setCommunicator(this);
+                fragmentManager.beginTransaction().
+                        replace(R.id.container, dashboardFragmentSection).commit();
+                break;
+            case SECTION_HISTORY:
+                fragmentManager.beginTransaction().
+                        replace(R.id.container, HistoryFragmentSection.newHistoryFragment(position, typeTransaction)).commit();
+                break;
+            case SECTION_PEOPLE:
+                fragmentManager.beginTransaction().
+                        replace(R.id.container, PeopleFragmentSection.newPeopleFragment(position)).commit();
+                break;
+            case SECTION_GROUPS:
+                fragmentManager.beginTransaction().
+                        replace(R.id.container, GroupFragmentSection.newGroupFragment(position)).commit();
+                break;
+            case SECTION_SETTINGS:
+                /*fragmentManager.beginTransaction().
+                        replace(R.id.container, DashboardFragment.newDashboardFragment(position)).commit();*/
+                break;
+        }
     }
 }

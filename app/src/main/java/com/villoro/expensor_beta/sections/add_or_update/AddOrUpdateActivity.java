@@ -20,12 +20,11 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     public final static String WHICH_LIST = "whichList";
     public final static String ID_OBJECT = "idObject";
 
-    public final static int CASE_EXPENSE = 0;
-    public final static int CASE_INCOME = 1;
-    public final static int CASE_CATEGORIES = 2;
-    public final static int CASE_PEOPLE = 3;
-    public final static int CASE_GROUP = 4;
-    public final static int CASE_PEOPLE_IN_GROUP = 5;
+    public final static int CASE_TRANSACTION_SIMPLE = 0;
+    public final static int CASE_CATEGORIES = 1;
+    public final static int CASE_PEOPLE = 2;
+    public final static int CASE_GROUP = 3;
+    public final static int CASE_PEOPLE_IN_GROUP = 4;
 
     int whichCase;
     long ID;
@@ -55,7 +54,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
 
         if (savedInstanceState == null){
             switch (whichCase){
-                case CASE_EXPENSE:
+                case CASE_TRANSACTION_SIMPLE:
                     transactionSimpleFragment = new AddOrUpdateTransactionSimpleFragment();
 
                     output = new Bundle();
@@ -119,7 +118,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         int id = item.getItemId();
         if (id == R.id.action_ok) {
             switch (whichCase){
-                case CASE_EXPENSE:
+                case CASE_TRANSACTION_SIMPLE:
                     transactionSimpleFragment.add();
                     break;
                 case CASE_CATEGORIES:
@@ -159,7 +158,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         if(ok)
         {
             switch (whichCase){
-                case CASE_EXPENSE:
+                case CASE_TRANSACTION_SIMPLE:
                     transactionSimpleFragment.delete();
                     break;
                 case CASE_CATEGORIES:

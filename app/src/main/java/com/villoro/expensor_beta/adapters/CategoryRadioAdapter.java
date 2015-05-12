@@ -37,7 +37,8 @@ public class CategoryRadioAdapter extends CursorAdapter{
         TextView tv_name = (TextView) view.findViewById(R.id.row_category_name);
 
         tv_color.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
-        tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
+        tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)) +
+        " id=" + cursor.getLong(cursor.getColumnIndex(Tables.ID)));
 
         radioButtons[cursor.getPosition()] = (RadioButton) view.findViewById(R.id.row_category_radio_button);
         if(cursor.getPosition() == 0){
@@ -53,6 +54,7 @@ public class CategoryRadioAdapter extends CursorAdapter{
     }
 
     public void setPositionSelected(int position, long id){
+        Log.d("CategoryRadioAdapter", "pos= " + position + ", id= " + id);
         if(positionSelected != -1) {
             radioButtons[positionSelected].setChecked(false);
         }

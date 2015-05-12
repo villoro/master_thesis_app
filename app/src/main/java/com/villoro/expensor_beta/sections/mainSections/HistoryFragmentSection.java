@@ -57,10 +57,11 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
 
     public HistoryFragmentSection(){};
 
-    public static HistoryFragmentSection newHistoryFragment(int sectionNumber){
+    public static HistoryFragmentSection newHistoryFragment(int sectionNumber, String typeTransaction){
         HistoryFragmentSection fragment = new HistoryFragmentSection();
         Bundle args = new Bundle();
         args.putInt(MainActivity.ARG_SECTION_NUMBER, sectionNumber);
+        args.putString(Tables.TYPE, typeTransaction);
         fragment.setArguments(args);
 
         return fragment;
@@ -71,6 +72,11 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(getArguments().getInt(MainActivity.ARG_SECTION_NUMBER));
+
+        typeTransaction = getArguments().getString(Tables.TYPE);
+        if(typeTransaction == null)
+            typeTransaction = Tables.TYPE_EXPENSE;
+
     }
 
     @Override
@@ -80,7 +86,6 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         setHasOptionsMenu(true);
         context = getActivity();
 
-        typeTransaction = Tables.TYPE_EXPENSE;
         date = UtilitiesDates.getDate();
         uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
         colorGreen = getActivity().getResources().getColor(R.color.green_income);
@@ -111,7 +116,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
             case R.id.action_add_transaction:
                 Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
                 intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
-                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_SIMPLE);
                 intent.putExtra(Tables.TYPE, typeTransaction);
                 startActivity(intent);
                 return true;
@@ -148,11 +153,9 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         if(typeTransaction.equals(Tables.TYPE_INCOME)){
             uri = ExpensorContract.IncomeEntry.buildIncomeUri(date[0], date[1]);
             month_container.setBackgroundColor(colorGreen);
-            Log.e("HistoryFragment", "trying to put color(green)= " + colorGreen);
         } else {
             uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
             month_container.setBackgroundColor(colorRed);
-            Log.e("HistoryFragment", "trying to put color(red)= " + colorRed);
         }
 
         Cursor cursor = getActivity().getContentResolver().query(
@@ -160,6 +163,17 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         transactionSimpleAdapter = new TransactionSimpleAdapter(context, cursor, 0);
 
         listView.setAdapter(transactionSimpleAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(context, AddOrUpdateActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, id);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_SIMPLE);
+                intent.putExtra(Tables.TYPE, typeTransaction);
+
+                startActivity(intent);
+            }
+        });
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -183,7 +197,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         {
             Intent intent = new Intent(context, AddOrUpdateActivity.class);
             intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
-            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_SIMPLE);
             intent.putExtra(Tables.TYPE, typeTransaction);
 
             startActivity(intent);
@@ -200,8 +214,15 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     @Override
     public void ifOkDo(boolean ok, int whichCase) {
         if(ok){
+            Uri deleteUri;
+            if(typeTransaction.equals(Tables.TYPE_EXPENSE)){
+                deleteUri = ExpensorContract.ExpenseEntry.EXPENSE_URI;
+            } else {
+                deleteUri = ExpensorContract.IncomeEntry.INCOME_URI;
+            }
+
             Log.d("HistoryFragmentSection", "trying to delete id= " + listID);
-            context.getContentResolver().delete(uri, Tables.ID + " = '" + listID + "'", null);
+            context.getContentResolver().delete(deleteUri, Tables.ID + " = '" + listID + "'", null);
             setList();
         }
     }

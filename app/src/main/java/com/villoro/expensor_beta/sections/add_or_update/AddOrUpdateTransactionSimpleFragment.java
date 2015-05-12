@@ -96,6 +96,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         if (currentID >0)
         {
+            setCategories();
             setValues();
         }
         return rv;
@@ -201,21 +202,33 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                 uriTransaction, null, Tables.ID + " = '" + currentID + "'", null, null);
         tempCursor.moveToFirst();
 
-
-        Log.d("TransactionSimpleFragment", "cursorCategories count= " + tempCursor.getCount() + ", columns= " + tempCursor.getColumnCount());
-
         date = UtilitiesDates.dateFromString(tempCursor.getString(tempCursor.getColumnIndex(Tables.DATE)));
         b_date.setText( UtilitiesDates.getFancyDate(date) );
-        int categoryID = tempCursor.getInt(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
-        lv_categories.setSelection(categoryID);
+        long categoryID = tempCursor.getLong(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
+        if(cursorCategories.moveToFirst()){
+            do{
+                long tempId = cursorCategories.getLong(cursorCategories.getColumnIndex(Tables.ID));
+                if(categoryID == tempId){
+                    categoryRadioAdapter.setPositionSelected(cursorCategories.getPosition(), categoryID);
+                    break;
+                }
+            } while (cursorCategories.moveToNext());
+        }
         e_amount.setText("" + tempCursor.getDouble(tempCursor.getColumnIndex(Tables.AMOUNT)));
         e_comments.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.COMMENTS)));
     }
 
     @Override
     public void delete() {
+        Uri deleteUri;
+        if(typeTransaction.equals(Tables.TYPE_EXPENSE)){
+            deleteUri = ExpensorContract.ExpenseEntry.EXPENSE_URI;
+        } else {
+            deleteUri = ExpensorContract.IncomeEntry.INCOME_URI;
+        }
+
         Log.d("TransactionSimpleFragment", "trying to delete ");
-        context.getContentResolver().delete(uriTransaction, Tables.ID + " = '" + currentID + "'", null);
+        context.getContentResolver().delete(deleteUri, Tables.ID + " = '" + currentID + "'", null);
     }
 
     public void setButtonExpense(){

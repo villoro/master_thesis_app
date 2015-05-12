@@ -39,7 +39,6 @@
                     android:id="@+id/et_amount"
                     android:hint="Amount"
                     android:inputType="numberDecimal" >
-                    <requestFocus />
                 </EditText>
             </LinearLayout>
 

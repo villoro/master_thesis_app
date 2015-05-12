@@ -142,7 +142,7 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
         {
             Intent intent = new Intent(this, AddOrUpdateActivity.class);
             intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
-            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_EXPENSE);
+            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_SIMPLE);
             intent.putExtra(Tables.TYPE, typeCategory);
 
             startActivity(intent);
