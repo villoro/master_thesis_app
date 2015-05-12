@@ -7,8 +7,6 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.widget.DatePicker;
 
-import com.villoro.expensor_beta.Utility;
-
 /**
  * Created by Arnau on 01/03/2015.
  */

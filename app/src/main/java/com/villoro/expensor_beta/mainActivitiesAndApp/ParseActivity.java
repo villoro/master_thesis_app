@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta;
+package com.villoro.expensor_beta.mainActivitiesAndApp;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
+import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
@@ -75,7 +77,7 @@ public class ParseActivity extends ActionBarActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, aux);
         listView.setAdapter(arrayAdapter);
 
-        lastUpdated.setText(Utility.getStringFromDateUTC(readLastUpdateDate()) +
+        lastUpdated.setText(UtilitiesDates.getStringFromDateUTC(readLastUpdateDate()) +
                 " " + readLastUpdateDate().getTime());
     }
 

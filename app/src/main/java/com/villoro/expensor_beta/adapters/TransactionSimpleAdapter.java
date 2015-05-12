@@ -3,15 +3,14 @@ package com.villoro.expensor_beta.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.Utility;
-import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.data.Tables;
 
 /**
@@ -40,10 +39,10 @@ public class TransactionSimpleAdapter extends CursorAdapter{
         TextView tv_amount = (TextView) view.findViewById(R.id.row_expense_amount);
 
         String aux_date = cursor.getString(cursor.getColumnIndex(Tables.DATE));
-        tv_date.setText(Utility.getFancyDate(aux_date));
+        tv_date.setText(UtilitiesDates.getFancyDate(aux_date));
 
         tv_comments.setText(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)));
-        tv_amount.setText(cursor.getString(cursor.getColumnIndex(Tables.AMOUNT)));
+        tv_amount.setText(UtilitiesNumbers.getFancyDouble(cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT))));
 
         tv_category.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
         tv_category.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)).substring(0,1));

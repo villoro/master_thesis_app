@@ -1,28 +1,25 @@
 package com.villoro.expensor_beta.sections;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
 import com.parse.ParseUser;
-import com.villoro.expensor_beta.LoginActivity;
-import com.villoro.expensor_beta.ParseActivity;
+import com.villoro.expensor_beta.mainActivitiesAndApp.LoginActivity;
+import com.villoro.expensor_beta.mainActivitiesAndApp.ParseActivity;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.sections.navigationDrawer.NavigationDrawerFragment;
 import com.villoro.expensor_beta.sync.parse.ParseAdapter;
-import com.villoro.expensor_beta.sections.DashboardFragmentSection;
-import com.villoro.expensor_beta.sections.GroupFragmentSection;
-import com.villoro.expensor_beta.sections.HistoryFragmentSection;
-import com.villoro.expensor_beta.sections.PeopleFragmentSection;
+import com.villoro.expensor_beta.sections.mainSections.DashboardFragmentSection;
+import com.villoro.expensor_beta.sections.mainSections.GroupFragmentSection;
+import com.villoro.expensor_beta.sections.mainSections.HistoryFragmentSection;
+import com.villoro.expensor_beta.sections.mainSections.PeopleFragmentSection;
 import com.villoro.expensor_beta.sync.ExpensorSyncAdapter;
 
 import java.lang.CharSequence;
@@ -125,6 +122,7 @@ public class MainActivity extends ActionBarActivity
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
     }
 
 

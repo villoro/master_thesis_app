@@ -1,6 +1,6 @@
 package com.villoro.expensor_beta.data;
 
-import com.villoro.expensor_beta.Utility;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 
 /**
  * Created by Arnau on 10/05/2015.
@@ -61,9 +61,9 @@ public class ExpensorQueries {
         StringBuilder sb = new StringBuilder();
 
         sb.append(Tables.DATE).append(GREATER_EQUAL_THAN).append(DATETIME);
-        sb.append(Utility.getFirstDay(year, month)).append(CLOSE_DATE).append(AND);
+        sb.append(UtilitiesDates.getFirstDay(year, month)).append(CLOSE_DATE).append(AND);
         sb.append(Tables.DATE).append(LESS_EQUAL_THAN).append(DATETIME);
-        sb.append(Utility.getLastDay(year, month)).append(CLOSE_DATE);
+        sb.append(UtilitiesDates.getLastDay(year, month)).append(CLOSE_DATE);
 
         return sb.toString();
     }

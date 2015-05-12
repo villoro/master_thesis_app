@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta;
+package com.villoro.expensor_beta.Utilities;
 
 import android.util.Log;
 import android.view.View;
@@ -18,17 +18,18 @@ import java.util.TimeZone;
 /**
  * Created by Arnau on 21/01/2015.
  */
-public class Utility {
+public class UtilitiesDates {
 
     public final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+
+    //------------------------------------------- DATE UTILITIES -----------------------------------
     //Used when saving a data
     public static String getStringFromDateUTC(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
         return dateFormat.format(date);
     }
-
 
     //String format "yyyy-MM-dd HH:mm:ss";
     public static int[] dateFromString(String date)
@@ -170,6 +171,7 @@ public class Utility {
 
         return sb.toString();
     }
+
 
 
     //TODO improve that

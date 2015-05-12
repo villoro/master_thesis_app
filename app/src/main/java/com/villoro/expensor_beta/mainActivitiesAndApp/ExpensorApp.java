@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta;
+package com.villoro.expensor_beta.mainActivitiesAndApp;
 
 import android.app.Application;
 import android.util.Log;

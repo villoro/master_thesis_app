@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/linearLayout_main_container">
+
+    <LinearLayout
+        style="@style/linearLayout_input" >
+
+        <TextView
+            style="@style/textView_input_title"
+            android:text="Amount"/>
+
+        <EditText
+            style="@style/editText_input"
+            android:id="@+id/et_amount"
+            android:hint="Amount"
+            android:inputType="numberDecimal" >
+            <requestFocus />
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/linearLayout_input" >
+
+        <TextView
+            style="@style/textView_input_title"
+            android:text="From"/>
+
+        <EditText
+            style="@style/editText_input"
+            android:id="@+id/et_from"
+            android:hint="Who gives money?"
+            android:inputType="textPersonName" >
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/linearLayout_input" >
+
+        <TextView
+            style="@style/textView_input_title"
+            android:text="To"/>
+
+        <EditText
+            style="@style/editText_input"
+            android:id="@+id/et_to"
+            android:hint="Who receives money?"
+            android:inputType="textPersonName" >
+        </EditText>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,6 +1,8 @@
 package com.villoro.expensor_beta.sections.add_or_update;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -38,6 +40,10 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_update);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
 
         Bundle extras = getIntent().getExtras();
         whichCase = extras.getInt(WHICH_LIST);

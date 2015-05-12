@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta;
+package com.villoro.expensor_beta.mainActivitiesAndApp;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -31,6 +31,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sections.MainActivity;
 import com.villoro.expensor_beta.sync.parse.ParseAdapter;

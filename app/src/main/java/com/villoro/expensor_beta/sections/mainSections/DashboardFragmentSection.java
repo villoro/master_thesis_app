@@ -1,4 +1,4 @@
-package com.villoro.expensor_beta.sections;
+package com.villoro.expensor_beta.sections.mainSections;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,14 +15,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.Utility;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.CategoryGraphAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
+import com.villoro.expensor_beta.sections.MainActivity;
 
 import java.lang.Override;
 
@@ -31,6 +34,8 @@ import java.lang.Override;
  */
 public class DashboardFragmentSection extends Fragment{
 
+    public static final double EPSILON = 0.000001;
+
     Context context;
     double maxWidth;
 
@@ -38,6 +43,10 @@ public class DashboardFragmentSection extends Fragment{
     TextView tv_income, tv_expense, tv_result;
 
     ListView lv_expense, lv_income;
+
+    ImageView b_previous, b_next;
+    int[] date;
+    TextView tv_month;
 
     public DashboardFragmentSection(){};
 
@@ -64,6 +73,7 @@ public class DashboardFragmentSection extends Fragment{
         context = getActivity();
 
         maxWidth = getAvailableWidth();
+        date = UtilitiesDates.getDate();
     }
 
     @Override
@@ -98,43 +108,14 @@ public class DashboardFragmentSection extends Fragment{
         lv_expense = (ListView) rootView.findViewById(R.id.lv_expenses);
         lv_income = (ListView) rootView.findViewById(R.id.lv_incomes);
 
-        Cursor cursor = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildExpenseGraphUri("2015", "5"),
-                null, null, null, null);
-        cursor.moveToFirst();
-        double expense= 0;
-        double income = 0;
-        double result = 0;
-        do{
-            String type = cursor.getString(cursor.getColumnIndex(Tables.TYPE));
-            if(type.equals(Tables.TYPE_EXPENSE)){
-                expense = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
-            } else if (type.equals(Tables.TYPE_INCOME)) {
-                income = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
-            }
+        b_previous = (ImageView) rootView.findViewById(R.id.iv_previous);
+        b_next = (ImageView) rootView.findViewById(R.id.iv_next);
 
-        } while (cursor.moveToNext());
+        tv_month = (TextView) rootView.findViewById(R.id.tv_month);
 
-        double max = Math.max(expense, income);
-        result = income - expense;
-        setWidth(g_expense, expense/max);
-        setWidth(g_income, income/max);
-        setWidth(g_result,  Math.abs(result)/ max);
-
-        if(expense > income) {
-            int colorRed = getResources().getColor(R.color.red_expense);
-            g_result.setBackgroundColor(colorRed);
-            tv_result.setTextColor(colorRed);
-        } else {
-            int colorGreen = getResources().getColor(R.color.green_income);
-            g_result.setBackgroundColor(colorGreen);
-            tv_result.setTextColor(colorGreen);
-        }
-
-        tv_expense.setText(expense + " €");
-        tv_income.setText(income + " €");
-        tv_result.setText(result + " €");
-
-        setLists();
+        setMainGraphs();
+        setButtonPreviousNext();
+        setList();
 
         return rootView;
     }
@@ -158,30 +139,97 @@ public class DashboardFragmentSection extends Fragment{
         view.setLayoutParams(params);
     }
 
-    public void setLists(){
-        Cursor cursorExpense = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildExpenseGraphAllUri("2015", "5"),
+    public void setMainGraphs(){
+        Cursor cursorGraph = getActivity().getContentResolver().query(
+                ExpensorContract.GraphEntry.buildExpenseGraphUri(date[0], date[1]),
+                null, null, null, null);
+        double expense= 0;
+        double income = 0;
+        double result = 0;
+        if(cursorGraph.moveToFirst()) {
+            do {
+                String type = cursorGraph.getString(cursorGraph.getColumnIndex(Tables.TYPE));
+                if (type.equals(Tables.TYPE_EXPENSE)) {
+                    expense = cursorGraph.getDouble(cursorGraph.getColumnIndex(Tables.SUM_AMOUNT));
+                } else if (type.equals(Tables.TYPE_INCOME)) {
+                    income = cursorGraph.getDouble(cursorGraph.getColumnIndex(Tables.SUM_AMOUNT));
+                }
+
+            } while (cursorGraph.moveToNext());
+        }
+
+        double max = Math.max(expense, income);
+        result = income - expense;
+        setWidth(g_expense, expense/max);
+        setWidth(g_income, income/max);
+        setWidth(g_result,  Math.abs(result)/ max);
+
+        tv_expense.setText(UtilitiesNumbers.getFancyDouble(expense) + " €");
+        tv_income.setText(UtilitiesNumbers.getFancyDouble(income) + " €");
+
+        if(result > 0) {
+            int colorRed = getResources().getColor(R.color.red_expense);
+            g_result.setBackgroundColor(colorRed);
+            tv_result.setText("- " + UtilitiesNumbers.getFancyDouble(result) + " €");
+        } else if (Math.abs(result) <= EPSILON) {
+            tv_result.setText("0.00 €");
+        } else {
+            int colorGreen = getResources().getColor(R.color.green_income);
+            g_result.setBackgroundColor(colorGreen);
+            tv_result.setText("+" + UtilitiesNumbers.getFancyDouble(result) + " €");
+        }
+    }
+
+    public void setList(){
+        tv_month.setText(UtilitiesDates.setFancyMonthName(date));
+
+        Cursor cursorExpense = getActivity().getContentResolver().query(
+                ExpensorContract.GraphEntry.buildExpenseGraphAllUri(date[0], date[1]),
                 null, null, null, null);
         double maxExpense = 0;
-        cursorExpense.moveToFirst();
-        do{
-            if(cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT)) > maxExpense)
-                maxExpense = cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT));
-        } while (cursorExpense.moveToNext());
+        if(cursorExpense.moveToFirst()) {
+            do {
+                if (cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT)) > maxExpense)
+                    maxExpense = cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT));
+            } while (cursorExpense.moveToNext());
+        }
         CategoryGraphAdapter expenseAdapter = new CategoryGraphAdapter(context, cursorExpense, 0, maxWidth, maxExpense);
         lv_expense.setAdapter(expenseAdapter);
-        Utility.setListViewHeightBasedOnChildren(lv_expense);
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_expense);
 
-        Cursor cursorIncome = getActivity().getContentResolver().query(ExpensorContract.GraphEntry.buildIncomeGraphAllUri("2015", "5"),
+        Cursor cursorIncome = getActivity().getContentResolver().query(
+                ExpensorContract.GraphEntry.buildIncomeGraphAllUri(date[0], date[1]),
                 null, null, null, null);
         double maxIncome = 0;
-        cursorExpense.moveToFirst();
-        do{
-            if(cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT)) > maxIncome)
-                maxIncome = cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT));
-        } while (cursorExpense.moveToNext());
+        if(cursorExpense.moveToFirst()) {
+            do {
+                if (cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT)) > maxIncome)
+                    maxIncome = cursorExpense.getDouble(cursorExpense.getColumnIndex(Tables.SUM_AMOUNT));
+            } while (cursorExpense.moveToNext());
+        }
         CategoryGraphAdapter incomeAdapter = new CategoryGraphAdapter(context, cursorIncome, 0, maxWidth, maxIncome);
         lv_income.setAdapter(incomeAdapter);
-        Utility.setListViewHeightBasedOnChildren(lv_income);
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_income);
+    }
+
+    public void setButtonPreviousNext(){
+        b_previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                date = UtilitiesDates.reduceMonth(date);
+                setList();
+                setMainGraphs();
+            }
+        });
+
+        b_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                date = UtilitiesDates.incrementMonth(date);
+                setList();
+                setMainGraphs();
+            }
+        });
     }
 
     //TODO probably I'll use a loader

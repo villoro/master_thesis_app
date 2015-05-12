@@ -2,8 +2,10 @@ package com.villoro.expensor_beta.sections.showList;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -37,7 +39,11 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_section_history);
+        setContentView(R.layout.fragment_show_categories);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
 
         Bundle bundle = getIntent().getExtras();
         typeCategory = bundle.getString(Tables.TYPE);

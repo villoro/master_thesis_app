@@ -114,6 +114,13 @@
         <item name="android:src">@drawable/ic_action_next_item</item>
     </style>
 
+    <style name="button_right">
+        <item name="android:layout_width">@dimen/row_my_navigation_bars</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
     <style name="textView_month_name" parent="android:Widget.Holo.Light.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
@@ -124,9 +131,21 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="textView_people_group_name" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">@dimen/fragment_margin</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="relative_layout_month_bar">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:background">@color/lighter_gray</item>
     </style>
 
     <style name="linearLayout_main_container_without_padding">

@@ -1,154 +1,177 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="fill_parent" >
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/linearLayout_main_container_without_padding">
 
-    <LinearLayout
-        style="@style/linearLayout_main_container">
-
-        <!-- PERSONAL PART -->
-        <TextView
-            style="@style/sectionHeader"
-            android:text="Personal"/>
-
-        <LinearLayout
-            style="@style/linearLayout_input" >
-
-            <RelativeLayout
-                style="@style/big_bar_relative_layout">
-
-                <TextView
-                    style="@style/big_bar_title"
-                    android:text="Income"/>
-
-                <TextView
-                    style="@style/big_bar_value"
-                    android:id="@+id/tv_income_value"/>
-
-            </RelativeLayout>
-
-            <View
-                style="@style/big_bar"
-                android:id="@+id/bar_income"
-                android:background="@color/green_income"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/linearLayout_input" >
-
-            <RelativeLayout
-                style="@style/big_bar_relative_layout">
-
-                <TextView
-                    style="@style/big_bar_title"
-                    android:text="Expense"/>
-
-                <TextView
-                    style="@style/big_bar_value"
-                    android:id="@+id/tv_expense_value"/>
-
-            </RelativeLayout>
-
-            <View
-                style="@style/big_bar"
-                android:id="@+id/bar_expense"
-                android:background="@color/red_expense"/>
-        </LinearLayout>
-
-        <View
-            style="@style/divider" />
-
-        <LinearLayout
-            style="@style/linearLayout_input" >
-
-            <RelativeLayout
-                style="@style/big_bar_relative_layout">
-
-                <TextView
-                    style="@style/big_bar_title"
-                    android:text="Result"/>
-
-                <TextView
-                    style="@style/big_bar_value"
-                    android:id="@+id/tv_result_value"/>
-
-            </RelativeLayout>
-
-            <View
-                style="@style/big_bar"
-                android:id="@+id/bar_result"/>
-        </LinearLayout>
-
-
-        <!-- FRIENDS PART -->
-        <TextView
-            style="@style/sectionHeader"
-            android:text="Friends"/>
-
-        <LinearLayout
-            style="@style/linearLayout_input" >
-
-            <RelativeLayout
-                style="@style/big_bar_relative_layout">
-
-                <TextView
-                    style="@style/big_bar_title"
-                    android:text="Owe me"/>
-
-                <TextView
-                    style="@style/big_bar_value"
-                    android:id="@+id/tv_friends_deuen_value"/>
-
-            </RelativeLayout>
-
-            <View
-                style="@style/big_bar"
-                android:id="@+id/bar_friends_deuen"
-                android:background="@color/green_income"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/linearLayout_input" >
-
-            <RelativeLayout
-                style="@style/big_bar_relative_layout">
-
-                <TextView
-                    style="@style/big_bar_title"
-                    android:text="I owe"/>
-
-                <TextView
-                    style="@style/big_bar_value"
-                    android:id="@+id/tv_friends_dec_value"/>
-
-            </RelativeLayout>
-
-            <View
-                style="@style/big_bar"
-                android:id="@+id/bar_friends_dec"
-                android:background="@color/red_expense"/>
-        </LinearLayout>
-
-
-        <!-- PERSONAL TRANSACTIONS PART -->
-        <TextView
-            style="@style/sectionHeader"
-            android:text="Incomes"/>
-
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lv_incomes"/>
+    <RelativeLayout
+        style="@style/relative_layout_month_bar"
+        android:id="@+id/month_container">
 
         <TextView
-            style="@style/sectionHeader"
-            android:text="Expenses"/>
+            style="@style/textView_month_name"
+            android:id="@+id/tv_month" />
 
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lv_expenses"/>
+        <ImageView
+            style="@style/button_previous"
+            android:id="@+id/iv_previous" />
+
+        <ImageView
+            style="@style/button_next"
+            android:id="@+id/iv_next" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent" android:layout_height="fill_parent" >
+
+        <LinearLayout
+            style="@style/linearLayout_main_container">
+
+            <!-- PERSONAL PART -->
+            <TextView
+                style="@style/sectionHeader"
+                android:text="Personal"/>
+
+            <LinearLayout
+                style="@style/linearLayout_input" >
+
+                <RelativeLayout
+                    style="@style/big_bar_relative_layout">
+
+                    <TextView
+                        style="@style/big_bar_title"
+                        android:text="Income:"/>
+
+                    <TextView
+                        style="@style/big_bar_value"
+                        android:id="@+id/tv_income_value"/>
+
+                </RelativeLayout>
+
+                <View
+                    style="@style/big_bar"
+                    android:id="@+id/bar_income"
+                    android:background="@color/green_income"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/linearLayout_input" >
+
+                <RelativeLayout
+                    style="@style/big_bar_relative_layout">
+
+                    <TextView
+                        style="@style/big_bar_title"
+                        android:text="Expense:"/>
+
+                    <TextView
+                        style="@style/big_bar_value"
+                        android:id="@+id/tv_expense_value"/>
+
+                </RelativeLayout>
+
+                <View
+                    style="@style/big_bar"
+                    android:id="@+id/bar_expense"
+                    android:background="@color/red_expense"/>
+            </LinearLayout>
+
+            <View
+                style="@style/divider" />
+
+            <LinearLayout
+                style="@style/linearLayout_input" >
+
+                <RelativeLayout
+                    style="@style/big_bar_relative_layout">
+
+                    <TextView
+                        style="@style/big_bar_title"
+                        android:text="Result:"/>
+
+                    <TextView
+                        style="@style/big_bar_value"
+                        android:id="@+id/tv_result_value"/>
+
+                </RelativeLayout>
+
+                <View
+                    style="@style/big_bar"
+                    android:id="@+id/bar_result"/>
+            </LinearLayout>
 
 
-    </LinearLayout>
-</ScrollView>
+            <!-- FRIENDS PART -->
+            <TextView
+                style="@style/sectionHeader"
+                android:text="Friends"/>
+
+            <LinearLayout
+                style="@style/linearLayout_input" >
+
+                <RelativeLayout
+                    style="@style/big_bar_relative_layout">
+
+                    <TextView
+                        style="@style/big_bar_title"
+                        android:text="Owe me:"/>
+
+                    <TextView
+                        style="@style/big_bar_value"
+                        android:id="@+id/tv_friends_deuen_value"/>
+
+                </RelativeLayout>
+
+                <View
+                    style="@style/big_bar"
+                    android:id="@+id/bar_friends_deuen"
+                    android:background="@color/green_income"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/linearLayout_input" >
+
+                <RelativeLayout
+                    style="@style/big_bar_relative_layout">
+
+                    <TextView
+                        style="@style/big_bar_title"
+                        android:text="I owe:"/>
+
+                    <TextView
+                        style="@style/big_bar_value"
+                        android:id="@+id/tv_friends_dec_value"/>
+
+                </RelativeLayout>
+
+                <View
+                    style="@style/big_bar"
+                    android:id="@+id/bar_friends_dec"
+                    android:background="@color/red_expense"/>
+            </LinearLayout>
+
+
+            <!-- PERSONAL TRANSACTIONS PART -->
+            <TextView
+                style="@style/sectionHeader"
+                android:text="Incomes"/>
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lv_incomes"/>
+
+            <TextView
+                style="@style/sectionHeader"
+                android:text="Expenses"/>
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lv_expenses"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

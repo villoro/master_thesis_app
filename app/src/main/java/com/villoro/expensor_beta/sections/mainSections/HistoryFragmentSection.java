@@ -1,10 +1,9 @@
-package com.villoro.expensor_beta.sections;
+package com.villoro.expensor_beta.sections.mainSections;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,8 +23,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.Utility;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.adapters.TransactionSimpleAdapter;
+import com.villoro.expensor_beta.sections.MainActivity;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
@@ -82,17 +81,18 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         context = getActivity();
 
         typeTransaction = Tables.TYPE_EXPENSE;
-        date = Utility.getDate();
+        date = UtilitiesDates.getDate();
         uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
-        colorGreen = context.getResources().getColor(R.color.green_income);
-        colorGreen = context.getResources().getColor(R.color.red_expense);
+        colorGreen = getActivity().getResources().getColor(R.color.green_income);
+        colorRed = getActivity().getResources().getColor(R.color.red_expense);
+
         Log.e("", "typeTransaction= " + typeTransaction);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setListView();
+        setList();
     }
 
     @Override
@@ -127,8 +127,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
 
         b_expense = (Button) rootView.findViewById(R.id.b_expense);
         b_income = (Button) rootView.findViewById(R.id.b_income);
-        setButtonExpense();
-        setButtonIncome();
+        setButtonsExpenseIncome();
 
         b_previous = (ImageView) rootView.findViewById(R.id.iv_previous);
         b_next = (ImageView) rootView.findViewById(R.id.iv_next);
@@ -138,24 +137,22 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         tv_month = (TextView) rootView.findViewById(R.id.tv_month);
         month_container = (RelativeLayout) rootView.findViewById(R.id.month_container);
 
-        setListView();
+        setList();
         return rootView;
     }
 
-    public void setListView(){
-        tv_month.setText(Utility.setFancyMonthName(date));
+    public void setList(){
+        tv_month.setText(UtilitiesDates.setFancyMonthName(date));
 
         Uri uri;
         if(typeTransaction.equals(Tables.TYPE_INCOME)){
             uri = ExpensorContract.IncomeEntry.buildIncomeUri(date[0], date[1]);
-            month_container.setBackgroundColor(Color.GREEN);
+            month_container.setBackgroundColor(colorGreen);
             Log.e("HistoryFragment", "trying to put color(green)= " + colorGreen);
- //TODO NEEEEEEEEEEDS WOOOOOOOOOOOOOOOOOORK
         } else {
             uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
-            month_container.setBackgroundColor(Color.RED);
+            month_container.setBackgroundColor(colorRed);
             Log.e("HistoryFragment", "trying to put color(red)= " + colorRed);
- //TODO NEEEEEEEEEEDS WOOOOOOOOOOOOOOOOOORK
         }
 
         Cursor cursor = getActivity().getContentResolver().query(
@@ -205,48 +202,46 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         if(ok){
             Log.d("HistoryFragmentSection", "trying to delete id= " + listID);
             context.getContentResolver().delete(uri, Tables.ID + " = '" + listID + "'", null);
-            setListView();
+            setList();
         }
     }
 
-    public void setButtonExpense(){
+    public void setButtonsExpenseIncome() {
         b_expense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
+                if (!typeTransaction.equals(Tables.TYPE_EXPENSE)) {
                     typeTransaction = Tables.TYPE_EXPENSE;
-                    setListView();
+                    setList();
+                }
+            }
+        });
+        b_income.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!typeTransaction.equals(Tables.TYPE_INCOME)) {
+                    typeTransaction = Tables.TYPE_INCOME;
+                    setList();
                 }
             }
         });
     }
 
-    public void setButtonIncome(){
-        b_income.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!typeTransaction.equals(Tables.TYPE_INCOME)){
-                    typeTransaction = Tables.TYPE_INCOME;
-                    setListView();
-                }
-            }
-        });
-    }
 
     public void setButtonPreviousNext(){
         b_previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                date = Utility.reduceMonth(date);
-                setListView();
+                date = UtilitiesDates.reduceMonth(date);
+                setList();
             }
         });
 
         b_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                date = Utility.incrementMonth(date);
-                setListView();
+                date = UtilitiesDates.incrementMonth(date);
+                setList();
             }
         });
     }

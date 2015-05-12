@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.Utility;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.adapters.CategoryRadioAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
@@ -103,10 +103,10 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
     private void bindButtonDate(View rv)
     {
-        date = Utility.getDate();
+        date = UtilitiesDates.getDate();
 
         b_date = (Button) rv.findViewById(R.id.b_date);
-        b_date.setText(Utility.getFancyDate(date));
+        b_date.setText(UtilitiesDates.getFancyDate(date));
 
         b_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +127,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         categoryRadioAdapter = new CategoryRadioAdapter(context, cursorCategories, 0);
         lv_categories.setAdapter(categoryRadioAdapter);
 
-        Utility.setListViewHeightBasedOnChildren(lv_categories);
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_categories);
         lv_categories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -153,7 +153,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         date[1] = month;
         date[2] = day;
 
-        b_date.setText(Utility.getFancyDate(date));
+        b_date.setText(UtilitiesDates.getFancyDate(date));
     }
 
 
@@ -174,7 +174,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     @Override
     public void add() {
         comments = e_comments.getText().toString().trim();
-        amount = Double.parseDouble(Utility.formatDoubleToSQLite(e_amount.getText().toString().trim()));
+        amount = Double.parseDouble(UtilitiesDates.formatDoubleToSQLite(e_amount.getText().toString().trim()));
 
         String from = "";
 
@@ -182,7 +182,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         //TODO check if values are possible
         ContentValues values = new ContentValues();
-        values.put(Tables.DATE, Utility.completeDateToString(date));
+        values.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
         values.put(Tables.COMMENTS, comments);
         values.put(Tables.AMOUNT, amount);
         values.put(Tables.CATEGORY_ID, categoryID);
@@ -204,8 +204,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         Log.d("TransactionSimpleFragment", "cursorCategories count= " + tempCursor.getCount() + ", columns= " + tempCursor.getColumnCount());
 
-        date = Utility.dateFromString(tempCursor.getString(tempCursor.getColumnIndex(Tables.DATE)));
-        b_date.setText( Utility.getFancyDate(date) );
+        date = UtilitiesDates.dateFromString(tempCursor.getString(tempCursor.getColumnIndex(Tables.DATE)));
+        b_date.setText( UtilitiesDates.getFancyDate(date) );
         int categoryID = tempCursor.getInt(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
         lv_categories.setSelection(categoryID);
         e_amount.setText("" + tempCursor.getDouble(tempCursor.getColumnIndex(Tables.AMOUNT)));

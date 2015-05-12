@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.data.Tables;
 
 /**
@@ -43,7 +44,7 @@ public class CategoryGraphAdapter extends CursorAdapter{
         double amount = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)) +
-        " " + amount + " €");
+        " " + UtilitiesNumbers.getFancyDouble(amount) + " €");
         tv_name.setTextColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
 
         line.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));

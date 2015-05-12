@@ -20,15 +20,15 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
-        android:name=".ExpensorApp"
+        android:name=".mainActivitiesAndApp.ExpensorApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
+            android:name=".mainActivitiesAndApp.LoginActivity"
+            android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
@@ -40,7 +40,7 @@
 
         <!-- TODO delete that activity -->
         <activity
-            android:name=".ParseActivity"
+            android:name=".mainActivitiesAndApp.ParseActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance">
         </activity>
@@ -55,11 +55,19 @@
             android:name=".sections.add_or_update.AddOrUpdateActivity"
             android:theme="@style/AppTheme"
             android:label="@string/title_activity_empty">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".sections.MainActivity" />
         </activity>
 
         <activity
             android:name=".sections.showList.ShowListActivity"
             android:label="@string/title_activity_empty">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".sections.MainActivity" />
         </activity>
 
         <activity
