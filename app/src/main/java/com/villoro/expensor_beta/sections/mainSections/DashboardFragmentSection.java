@@ -198,7 +198,7 @@ public class DashboardFragmentSection extends Fragment{
         tv_expense.setText(UtilitiesNumbers.getFancyDouble(expense) + " €");
         tv_income.setText(UtilitiesNumbers.getFancyDouble(income) + " €");
 
-        if(result < EPSILON) {
+        if(result < -EPSILON) {
             int colorRed = getResources().getColor(R.color.red_expense);
             g_result.setBackgroundColor(colorRed);
             tv_result.setText(UtilitiesNumbers.getFancyDouble(result).replace("-", "- ") + " €");

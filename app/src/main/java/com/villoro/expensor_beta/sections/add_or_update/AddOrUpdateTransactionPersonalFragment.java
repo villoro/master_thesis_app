@@ -37,7 +37,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
     Context context;
     long currentID;
 
-    EditText e_amount;
+    EditText e_amount, e_comments;
     AutoCompleteTextView ac_from, ac_to;
     long fromId, toId, myId;
     double amount;
@@ -60,6 +60,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
         ac_from = (AutoCompleteTextView) rv.findViewById(R.id.et_from);
         ac_to = (AutoCompleteTextView) rv.findViewById(R.id.et_to);
         e_amount = (EditText) rv.findViewById(R.id.et_amount);
+        e_comments = (EditText) rv.findViewById(R.id.et_comments);
 
         fromId = 0; toId = 0;
 
@@ -145,14 +146,21 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
 
     @Override
     public void add() {
+        Log.d("AddTransactionPeople", "amount= " +e_amount.getText().toString().trim());
         amount = Double.parseDouble(UtilitiesDates.formatDoubleToSQLite(e_amount.getText().toString().trim()));
 
         Log.d("AddTransactionPeople", "from= " + fromId + ", to= " + toId + ", amount= " + amount);
 
         //TODO check if values are possible
         ContentValues values = new ContentValues();
-        values.put(Tables.FROM, fromId);
-        values.put(Tables.TO, toId);
+        if(fromId == myId){
+            values.put(Tables.PEOPLE_ID, toId);
+        } else {
+            amount = -amount;
+            values.put(Tables.PEOPLE_ID, fromId);
+        }
+
+        values.put(Tables.COMMENTS, e_comments.getText().toString().trim());
         values.put(Tables.AMOUNT, amount);
         if (currentID > 0){
             context.getContentResolver().update(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI,

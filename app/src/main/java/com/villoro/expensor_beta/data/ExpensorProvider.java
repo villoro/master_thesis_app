@@ -32,6 +32,7 @@ public class ExpensorProvider extends ContentProvider {
 
     private static final int PEOPLE = 400;
     private static final int PEOPLE_WITH_PARTIAL_NAME = 401;
+    private static final int PEOPLE_WITH_BALANCE = 402;
 
     private static final int PEOPLE_IN_GROUP = 450;
 
@@ -39,6 +40,7 @@ public class ExpensorProvider extends ContentProvider {
 
     private static final int TRANSACTIONS_PEOPLE = 700;
     private static final int TRANSACTIONS_PEOPLE_WITH_PEOPLE_ID = 701;
+
 
     private static final int TRANSACTIONS_GROUP = 800;
 
@@ -69,6 +71,7 @@ public class ExpensorProvider extends ContentProvider {
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/*", PEOPLE_WITH_PARTIAL_NAME);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/*/#", PEOPLE_WITH_BALANCE);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
 
@@ -162,8 +165,16 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case PEOPLE_WITH_PARTIAL_NAME: {
+                Log.d("ExpensorProvider", "querying case people with partial name");
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPeopleWithNameLike(
                         ExpensorContract.PeopleEntry.getPartOfNameFromUri(uri)), null);
+                break;
+            }
+            case PEOPLE_WITH_BALANCE: {
+                Log.d("ExpensorProvider", "querying case people with balance");
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPeopleFromBalanceCase(
+                                ExpensorContract.PeopleEntry.getBalanceCase(uri)) , null
+                );
                 break;
             }
             case PEOPLE_IN_GROUP: {

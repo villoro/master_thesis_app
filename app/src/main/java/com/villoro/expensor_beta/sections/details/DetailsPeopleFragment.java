@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.adapters.TransactionPersonalAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
@@ -76,20 +77,22 @@ public class DetailsPeopleFragment extends Fragment implements DialogLongClickLi
         TextView t_name = (TextView) rootView.findViewById(R.id.tv_name);
 
         Cursor tempCursor = context.getContentResolver().query(ExpensorContract.PeopleEntry.PEOPLE_URI, null,
-                Tables.ID + " '" + currentID + "'", null, null);
+                Tables.ID + " = '" + currentID + "'", null, null);
         if(tempCursor.moveToFirst()){
             t_name.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
         }
-
         setListView();
 
         return rootView;
     }
 
     public void setListView(){
+        Log.d("DetailsPeopleFragment", "id to query= " + currentID);
         Cursor cursor = context.getContentResolver().query(
                 ExpensorContract.TransactionPeopleEntry.buildFromPeopleId(currentID), null, null, null, null);
         Log.d("DetailsPeopleFragment", "cursor count= " + cursor.getCount());
+        TransactionPersonalAdapter adapter = new TransactionPersonalAdapter(context, cursor, 0);
+        listView.setAdapter(adapter);
 
     }
 

@@ -25,6 +25,7 @@ public class ExpensorQueries {
     private static final String GREATER_THAN = " > ";
     private static final String GREATER_EQUAL_THAN = " >= ";
     private static final String LESS_EQUAL_THAN = " <= ";
+    private static final String LESS_THAN = " < ";
     private static final String LIKE_OPEN = " LIKE '";
     private static final String LIKE_CLOSE = "%' ";
     private static final String APOSTROPHE = "'";
@@ -130,10 +131,11 @@ public class ExpensorQueries {
         sb.append(PARENTHESIS_OPEN).append(SELECT);
         sb.append(Tables.ID).append(COMA).append(Tables.NAME);
         sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
-        sb.append(WHERE).append(whereNoDeleted());
+        sb.append(WHERE).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
-        sb.append(ON).append(AUX).append(Tables.ID).append(EQUAL).append(Tables.PEOPLE_ID);
+        sb.append(ON).append(AUX).append(".").append(Tables.ID).append(EQUAL).append(Tables.PEOPLE_ID);
         sb.append(WHERE).append(whereNoDeleted());
+        sb.append(AND).append(Tables.PEOPLE_ID).append(EQUAL).append(APOSTROPHE).append(id).append(APOSTROPHE);
         sb.append(ORDER_BY).append(Tables.DATE).append(ASC).append(CLOSE);
 
         return sb.toString();
@@ -168,6 +170,42 @@ public class ExpensorQueries {
 
         sb.append(Tables.EMAIL).append(NOT_EQUAL).append(APOSTROPHE);
         sb.append(ParseUser.getCurrentUser().getEmail()).append(APOSTROPHE);
+
+        return sb.toString();
+    }
+
+    public static final String queryPeopleFromBalanceCase(int caseBalance){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT).append(Tables.NAME).append(COMA).append(Tables.SUM_AMOUNT);
+        sb.append(COMA).append(Tables.ID).append(FROM);
+        sb.append(PARENTHESIS_OPEN).append(SELECT).append(Tables.PEOPLE_ID).append(COMA).append(sumAmount());
+        sb.append(FROM).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
+        sb.append(WHERE).append(whereNoDeleted());
+        sb.append(GROUP_BY).append(Tables.PEOPLE_ID).append(PARENTHESIS_CLOSE);
+        sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_PEOPLE);
+        sb.append(ON).append(AUX).append(".").append(Tables.PEOPLE_ID).append(EQUAL);
+        sb.append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID);
+        sb.append(WHERE);
+        if(caseBalance == ExpensorContract.PeopleEntry.CASE_BALANCE_POSITIVE){
+            sb.append(Tables.SUM_AMOUNT).append(GREATER_THAN);
+        } else if (caseBalance == ExpensorContract.PeopleEntry.CASE_BALANCE_NEGATIVE){
+            sb.append(Tables.SUM_AMOUNT).append(LESS_THAN).append("-");
+        } else {
+            sb.append("ABS(").append(Tables.SUM_AMOUNT).append(PARENTHESIS_CLOSE).append(LESS_EQUAL_THAN);
+        }
+        sb.append("0.00001");
+
+        sb.append(AND);
+        sb.append(whereNoDeleted()).append(CLOSE);
+
+        /*sb.append(SELECT).append(Tables.NAME + COMA).append(Tables.TABLENAME_PEOPLE + "." + Tables.ID);
+        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
+        sb.append(" LEFT JOIN ").append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
+        sb.append(ON).append(Tables.TABLENAME_PEOPLE + "." + Tables.ID).append(EQUAL);
+        sb.append(Tables.TABLENAME_TRANSACTIONS_PEOPLE + "." + Tables.PEOPLE_ID);
+        sb.append(WHERE).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE + "." + Tables.PEOPLE_ID).append(" IS NULL;");*/
+
 
         return sb.toString();
     }

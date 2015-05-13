@@ -51,4 +51,20 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        style="@style/linearLayout_input" >
+
+        <TextView
+            style="@style/textView_input_title"
+            android:text="Comments"/>
+
+        <EditText
+            style="@style/editText_input"
+            android:id="@+id/et_comments"
+            android:hint="Comments"
+            android:inputType="text" >
+            <requestFocus />
+        </EditText>
+
+    </LinearLayout>
 </LinearLayout>

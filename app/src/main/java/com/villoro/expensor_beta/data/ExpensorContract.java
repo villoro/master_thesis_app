@@ -158,6 +158,10 @@ public class ExpensorContract {
     }
 
     public static final class PeopleEntry {
+        public static final int CASE_BALANCE_POSITIVE = 1;
+        public static final int CASE_BALANCE_NEGATIVE = 2;
+        public static final int CASE_SETTLED = 3;
+
         private static final String tableName = Tables.TABLENAME_PEOPLE;
 
         public static final Uri PEOPLE_URI =
@@ -174,6 +178,14 @@ public class ExpensorContract {
 
         public static Uri buildFromPartOfNameUri(String partOfName){
             return PEOPLE_URI.buildUpon().appendPath(partOfName).build();
+        }
+
+        public static Uri buildFromBalanceState(int caseBalance){
+            return PEOPLE_URI.buildUpon().appendPath("balance").appendPath(""+caseBalance).build();
+        }
+
+        public static int getBalanceCase(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(2) );
         }
 
         public static String getPartOfNameFromUri(Uri uri){
@@ -225,17 +237,19 @@ public class ExpensorContract {
         public static final String CONTENT_ITEM_TYPE =
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
+        public static Uri buildTransactionPeopleUri(long id) {
+            return ContentUris.withAppendedId(TRANSACTION_PEOPLE_URI, id);
+        }
+
         public static Uri buildFromPeopleId(long peopleId){
             return TRANSACTION_PEOPLE_URI.buildUpon().appendPath(""+peopleId).build();
         }
 
         public static long getPeopleId(Uri uri){
-            return Long.getLong( uri.getPathSegments().get(1) );
+            return Long.parseLong( uri.getPathSegments().get(1) );
         }
 
-        public static Uri buildTransactionPeopleUri(long id) {
-            return ContentUris.withAppendedId(TRANSACTION_PEOPLE_URI, id);
-        }
+
     }
 
     public static final class TransactionGroupEntry {

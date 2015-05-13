@@ -21,7 +21,9 @@ import android.widget.ListView;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
+import com.villoro.expensor_beta.adapters.PeopleWithBalanceAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.ExpensorQueries;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
@@ -32,10 +34,11 @@ import com.villoro.expensor_beta.sections.details.ShowDetailsActivity;
 /**
  * Created by Arnau on 28/02/2015.
  */
-public class PeopleFragmentSection extends Fragment implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel {
+public class PeopleFragmentSection extends Fragment implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel,
+ListView.OnItemClickListener, ListView.OnItemLongClickListener{
 
 
-    ListView listView;
+    ListView lv_positive, lv_negative, lv_settled;
     Context context;
     long listID;
 
@@ -104,68 +107,42 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_section_people, container, false);
-        listView = (ListView) rootView.findViewById(R.id.lv_people);
+        lv_positive = (ListView) rootView.findViewById(R.id.lv_positive);
+        lv_negative = (ListView) rootView.findViewById(R.id.lv_negative);
+        lv_settled = (ListView) rootView.findViewById(R.id.lv_settled);
+
+        setListView();
 
         return rootView;
     }
 
     public void setListView(){
-        Cursor cursor = context.getContentResolver().query(
-                ExpensorContract.PeopleEntry.PEOPLE_URI, null, null, null, null);
+        Cursor cursorPositive = context.getContentResolver().query(ExpensorContract.PeopleEntry.buildFromBalanceState(
+                        ExpensorContract.PeopleEntry.CASE_BALANCE_POSITIVE), null, null, null, null);
+        PeopleWithBalanceAdapter adapter_positive = new PeopleWithBalanceAdapter(context, cursorPositive, 0);
+        lv_positive.setAdapter(adapter_positive);
 
-        String[] aux = new String[cursor.getCount()];
+        Cursor cursorNegative = context.getContentResolver().query(ExpensorContract.PeopleEntry.buildFromBalanceState(
+                ExpensorContract.PeopleEntry.CASE_BALANCE_NEGATIVE), null, null, null, null);
+        PeopleWithBalanceAdapter adapter_negative = new PeopleWithBalanceAdapter(context, cursorNegative, 0);
+        lv_negative.setAdapter(adapter_negative);
 
-        Log.e("PeopleFragmentSection", "cursour count= " + cursor.getCount());
+        Cursor cursorSettled = context.getContentResolver().query(ExpensorContract.PeopleEntry.buildFromBalanceState(
+                ExpensorContract.PeopleEntry.CASE_SETTLED), null, null, null, null);
+        PeopleWithBalanceAdapter adapter_settled = new PeopleWithBalanceAdapter(context, cursorSettled, 0);
+        lv_settled.setAdapter(adapter_settled);
 
-        int i = 0;
+        lv_positive.setOnItemClickListener(this);
+        lv_negative.setOnItemClickListener(this);
+        lv_settled.setOnItemClickListener(this);
 
-        if (cursor.moveToFirst()){
-            do{
-                StringBuilder sb = new StringBuilder();
-                sb.append("_id= " + cursor.getLong(cursor.getColumnIndex(Tables.ID)) + ", ");
+        lv_positive.setOnItemLongClickListener(this);
+        lv_negative.setOnItemLongClickListener(this);
+        lv_settled.setOnItemLongClickListener(this);
 
-                sb.append("name= " + cursor.getString(cursor.getColumnIndex(Tables.NAME)) + ", ");
-                sb.append("email= " + cursor.getString(cursor.getColumnIndex(Tables.EMAIL)) + ", ");
-                sb.append("pointsTo= " + cursor.getString(cursor.getColumnIndex(Tables.POINTS)) + ", ");
-                sb.append("userID= " + cursor.getString(cursor.getColumnIndex(Tables.USER_ID)) + ", ");
-
-                sb.append("parseID= " + cursor.getString(cursor.getColumnIndex(Tables.PARSE_ID_NAME)) + ", ");
-                sb.append("updatedAt= " + cursor.getLong(cursor.getColumnIndex(Tables.LAST_UPDATE)) + ", ");
-                sb.append("deleted= " + cursor.getInt(cursor.getColumnIndex(Tables.DELETED)));
-
-                aux[i] = sb.toString();
-                i++;
-            } while (cursor.moveToNext());
-        }
-        Log.d("PeopleFragmentSection", "aux length= " + aux.length + " values= " + aux.toString());
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, aux);
-        listView.setAdapter(arrayAdapter);
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO when using cursorAdapter delete the "1"
-                showLongClickList(id + 1);
-                return true;
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(context, ShowDetailsActivity.class);
-                intent.putExtra(ShowDetailsActivity.ID_OBJECT, id);
-                intent.putExtra(ShowDetailsActivity.WHICH_LIST, ShowDetailsActivity.CASE_PEOPLE);
-                startActivity(intent);
-            }
-        });
-        UtilitiesDates.setListViewHeightBasedOnChildren(listView);
-    }
-
-    public void showLongClickList(long id){
-        DialogLongClickList dialog = new DialogLongClickList();
-        dialog.setCommunicator(this);
-        dialog.show(getFragmentManager(), null);
-        listID = id;
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_positive);
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_negative);
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_settled);
     }
 
     @Override
@@ -194,5 +171,22 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
             context.getContentResolver().delete(ExpensorContract.PeopleEntry.PEOPLE_URI, Tables.ID + " = '" + listID + "'", null);
             setListView();
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(context, ShowDetailsActivity.class);
+        intent.putExtra(ShowDetailsActivity.ID_OBJECT, id);
+        intent.putExtra(ShowDetailsActivity.WHICH_LIST, ShowDetailsActivity.CASE_PEOPLE);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        DialogLongClickList dialog = new DialogLongClickList();
+        dialog.setCommunicator(this);
+        dialog.show(getFragmentManager(), null);
+        listID = id;
+        return true;
     }
 }

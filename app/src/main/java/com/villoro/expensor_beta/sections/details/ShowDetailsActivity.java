@@ -28,6 +28,7 @@ public class ShowDetailsActivity extends ActionBarActivity {
     long ID;
 
     DetailsGroupFragment detailsGroupFragment;
+    DetailsPeopleFragment detailsPeopleFragment;
 
 
     @Override
@@ -43,7 +44,6 @@ public class ShowDetailsActivity extends ActionBarActivity {
         whichCase = extras.getInt(WHICH_LIST);
 
         ID = extras.getLong(ID_OBJECT);
-        Log.d("ShowDetailsActivity", "id= " + ID);
 
         if (savedInstanceState == null) {
             switch (whichCase) {
@@ -53,6 +53,10 @@ public class ShowDetailsActivity extends ActionBarActivity {
                     getSupportFragmentManager().beginTransaction().add(R.id.container, detailsGroupFragment).commit();
                     break;
                 case CASE_PEOPLE:
+                    detailsPeopleFragment = new DetailsPeopleFragment();
+                    detailsPeopleFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, detailsPeopleFragment).commit();
+                    break;
             }
         }
     }
