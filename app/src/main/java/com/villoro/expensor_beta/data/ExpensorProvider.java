@@ -31,12 +31,14 @@ public class ExpensorProvider extends ContentProvider {
     private static final int CATEGORIES = 300;
 
     private static final int PEOPLE = 400;
+    private static final int PEOPLE_WITH_PARTIAL_NAME = 401;
 
     private static final int PEOPLE_IN_GROUP = 450;
 
     private static final int GROUPS = 600;
 
     private static final int TRANSACTIONS_PEOPLE = 700;
+    private static final int TRANSACTIONS_PEOPLE_WITH_PEOPLE_ID = 701;
 
     private static final int TRANSACTIONS_GROUP = 800;
 
@@ -66,12 +68,14 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/*", CATEGORIES);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE, PEOPLE);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/*", PEOPLE_WITH_PARTIAL_NAME);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE, TRANSACTIONS_PEOPLE);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/#", TRANSACTIONS_PEOPLE_WITH_PEOPLE_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP, TRANSACTIONS_GROUP);
 
@@ -157,6 +161,11 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
+            case PEOPLE_WITH_PARTIAL_NAME: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPeopleWithNameLike(
+                        ExpensorContract.PeopleEntry.getPartOfNameFromUri(uri)), null);
+                break;
+            }
             case PEOPLE_IN_GROUP: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_PEOPLE_IN_GROUP,
@@ -202,6 +211,12 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
+                );
+                break;
+            }
+            case TRANSACTIONS_PEOPLE_WITH_PEOPLE_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryTransactionPersonal(
+                        ExpensorContract.TransactionPeopleEntry.getPeopleId(uri)) , null
                 );
                 break;
             }

@@ -1,6 +1,12 @@
 package com.villoro.expensor_beta.Utilities;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.widget.Adapter;
+
+import com.parse.ParseUser;
+import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.Tables;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,5 +49,15 @@ public class UtilitiesNumbers {
             }
         }
         return 0;
+    }
+
+    public static long getMyId(Context context){
+        Cursor cursor = context.getContentResolver().query(ExpensorContract.PeopleEntry.PEOPLE_URI, null,
+                Tables.EMAIL + " = '" + ParseUser.getCurrentUser().getEmail() + "'", null, null);
+        if(cursor.moveToFirst()){
+            return cursor.getLong(cursor.getColumnIndex(Tables.ID));
+        } else {
+            return -1;
+        }
     }
 }

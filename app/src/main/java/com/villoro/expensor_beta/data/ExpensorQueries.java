@@ -1,5 +1,6 @@
 package com.villoro.expensor_beta.data;
 
+import com.parse.ParseUser;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 
 /**
@@ -18,11 +19,14 @@ public class ExpensorQueries {
     private static final String LEFT_JOIN = " LEFT OUTER JOIN ";
     private static final String ON = " ON ";
     private static final String EQUAL = " = ";
+    private static final String NOT_EQUAL = " != ";
     private static final String WHERE = " WHERE ";
     private static final String WHERE_CLAUSE_NAME = Tables.NAME + " = ";
     private static final String GREATER_THAN = " > ";
     private static final String GREATER_EQUAL_THAN = " >= ";
     private static final String LESS_EQUAL_THAN = " <= ";
+    private static final String LIKE_OPEN = " LIKE '";
+    private static final String LIKE_CLOSE = "%' ";
     private static final String APOSTROPHE = "'";
     private static final String COMA = ", ";
     private static final String SECOND_WHERE = " =? and ";
@@ -119,6 +123,22 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
+    public static final String queryTransactionPersonal(long id){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT_ALL_FROM);
+        sb.append(PARENTHESIS_OPEN).append(SELECT);
+        sb.append(Tables.ID).append(COMA).append(Tables.NAME);
+        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
+        sb.append(WHERE).append(whereNoDeleted());
+        sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
+        sb.append(ON).append(AUX).append(Tables.ID).append(EQUAL).append(Tables.PEOPLE_ID);
+        sb.append(WHERE).append(whereNoDeleted());
+        sb.append(ORDER_BY).append(Tables.DATE).append(ASC).append(CLOSE);
+
+        return sb.toString();
+    }
+
     public static final String whereType(String where, String type){
         StringBuilder sb = new StringBuilder();
 
@@ -130,5 +150,26 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
+    public static final String queryPeopleWithNameLike(String like){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT).append(Tables.ID).append(COMA).append(Tables.NAME);
+        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
+        sb.append(WHERE).append(whereNoDeleted());
+        sb.append(AND).append(notMe());
+        sb.append(AND).append(Tables.NAME).append(LIKE_OPEN).append(like).append(LIKE_CLOSE);
+        sb.append(CLOSE);
+
+        return sb.toString();
+    }
+
+    public static final String notMe(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(Tables.EMAIL).append(NOT_EQUAL).append(APOSTROPHE);
+        sb.append(ParseUser.getCurrentUser().getEmail()).append(APOSTROPHE);
+
+        return sb.toString();
+    }
 
 }

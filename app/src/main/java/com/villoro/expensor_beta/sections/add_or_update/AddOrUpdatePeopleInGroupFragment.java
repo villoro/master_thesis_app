@@ -10,7 +10,6 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.villoro.expensor_beta.R;
@@ -63,7 +62,7 @@ public class AddOrUpdatePeopleInGroupFragment extends Fragment implements AddOrU
     private void setSpinner(){
         to = new int[]{android.R.id.text1};
         cursorPeople = context.getContentResolver().query(
-                ExpensorContract.PeopleEntry.CONTENT_URI, null, null, null, null);
+                ExpensorContract.PeopleEntry.PEOPLE_URI, null, null, null, null);
         adapter_people = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_1, cursorPeople, new String[]{Tables.NAME},
                 to, 0);

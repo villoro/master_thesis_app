@@ -1,7 +1,9 @@
 package com.villoro.expensor_beta.sections.details;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -16,27 +18,49 @@ import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
  */
 public class ShowDetailsActivity extends ActionBarActivity {
 
+    public final static String WHICH_LIST = "whichList";
+    public final static String ID_OBJECT = "idObject";
+
+    public final static int CASE_PEOPLE = 2;
+    public final static int CASE_GROUP = 3;
+
     int whichCase;
     long ID;
+
+    DetailsGroupFragment detailsGroupFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_update);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
+
         Bundle extras = getIntent().getExtras();
-        ID = extras.getLong(AddOrUpdateActivity.ID_OBJECT);
+        whichCase = extras.getInt(WHICH_LIST);
+
+        ID = extras.getLong(ID_OBJECT);
         Log.d("ShowDetailsActivity", "id= " + ID);
 
-        DetailsGroupFragment detailsGroupFragment = new DetailsGroupFragment();
-        detailsGroupFragment.initialize(ID);
-        getSupportFragmentManager().beginTransaction().add(R.id.container, detailsGroupFragment).commit();
+        if (savedInstanceState == null) {
+            switch (whichCase) {
+                case CASE_GROUP:
+                    detailsGroupFragment = new DetailsGroupFragment();
+                    detailsGroupFragment.initialize(ID);
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, detailsGroupFragment).commit();
+                    break;
+                case CASE_PEOPLE:
+            }
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //TODO make generic
-        getMenuInflater().inflate(R.menu.menu_group_details, menu);
+        //getMenuInflater().inflate(R.menu.menu_group_details, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

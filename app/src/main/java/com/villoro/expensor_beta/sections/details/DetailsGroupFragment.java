@@ -21,9 +21,7 @@ import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
-import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
-import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateInterface;
 
 /**
  * Created by Arnau on 01/03/2015.
@@ -76,7 +74,7 @@ public class DetailsGroupFragment extends Fragment implements DialogLongClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_group_details, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_details_group, container, false);
         listView = (ListView) rootView.findViewById(R.id.lv_TEMPORAL_people_in_group);
 
         return rootView;
@@ -152,7 +150,8 @@ public class DetailsGroupFragment extends Fragment implements DialogLongClickLis
         }
         if (choice == DialogLongClickList.CASE_DELETE)
         {
-            //
+            context.getContentResolver().delete(ExpensorContract.PeopleEntry.PEOPLE_URI,
+                    Tables.ID + " = '" + listID + "'", null);
         }
     }
 }

@@ -4,8 +4,15 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/action_add_transaction"
+        android:orderInCategory="10"
+        android:title="@string/action_add_transaction"
+        android:icon="@drawable/ic_action_add"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/action_add_people"
-        android:orderInCategory="70"
+        android:orderInCategory="100"
         android:title="@string/action_add_people"
         android:icon="@drawable/ic_action_social_add_person"
         app:showAsAction="ifRoom"/>

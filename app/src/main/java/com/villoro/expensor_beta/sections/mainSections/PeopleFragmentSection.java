@@ -19,12 +19,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.sections.MainActivity;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
+import com.villoro.expensor_beta.sections.details.ShowDetailsActivity;
 
 /**
  * Created by Arnau on 28/02/2015.
@@ -79,11 +82,18 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Intent intent;
         switch (id){
             case R.id.action_add_people:
-                Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
+                intent = new Intent(getActivity(), AddOrUpdateActivity.class);
                 intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
                 intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_PEOPLE);
+                startActivity(intent);
+                return true;
+            case R.id.action_add_transaction:
+                intent = new Intent(getActivity(), AddOrUpdateActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_PERSONAL);
                 startActivity(intent);
                 return true;
         }
@@ -101,7 +111,7 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
 
     public void setListView(){
         Cursor cursor = context.getContentResolver().query(
-                ExpensorContract.PeopleEntry.CONTENT_URI, null, null, null, null);
+                ExpensorContract.PeopleEntry.PEOPLE_URI, null, null, null, null);
 
         String[] aux = new String[cursor.getCount()];
 
@@ -139,6 +149,16 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
                 return true;
             }
         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(context, ShowDetailsActivity.class);
+                intent.putExtra(ShowDetailsActivity.ID_OBJECT, id);
+                intent.putExtra(ShowDetailsActivity.WHICH_LIST, ShowDetailsActivity.CASE_PEOPLE);
+                startActivity(intent);
+            }
+        });
+        UtilitiesDates.setListViewHeightBasedOnChildren(listView);
     }
 
     public void showLongClickList(long id){
@@ -171,7 +191,7 @@ public class PeopleFragmentSection extends Fragment implements DialogLongClickLi
     public void ifOkDo(boolean ok, int whichCase) {
         if(ok){
             Log.d("PeopleFragmentSection", "trying to delete id= " + listID);
-            context.getContentResolver().delete(ExpensorContract.PeopleEntry.CONTENT_URI, Tables.ID + " = '" + listID + "'", null);
+            context.getContentResolver().delete(ExpensorContract.PeopleEntry.PEOPLE_URI, Tables.ID + " = '" + listID + "'", null);
             setListView();
         }
     }

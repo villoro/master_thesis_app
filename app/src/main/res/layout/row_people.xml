@@ -2,27 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_thickness" >
-    
+
 
     <TextView
         android:id="@+id/row_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_number" 
-        android:layout_marginLeft="@dimen/margin_double" 
+        android:layout_marginTop="@dimen/margin_number"
+        android:layout_marginLeft="@dimen/margin_double"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-    <TextView
-        android:id="@+id/row_amount"
-    	android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/margin_number" 
-        android:layout_marginRight="@dimen/margin_double"    
-        android:layout_alignParentRight="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.villoro.expensor_beta.data;
 
 import android.content.ContentUris;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -159,7 +160,7 @@ public class ExpensorContract {
     public static final class PeopleEntry {
         private static final String tableName = Tables.TABLENAME_PEOPLE;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri PEOPLE_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -168,8 +169,17 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildPeopleUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(PEOPLE_URI, id);
         }
+
+        public static Uri buildFromPartOfNameUri(String partOfName){
+            return PEOPLE_URI.buildUpon().appendPath(partOfName).build();
+        }
+
+        public static String getPartOfNameFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
+        }
+
     }
 
     public static final class PeopleInGroupEntry {
@@ -207,7 +217,7 @@ public class ExpensorContract {
     public static final class TransactionPeopleEntry {
         private static final String tableName = Tables.TABLENAME_TRANSACTIONS_PEOPLE;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri TRANSACTION_PEOPLE_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -215,8 +225,16 @@ public class ExpensorContract {
         public static final String CONTENT_ITEM_TYPE =
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
+        public static Uri buildFromPeopleId(long peopleId){
+            return TRANSACTION_PEOPLE_URI.buildUpon().appendPath(""+peopleId).build();
+        }
+
+        public static long getPeopleId(Uri uri){
+            return Long.getLong( uri.getPathSegments().get(1) );
+        }
+
         public static Uri buildTransactionPeopleUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(TRANSACTION_PEOPLE_URI, id);
         }
     }
 

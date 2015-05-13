@@ -224,7 +224,7 @@ public class ParseAdapter {
             values.put(Tables.POINTS, parsePublicPeopleID);
         }
         Log.d("", "trying to insert= " + values.toString());
-        context.getContentResolver().insert(ExpensorContract.PeopleEntry.CONTENT_URI, values);
+        context.getContentResolver().insert(ExpensorContract.PeopleEntry.PEOPLE_URI, values);
     }
 
     public static int updatePeoplePointsTo(Context context, String email, String parseUserID){

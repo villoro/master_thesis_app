@@ -26,6 +26,7 @@ import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.sections.details.ShowDetailsActivity;
+import com.villoro.expensor_beta.sections.showList.ShowListActivity;
 
 /**
  * Created by Arnau on 28/02/2015.
@@ -139,7 +140,8 @@ public class GroupFragmentSection extends Fragment implements DialogLongClickLis
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(context, ShowDetailsActivity.class);
-                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, id + 1);
+                intent.putExtra(ShowDetailsActivity.ID_OBJECT, id + 1);
+                intent.putExtra(ShowDetailsActivity.WHICH_LIST, ShowDetailsActivity.CASE_GROUP);
                 startActivity(intent);
             }
         });

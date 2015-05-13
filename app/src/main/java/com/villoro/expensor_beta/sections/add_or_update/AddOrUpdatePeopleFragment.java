@@ -60,9 +60,9 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
         values.put(Tables.NAME, name);
         values.put(Tables.EMAIL, email);
         if (currentID > 0){
-            //context.getContentResolver().update(ExpensorContract.PeopleEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            context.getContentResolver().update(ExpensorContract.PeopleEntry.PEOPLE_URI, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(ExpensorContract.PeopleEntry.CONTENT_URI, values);
+            context.getContentResolver().insert(ExpensorContract.PeopleEntry.PEOPLE_URI, values);
         }
     }
 
@@ -81,7 +81,7 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
     @Override
     public void setValues() {
         Cursor tempCursor = context.getContentResolver().query(
-                ExpensorContract.PeopleEntry.CONTENT_URI, null, Tables.ID + " = '" + currentID + "'", null, null);
+                ExpensorContract.PeopleEntry.PEOPLE_URI, null, Tables.ID + " = '" + currentID + "'", null, null);
         tempCursor.moveToFirst();
 
         e_name.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
@@ -90,6 +90,7 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
 
     @Override
     public void delete() {
-
+        context.getContentResolver().delete(ExpensorContract.PeopleEntry.PEOPLE_URI,
+                Tables.ID + " = '" + currentID + "'", null);
     }
 }

@@ -26,12 +26,13 @@
             style="@style/textView_input_title"
             android:text="From"/>
 
-        <EditText
-            style="@style/editText_input"
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:id="@+id/et_from"
             android:hint="Who gives money?"
-            android:inputType="textPersonName" >
-        </EditText>
+            android:inputType="textPersonName" />
 
     </LinearLayout>
 
@@ -42,12 +43,11 @@
             style="@style/textView_input_title"
             android:text="To"/>
 
-        <EditText
+        <AutoCompleteTextView
             style="@style/editText_input"
             android:id="@+id/et_to"
             android:hint="Who receives money?"
-            android:inputType="textPersonName" >
-        </EditText>
+            android:inputType="textPersonName" />
 
     </LinearLayout>
 
