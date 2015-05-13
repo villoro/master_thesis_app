@@ -16,7 +16,7 @@ public class ExpensorQueries {
     private static final String ASC = " ASC ";
     private static final String DESC = " DESC ";
     private static final String JOIN = " JOIN ";
-    private static final String LEFT_JOIN = " LEFT OUTER JOIN ";
+    private static final String LEFT_JOIN = " LEFT JOIN ";
     private static final String ON = " ON ";
     private static final String EQUAL = " = ";
     private static final String NOT_EQUAL = " != ";
@@ -26,7 +26,7 @@ public class ExpensorQueries {
     private static final String GREATER_EQUAL_THAN = " >= ";
     private static final String LESS_EQUAL_THAN = " <= ";
     private static final String LESS_THAN = " < ";
-    private static final String LIKE_OPEN = " LIKE '";
+    private static final String LIKE_OPEN = " LIKE '%";
     private static final String LIKE_CLOSE = "%' ";
     private static final String APOSTROPHE = "'";
     private static final String COMA = ", ";
@@ -36,8 +36,10 @@ public class ExpensorQueries {
     private static final String PARENTHESIS_OPEN = "(";
     private static final String PARENTHESIS_CLOSE = ")";
     private static final String SUM = "SUM";
+    private static final String ABSOLUTE = " ABS";
     private static final String AS = " AS ";
     private static final String AND = " AND ";
+    private static final String OR = " OR ";
     private static final String AUX = "aux";
     private static final String AUX_ID = "auxID";
     private static final String AUX0 = "aux0";
@@ -177,35 +179,32 @@ public class ExpensorQueries {
     public static final String queryPeopleFromBalanceCase(int caseBalance){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(SELECT).append(Tables.NAME).append(COMA).append(Tables.SUM_AMOUNT);
-        sb.append(COMA).append(Tables.ID).append(FROM);
+        sb.append(SELECT).append(Tables.NAME).append(COMA).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID);
+        sb.append(COMA).append(Tables.SUM_AMOUNT);
+        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
+        sb.append(LEFT_JOIN);
         sb.append(PARENTHESIS_OPEN).append(SELECT).append(Tables.PEOPLE_ID).append(COMA).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
         sb.append(WHERE).append(whereNoDeleted());
         sb.append(GROUP_BY).append(Tables.PEOPLE_ID).append(PARENTHESIS_CLOSE);
-        sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_PEOPLE);
-        sb.append(ON).append(AUX).append(".").append(Tables.PEOPLE_ID).append(EQUAL);
-        sb.append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID);
+        sb.append(AS).append(AUX);
+        sb.append(ON).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID).append(EQUAL);
+        sb.append(AUX).append(".").append(Tables.PEOPLE_ID);
         sb.append(WHERE);
         if(caseBalance == ExpensorContract.PeopleEntry.CASE_BALANCE_POSITIVE){
-            sb.append(Tables.SUM_AMOUNT).append(GREATER_THAN);
+            sb.append(Tables.SUM_AMOUNT).append(GREATER_THAN).append("0.00001");
         } else if (caseBalance == ExpensorContract.PeopleEntry.CASE_BALANCE_NEGATIVE){
-            sb.append(Tables.SUM_AMOUNT).append(LESS_THAN).append("-");
+            sb.append(Tables.SUM_AMOUNT).append(LESS_THAN).append("-0.00001");
         } else {
-            sb.append("ABS(").append(Tables.SUM_AMOUNT).append(PARENTHESIS_CLOSE).append(LESS_EQUAL_THAN);
+            sb.append(PARENTHESIS_OPEN);
+            sb.append(ABSOLUTE).append(PARENTHESIS_OPEN).append(Tables.SUM_AMOUNT).append(PARENTHESIS_CLOSE);
+            sb.append(LESS_EQUAL_THAN).append("0.00001");
+            sb.append(OR).append(AUX).append(".").append(Tables.PEOPLE_ID).append(IS_NULL);
+            sb.append(PARENTHESIS_CLOSE);
         }
-        sb.append("0.00001");
 
         sb.append(AND);
         sb.append(whereNoDeleted()).append(CLOSE);
-
-        /*sb.append(SELECT).append(Tables.NAME + COMA).append(Tables.TABLENAME_PEOPLE + "." + Tables.ID);
-        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
-        sb.append(" LEFT JOIN ").append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
-        sb.append(ON).append(Tables.TABLENAME_PEOPLE + "." + Tables.ID).append(EQUAL);
-        sb.append(Tables.TABLENAME_TRANSACTIONS_PEOPLE + "." + Tables.PEOPLE_ID);
-        sb.append(WHERE).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE + "." + Tables.PEOPLE_ID).append(" IS NULL;");*/
-
 
         return sb.toString();
     }

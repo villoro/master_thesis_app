@@ -41,13 +41,13 @@ public class PeopleWithBalanceAdapter extends CursorAdapter {
         TextView tv_amount = (TextView) view.findViewById(R.id.row_amount);
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
-        /*double amount = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
+        double amount = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
         tv_amount.setText(UtilitiesNumbers.getFancyDouble(amount));
 
         if(amount > 0) {
             tv_amount.setTextColor(colorGreen);
         } else {
             tv_amount.setTextColor(colorRed);
-        }*/
+        }
     }
 }

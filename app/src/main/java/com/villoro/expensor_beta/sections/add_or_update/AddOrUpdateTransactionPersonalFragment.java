@@ -81,7 +81,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                setFromCursor(s.toString(), AUTO_COMPLETE_FROM);
+                setFromCursor(s.toString().trim(), AUTO_COMPLETE_FROM);
             }
 
             @Override
@@ -97,7 +97,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                setFromCursor(s.toString(), AUTO_COMPLETE_TO);
+                setFromCursor(s.toString().trim(), AUTO_COMPLETE_TO);
             }
 
             @Override

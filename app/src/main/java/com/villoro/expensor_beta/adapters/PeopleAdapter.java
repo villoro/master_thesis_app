@@ -26,7 +26,7 @@ public class PeopleAdapter extends CursorAdapter{
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return mInflater.inflate(R.layout.row_people, viewGroup, false);
+        return mInflater.inflate(R.layout.row_people_with_amount, viewGroup, false);
     }
 
     @Override

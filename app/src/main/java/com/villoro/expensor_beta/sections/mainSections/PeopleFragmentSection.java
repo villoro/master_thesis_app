@@ -21,6 +21,7 @@ import android.widget.ListView;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
+import com.villoro.expensor_beta.adapters.PeopleAdapter;
 import com.villoro.expensor_beta.adapters.PeopleWithBalanceAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.ExpensorQueries;
@@ -129,7 +130,7 @@ ListView.OnItemClickListener, ListView.OnItemLongClickListener{
 
         Cursor cursorSettled = context.getContentResolver().query(ExpensorContract.PeopleEntry.buildFromBalanceState(
                 ExpensorContract.PeopleEntry.CASE_SETTLED), null, null, null, null);
-        PeopleWithBalanceAdapter adapter_settled = new PeopleWithBalanceAdapter(context, cursorSettled, 0);
+        PeopleAdapter adapter_settled = new PeopleAdapter(context, cursorSettled, 0);
         lv_settled.setAdapter(adapter_settled);
 
         lv_positive.setOnItemClickListener(this);
