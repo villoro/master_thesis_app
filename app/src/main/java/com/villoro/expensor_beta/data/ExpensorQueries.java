@@ -43,15 +43,9 @@ public class ExpensorQueries {
     public static final String queryGraph(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
-        /*sb.append(SELECT).append(sumAmount());
-        sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
-        sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
-        sb.append(AND).append(whereDate(year, month));
-        sb.append(AND).append(whereNoDeleted()).append(CLOSE);*/
-
         sb.append(SELECT).append(Tables.TYPE).append(COMA).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
-        sb.append(WHERE).append(whereDate(year, month));
+        sb.append(WHERE).append(whereDate(year, month)).append(AND).append(whereNoDeleted());
         sb.append(GROUP_BY).append(Tables.TYPE);
 
         return sb.toString();

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.CategoryGraphAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.ExpensorQueries;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sections.MainActivity;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
@@ -196,16 +198,16 @@ public class DashboardFragmentSection extends Fragment{
         tv_expense.setText(UtilitiesNumbers.getFancyDouble(expense) + " €");
         tv_income.setText(UtilitiesNumbers.getFancyDouble(income) + " €");
 
-        if(result > 0) {
+        if(result < EPSILON) {
             int colorRed = getResources().getColor(R.color.red_expense);
             g_result.setBackgroundColor(colorRed);
-            tv_result.setText("- " + UtilitiesNumbers.getFancyDouble(result) + " €");
+            tv_result.setText(UtilitiesNumbers.getFancyDouble(result).replace("-", "- ") + " €");
         } else if (Math.abs(result) <= EPSILON) {
             tv_result.setText("0.00 €");
-        } else {
+        } else if (result > EPSILON){
             int colorGreen = getResources().getColor(R.color.green_income);
             g_result.setBackgroundColor(colorGreen);
-            tv_result.setText("+" + UtilitiesNumbers.getFancyDouble(result) + " €");
+            tv_result.setText("+ " + UtilitiesNumbers.getFancyDouble(result) + " €");
         }
     }
 

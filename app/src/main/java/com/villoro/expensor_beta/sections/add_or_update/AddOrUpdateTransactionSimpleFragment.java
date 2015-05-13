@@ -75,6 +75,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("AddOrUpadateTransactionSimpleFragment", "setCategories onResume");
         setCategories();
     }
 
@@ -94,11 +95,6 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         setButtonExpense();
         setButtonIncome();
 
-        if (currentID >0)
-        {
-            setCategories();
-            setValues();
-        }
         return rv;
     }
 
@@ -135,6 +131,11 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                 categoryRadioAdapter.setPositionSelected(position, id);
             }
         });
+
+        if (currentID >0)
+        {
+            setValues();
+        }
     }
 
     private void bindIVCategories(View rv)
@@ -227,7 +228,6 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             deleteUri = ExpensorContract.IncomeEntry.INCOME_URI;
         }
 
-        Log.d("TransactionSimpleFragment", "trying to delete ");
         context.getContentResolver().delete(deleteUri, Tables.ID + " = '" + currentID + "'", null);
     }
 

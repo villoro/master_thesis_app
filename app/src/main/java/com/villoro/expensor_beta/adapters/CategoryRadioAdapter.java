@@ -29,6 +29,8 @@ public class CategoryRadioAdapter extends CursorAdapter{
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         radioButtons = new RadioButton[c.getCount()];
+
+        positionSelected = 0;
     }
 
     @Override
@@ -37,14 +39,12 @@ public class CategoryRadioAdapter extends CursorAdapter{
         TextView tv_name = (TextView) view.findViewById(R.id.row_category_name);
 
         tv_color.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
-        tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)) +
-        " id=" + cursor.getLong(cursor.getColumnIndex(Tables.ID)));
+        tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
 
         radioButtons[cursor.getPosition()] = (RadioButton) view.findViewById(R.id.row_category_radio_button);
-        if(cursor.getPosition() == 0){
-            positionSelected = 0;
+        if(cursor.getPosition() == positionSelected){
             idSelected = cursor.getLong(cursor.getColumnIndex(Tables.ID));
-            radioButtons[0].setChecked(true);
+            radioButtons[positionSelected].setChecked(true);
         }
     }
 
@@ -54,7 +54,6 @@ public class CategoryRadioAdapter extends CursorAdapter{
     }
 
     public void setPositionSelected(int position, long id){
-        Log.d("CategoryRadioAdapter", "pos= " + position + ", id= " + id);
         if(positionSelected != -1) {
             radioButtons[positionSelected].setChecked(false);
         }
