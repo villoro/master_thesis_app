@@ -35,6 +35,7 @@ public class Tables {
 
     //query columns
     public static final String SUM_AMOUNT = "sum_amount";
+    public static final String SUM_AMOUNT2 = "sum_of_sum_amount";
     public static final String PERCENTAGE = "percentage";
 
     //foreign keys columns

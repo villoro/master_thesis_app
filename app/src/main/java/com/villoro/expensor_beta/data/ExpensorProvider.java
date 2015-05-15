@@ -18,15 +18,17 @@ public class ExpensorProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private ExpensorDbHelper mOpenHelper;
 
-    private static final String GRAPH = ExpensorContract.GraphEntry.GRAPH;
-    private static final String ALL = ExpensorContract.GraphEntry.ALL;
+    private static final String GRAPH_TRANSACTION = ExpensorContract.GraphTransactionEntry.GRAPH_TRANSACTION;
+    private static final String GRAPH_PERSONAL = ExpensorContract.GraphPersonalEntry.GRAPH_PERSONAL;
+    private static final String ALL = ExpensorContract.GraphTransactionEntry.ALL;
 
     //what I need to retrive
     private static final int TRANSACTION_SIMPLE = 100;
     private static final int TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH = 101;
 
-    private static final int GRAPHIC = 200;
-    private static final int GRAPHIC_ALL = 201;
+    private static final int GRAPHIC_TRANSACTION = 200;
+    private static final int GRAPHIC_TRANSACTION_ALL = 201;
+    private static final int GRAPHIC_PERSONAL = 202;
 
     private static final int CATEGORIES = 300;
 
@@ -63,9 +65,10 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/*", TRANSACTION_SIMPLE);
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTION_SIMPLE + "/*/#/#", TRANSACTION_SIMPLE_WITH_YEAR_AND_MONTH);
 
-        matcher.addURI(authority, GRAPH + "/*/#/#", GRAPHIC);
-        //matcher.addURI(authority, GRAPH + "/" +  ALL + "/*/#/#", GRAPHIC_ALL); //TODO
-        matcher.addURI(authority, GRAPH + "/*/*/#/#", GRAPHIC_ALL);
+        matcher.addURI(authority, GRAPH_TRANSACTION + "/*/#/#", GRAPHIC_TRANSACTION);
+        //matcher.addURI(authority, GRAPH_TRANSACTION + "/" +  ALL + "/*/#/#", GRAPHIC_TRANSACTION_ALL); //TODO
+        matcher.addURI(authority, GRAPH_TRANSACTION + "/*/*/#/#", GRAPHIC_TRANSACTION_ALL);
+        matcher.addURI(authority, GRAPH_PERSONAL + "/#/#/#", GRAPHIC_PERSONAL);
 
         matcher.addURI(authority, Tables.TABLENAME_CATEGORIES + "/*", CATEGORIES);
 
@@ -122,21 +125,30 @@ public class ExpensorProvider extends ContentProvider {
                         ExpensorContract.TransactionSimple.getMonthFromUriAll(uri)), null);
                 break;
             }
-            case GRAPHIC: {
+            case GRAPHIC_TRANSACTION: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
                         ExpensorQueries.queryGraph(
-                                ExpensorContract.GraphEntry.getType(uri),
-                                ExpensorContract.GraphEntry.getYearFromUri(uri),
-                                ExpensorContract.GraphEntry.getMonthFromUri(uri)
+                                ExpensorContract.GraphTransactionEntry.getType(uri),
+                                ExpensorContract.GraphTransactionEntry.getYearFromUri(uri),
+                                ExpensorContract.GraphTransactionEntry.getMonthFromUri(uri)
                         ), null);
                 break;
             }
-            case GRAPHIC_ALL: {
+            case GRAPHIC_TRANSACTION_ALL: {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(
                         ExpensorQueries.queryGraphAll(
-                                ExpensorContract.GraphEntry.getTypeAll(uri),
-                                ExpensorContract.GraphEntry.getYearFromUriAll(uri),
-                                ExpensorContract.GraphEntry.getMonthFromUriAll(uri)
+                                ExpensorContract.GraphTransactionEntry.getTypeAll(uri),
+                                ExpensorContract.GraphTransactionEntry.getYearFromUriAll(uri),
+                                ExpensorContract.GraphTransactionEntry.getMonthFromUriAll(uri)
+                        ), null);
+                break;
+            }
+            case GRAPHIC_PERSONAL: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        ExpensorQueries.queryGraphPeople(
+                                ExpensorContract.GraphPersonalEntry.getBalanceCase(uri),
+                                ExpensorContract.GraphPersonalEntry.getYearFromUri(uri),
+                                ExpensorContract.GraphPersonalEntry.getMonthFromUri(uri)
                         ), null);
                 break;
             }
@@ -273,10 +285,10 @@ public class ExpensorProvider extends ContentProvider {
             case TRANSACTION_SIMPLE:
                 return ExpensorContract.ExpenseEntry.CONTENT_ITEM_TYPE;
 
-            case GRAPHIC:
-                return ExpensorContract.GraphEntry.CONTENT_TYPE;
-            case GRAPHIC_ALL:
-                return ExpensorContract.GraphEntry.CONTENT_ITEM_TYPE;
+            case GRAPHIC_TRANSACTION:
+                return ExpensorContract.GraphTransactionEntry.CONTENT_TYPE;
+            case GRAPHIC_TRANSACTION_ALL:
+                return ExpensorContract.GraphTransactionEntry.CONTENT_ITEM_TYPE;
 
             case CATEGORIES:
                 return ExpensorContract.CategoriesEntry.CONTENT_TYPE;

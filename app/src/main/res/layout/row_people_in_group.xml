@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/row_thickness" >
+
+    <ImageView
+        android:layout_width="@dimen/row_icon_size"
+        android:layout_height="@dimen/row_icon_size"
+        android:id="@+id/iv_delete"
+        android:src="@drawable/ic_action_discard_black"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/row_icon_margin"
+        android:layout_marginRight="@dimen/row_icon_margin"/>
+
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/row_thickness_with_margin_simple"
+        android:gravity="center_vertical"
+        android:id="@+id/ac_name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/iv_delete"
+        android:layout_toStartOf="@+id/iv_delete" />
+</RelativeLayout>

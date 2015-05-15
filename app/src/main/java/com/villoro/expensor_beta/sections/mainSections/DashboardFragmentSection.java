@@ -45,8 +45,8 @@ public class DashboardFragmentSection extends Fragment{
     Context context;
     double maxWidth;
 
-    View g_income, g_expense, g_result;
-    TextView tv_income, tv_expense, tv_result;
+    View g_income, g_expense, g_result, g_I_owe, g_owe_me;
+    TextView tv_income, tv_expense, tv_result, tv_I_owe, tv_owe_me;
 
     ListView lv_expense, lv_income;
 
@@ -73,6 +73,13 @@ public class DashboardFragmentSection extends Fragment{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        setMainGraphs();
+        setList();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
@@ -82,6 +89,8 @@ public class DashboardFragmentSection extends Fragment{
         typeTransaction = Tables.TYPE_EXPENSE;
         maxWidth = getAvailableWidth();
         date = UtilitiesDates.getDate();
+
+        Log.d("DashboardFragment", "query= " + ExpensorQueries.queryPeopleFromBalanceCase(1));
     }
 
     @Override
@@ -117,9 +126,15 @@ public class DashboardFragmentSection extends Fragment{
         g_expense = rootView.findViewById(R.id.bar_expense);
         g_result = rootView.findViewById(R.id.bar_result);
 
+        g_I_owe = rootView.findViewById(R.id.bar_i_owe);
+        g_owe_me = rootView.findViewById(R.id.bar_owe_me);
+
         tv_income = (TextView) rootView.findViewById(R.id.tv_income_value);
         tv_expense = (TextView) rootView.findViewById(R.id.tv_expense_value);
         tv_result = (TextView) rootView.findViewById(R.id.tv_result_value);
+
+        tv_I_owe = (TextView) rootView.findViewById(R.id.tv_i_owe);
+        tv_owe_me = (TextView) rootView.findViewById(R.id.tv_owe_me);
 
         lv_expense = (ListView) rootView.findViewById(R.id.lv_expenses);
         lv_income = (ListView) rootView.findViewById(R.id.lv_incomes);
@@ -143,6 +158,21 @@ public class DashboardFragmentSection extends Fragment{
 
             }
         });
+
+        g_I_owe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                comm.goToSection(MainActivity.SECTION_PEOPLE, null);
+            }
+        });
+        g_owe_me.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                comm.goToSection(MainActivity.SECTION_PEOPLE, null);
+            }
+        });
+
+        Log.e("DashboardFragment", "query= " + ExpensorQueries.queryGraphPeople(1, 2015, 5));
 
         setMainGraphs();
         setButtonPreviousNext();
@@ -172,7 +202,7 @@ public class DashboardFragmentSection extends Fragment{
 
     public void setMainGraphs(){
         Cursor cursorGraph = getActivity().getContentResolver().query(
-                ExpensorContract.GraphEntry.buildExpenseGraphUri(date[0], date[1]),
+                ExpensorContract.GraphTransactionEntry.buildExpenseGraphUri(date[0], date[1]),
                 null, null, null, null);
         double expense= 0;
         double income = 0;
@@ -189,11 +219,11 @@ public class DashboardFragmentSection extends Fragment{
             } while (cursorGraph.moveToNext());
         }
 
-        double max = Math.max(expense, income);
+        double maxTrans = Math.max(expense, income);
         result = income - expense;
-        setWidth(g_expense, expense/max);
-        setWidth(g_income, income/max);
-        setWidth(g_result,  Math.abs(result)/ max);
+        setWidth(g_expense, expense/maxTrans);
+        setWidth(g_income, income/maxTrans);
+        setWidth(g_result,  Math.abs(result)/ maxTrans);
 
         tv_expense.setText(UtilitiesNumbers.getFancyDouble(expense) + " €");
         tv_income.setText(UtilitiesNumbers.getFancyDouble(income) + " €");
@@ -209,13 +239,40 @@ public class DashboardFragmentSection extends Fragment{
             g_result.setBackgroundColor(colorGreen);
             tv_result.setText("+ " + UtilitiesNumbers.getFancyDouble(result) + " €");
         }
+
+
+        Cursor cursorGraphPeopleOweMe = getActivity().getContentResolver().query(
+                ExpensorContract.GraphPersonalEntry.buildIncomeGraphAllUri(
+                        ExpensorContract.PeopleEntry.CASE_BALANCE_POSITIVE, date[0], date[1] ),
+                null, null, null, null);
+        Cursor cursorGraphPeopleIOwe = getActivity().getContentResolver().query(
+                ExpensorContract.GraphPersonalEntry.buildIncomeGraphAllUri(
+                        ExpensorContract.PeopleEntry.CASE_BALANCE_NEGATIVE, date[0], date[1] ),
+                null, null, null, null);
+
+        double oweMe = 0;
+        double IOwe = 0;
+        if(cursorGraphPeopleOweMe.moveToFirst()) {
+            oweMe = cursorGraphPeopleOweMe.getDouble(cursorGraphPeopleOweMe.getColumnIndex(Tables.SUM_AMOUNT2));
+        }
+        if(cursorGraphPeopleIOwe.moveToFirst()){
+            IOwe = - cursorGraphPeopleIOwe.getDouble(cursorGraphPeopleIOwe.getColumnIndex(Tables.SUM_AMOUNT2));
+        }
+        double maxPeople = Math.max(oweMe, IOwe);
+        setWidth(g_owe_me, oweMe/maxPeople);
+        setWidth(g_I_owe, IOwe/maxPeople);
+
+        tv_owe_me.setText(UtilitiesNumbers.getFancyDouble(oweMe) + " €");
+        tv_I_owe.setText(UtilitiesNumbers.getFancyDouble(IOwe) + " €");
+
+
     }
 
     public void setList(){
         tv_month.setText(UtilitiesDates.setFancyMonthName(date));
 
         Cursor cursorExpense = getActivity().getContentResolver().query(
-                ExpensorContract.GraphEntry.buildExpenseGraphAllUri(date[0], date[1]),
+                ExpensorContract.GraphTransactionEntry.buildExpenseGraphAllUri(date[0], date[1]),
                 null, null, null, null);
         double maxExpense = 0;
         if(cursorExpense.moveToFirst()) {
@@ -229,7 +286,7 @@ public class DashboardFragmentSection extends Fragment{
         UtilitiesDates.setListViewHeightBasedOnChildren(lv_expense);
 
         Cursor cursorIncome = getActivity().getContentResolver().query(
-                ExpensorContract.GraphEntry.buildIncomeGraphAllUri(date[0], date[1]),
+                ExpensorContract.GraphTransactionEntry.buildIncomeGraphAllUri(date[0], date[1]),
                 null, null, null, null);
         double maxIncome = 0;
         if(cursorExpense.moveToFirst()) {

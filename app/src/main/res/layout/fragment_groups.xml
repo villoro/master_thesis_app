@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/linearLayout_main_container">
 
+
+
     <LinearLayout
         style="@style/linearLayout_input" >
 
@@ -19,5 +21,14 @@
         </EditText>
 
     </LinearLayout>
+
+    <TextView
+        android:text="Members"
+        style="@style/sectionHeader" />
+
+    <ListView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/lv" />
 
 </LinearLayout>

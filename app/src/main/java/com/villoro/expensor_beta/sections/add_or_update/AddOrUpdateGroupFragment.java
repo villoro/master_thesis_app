@@ -10,15 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
+import com.villoro.expensor_beta.adapters.PeopleInGroupAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
+
+import java.util.ArrayList;
 
 /**
  * Created by Arnau on 01/03/2015.
  */
-public class AddOrUpdateGroupFragment extends Fragment implements AddOrUpdateInterface {
+public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupAdapter.CommPeopleInGroup, AddOrUpdateInterface {
 
     Context context;
     long currentID;
@@ -26,6 +31,11 @@ public class AddOrUpdateGroupFragment extends Fragment implements AddOrUpdateInt
     EditText e_name;
 
     String name;
+    ArrayList<String> names;
+    ArrayList<Long> ids;
+
+    PeopleInGroupAdapter peopleInGroupAdapter;
+    ListView listView;
 
     public AddOrUpdateGroupFragment(){};
 
@@ -34,6 +44,12 @@ public class AddOrUpdateGroupFragment extends Fragment implements AddOrUpdateInt
         super.onCreate(savedInstanceState);
 
         context = getActivity();
+        names = new ArrayList<>();
+        ids = new ArrayList<>();
+
+        names.add("me");
+        ids.add(UtilitiesNumbers.getMyId(context));
+        names.add("");
     }
 
     @Override
@@ -41,7 +57,8 @@ public class AddOrUpdateGroupFragment extends Fragment implements AddOrUpdateInt
         View rv = inflater.inflate(R.layout.fragment_groups, container, false);
 
         e_name = (EditText) rv.findViewById(R.id.et_groups_name);
-
+        listView = (ListView) rv.findViewById(R.id.lv);
+        setList();
         if (currentID >0)
         {
             setValues();
@@ -88,5 +105,18 @@ public class AddOrUpdateGroupFragment extends Fragment implements AddOrUpdateInt
     @Override
     public void delete() {
 
+    }
+
+    public void setList(){
+        peopleInGroupAdapter = new PeopleInGroupAdapter(context, names, ids);
+        peopleInGroupAdapter.setCommunicator(this);
+        listView.setAdapter(peopleInGroupAdapter);
+    }
+
+    @Override
+    public void resetArrayLists(ArrayList<String> names, ArrayList<Long> ids) {
+        this.names = names;
+        this.ids = ids;
+        setList();
     }
 }

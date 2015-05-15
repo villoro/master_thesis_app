@@ -105,6 +105,9 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         b_date = (Button) rv.findViewById(R.id.b_date);
         b_date.setText(UtilitiesDates.getFancyDate(date));
 
+        dialogDate = new DialogDatePicker();
+        dialogDate.setCommunicator(this);
+
         b_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,10 +116,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
                 dialogDate.show(getFragmentManager(), "datePicker");
             }
         });
-
-        dialogDate = new DialogDatePicker();
-        dialogDate.setCommunicator(this);
     }
+
 
     private void setCategories(){
         cursorCategories = context.getContentResolver().query(

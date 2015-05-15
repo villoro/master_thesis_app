@@ -118,13 +118,13 @@
 
                     <TextView
                         style="@style/big_bar_value"
-                        android:id="@+id/tv_friends_deuen_value"/>
+                        android:id="@+id/tv_owe_me"/>
 
                 </RelativeLayout>
 
                 <View
                     style="@style/big_bar"
-                    android:id="@+id/bar_friends_deuen"
+                    android:id="@+id/bar_owe_me"
                     android:background="@color/green_income"/>
 
             </LinearLayout>
@@ -141,13 +141,13 @@
 
                     <TextView
                         style="@style/big_bar_value"
-                        android:id="@+id/tv_friends_dec_value"/>
+                        android:id="@+id/tv_i_owe"/>
 
                 </RelativeLayout>
 
                 <View
                     style="@style/big_bar"
-                    android:id="@+id/bar_friends_dec"
+                    android:id="@+id/bar_i_owe"
                     android:background="@color/red_expense"/>
             </LinearLayout>
 

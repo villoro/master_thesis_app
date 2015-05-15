@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.data.Tables;
 
 /**
@@ -27,7 +29,7 @@ public class TransactionPersonalAdapter extends CursorAdapter{
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return mInflater.inflate(R.layout.row_trans_people, viewGroup, false);
+        return mInflater.inflate(R.layout.row_transaction_people, viewGroup, false);
     }
 
     @Override
@@ -36,8 +38,8 @@ public class TransactionPersonalAdapter extends CursorAdapter{
         TextView tv_comments = (TextView) view.findViewById(R.id.row_trans_people_comments);
         TextView tv_amount = (TextView) view.findViewById(R.id.row_trans_people_amount);
 
-        tv_date.setText(cursor.getString(cursor.getColumnIndex(Tables.DATE)));
+        tv_date.setText(UtilitiesDates.getFancyDate(cursor.getString(cursor.getColumnIndex(Tables.DATE))));
         tv_comments.setText(cursor.getString(cursor.getColumnIndex(Tables.COMMENTS)));
-        tv_amount.setText(cursor.getString(cursor.getColumnIndex(Tables.AMOUNT)));
+        tv_amount.setText(UtilitiesNumbers.getFancyDouble(cursor.getDouble(cursor.getColumnIndex(Tables.AMOUNT))));
     }
 }

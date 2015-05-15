@@ -56,6 +56,18 @@
 
         <TextView
             style="@style/textView_input_title"
+            android:text="Date" />
+
+        <Button
+            style="@style/button_input"
+            android:id="@+id/b_date"/>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/linearLayout_input" >
+
+        <TextView
+            style="@style/textView_input_title"
             android:text="Comments"/>
 
         <EditText

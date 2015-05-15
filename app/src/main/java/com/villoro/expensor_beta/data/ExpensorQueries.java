@@ -52,17 +52,46 @@ public class ExpensorQueries {
 
         sb.append(SELECT).append(Tables.TYPE).append(COMA).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
-        sb.append(WHERE).append(whereDate(year, month)).append(AND).append(whereNoDeleted());
+        sb.append(WHERE).append(whereDateInterval(year, month)).append(AND).append(whereNoDeleted());
         sb.append(GROUP_BY).append(Tables.TYPE);
 
         return sb.toString();
     }
 
-    private static final String whereDate(int year, int month){
+    public static final String queryGraphPeople(int caseBalance, int year, int month){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT).append(sumAmount2());
+        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
+        sb.append(LEFT_JOIN);
+        sb.append(PARENTHESIS_OPEN).append(SELECT).append(Tables.PEOPLE_ID).append(COMA).append(sumAmount());
+        sb.append(FROM).append(Tables.TABLENAME_TRANSACTIONS_PEOPLE);
+        sb.append(WHERE).append(whereNoDeleted()).append(AND).append(whereDateOnlyFinalDate(year, month));
+        sb.append(GROUP_BY).append(Tables.PEOPLE_ID).append(PARENTHESIS_CLOSE);
+        sb.append(AS).append(AUX);
+        sb.append(ON).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID).append(EQUAL);
+        sb.append(AUX).append(".").append(Tables.PEOPLE_ID);
+        sb.append(WHERE).append(balanceFromCase(caseBalance));
+        sb.append(AND).append(notMe()).append(AND);
+        sb.append(whereNoDeleted()).append(CLOSE);
+
+        return sb.toString();
+    }
+
+    private static final String whereDateInterval(int year, int month){
         StringBuilder sb = new StringBuilder();
 
         sb.append(Tables.DATE).append(GREATER_EQUAL_THAN).append(DATETIME);
         sb.append(UtilitiesDates.getFirstDay(year, month)).append(CLOSE_DATE).append(AND);
+        sb.append(Tables.DATE).append(LESS_EQUAL_THAN).append(DATETIME);
+        sb.append(UtilitiesDates.getLastDay(year, month)).append(CLOSE_DATE);
+
+        return sb.toString();
+    }
+
+    private static final String whereDateOnlyFinalDate(int year, int month){
+        StringBuilder sb = new StringBuilder();
+
         sb.append(Tables.DATE).append(LESS_EQUAL_THAN).append(DATETIME);
         sb.append(UtilitiesDates.getLastDay(year, month)).append(CLOSE_DATE);
 
@@ -88,7 +117,7 @@ public class ExpensorQueries {
         sb.append(Tables.CATEGORY_ID).append(COMA).append(sumAmount());
         sb.append(FROM).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(WHERE).append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
-        sb.append(AND).append(whereDate(year, month));
+        sb.append(AND).append(whereDateInterval(year, month));
         sb.append(AND).append(whereNoDeleted());
         sb.append(GROUP_BY).append(Tables.CATEGORY_ID).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_CATEGORIES);
@@ -109,6 +138,15 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
+    private static final String sumAmount2(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SUM).append(PARENTHESIS_OPEN).append(Tables.SUM_AMOUNT).append(PARENTHESIS_CLOSE);
+        sb.append(AS).append(Tables.SUM_AMOUNT2);
+
+        return sb.toString();
+    }
+
     public static final String queryTransactionSimpleMonth(String type, int year, int month){
         StringBuilder sb = new StringBuilder();
 
@@ -119,7 +157,7 @@ public class ExpensorQueries {
         sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_TRANSACTION_SIMPLE);
         sb.append(ON).append(AUX).append(".").append(AUX_ID).append(EQUAL).append(Tables.CATEGORY_ID);
-        sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereDate(year, month));
+        sb.append(WHERE).append(whereType(null, type)).append(AND).append(whereDateInterval(year, month));
         sb.append(AND).append(whereNoDeleted());
         sb.append(ORDER_BY).append(Tables.DATE).append(ASC).append(CLOSE);
 
@@ -190,7 +228,16 @@ public class ExpensorQueries {
         sb.append(AS).append(AUX);
         sb.append(ON).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID).append(EQUAL);
         sb.append(AUX).append(".").append(Tables.PEOPLE_ID);
-        sb.append(WHERE);
+        sb.append(WHERE).append(balanceFromCase(caseBalance));
+        sb.append(AND).append(notMe()).append(AND);
+        sb.append(whereNoDeleted()).append(CLOSE);
+
+        return sb.toString();
+    }
+
+    private static final String balanceFromCase(int caseBalance){
+        StringBuilder sb = new StringBuilder();
+
         if(caseBalance == ExpensorContract.PeopleEntry.CASE_BALANCE_POSITIVE){
             sb.append(Tables.SUM_AMOUNT).append(GREATER_THAN).append("0.00001");
         } else if (caseBalance == ExpensorContract.PeopleEntry.CASE_BALANCE_NEGATIVE){
@@ -202,9 +249,6 @@ public class ExpensorQueries {
             sb.append(OR).append(AUX).append(".").append(Tables.PEOPLE_ID).append(IS_NULL);
             sb.append(PARENTHESIS_CLOSE);
         }
-
-        sb.append(AND);
-        sb.append(whereNoDeleted()).append(CLOSE);
 
         return sb.toString();
     }

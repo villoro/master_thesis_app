@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,11 +26,14 @@ import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.PeopleAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
+import com.villoro.expensor_beta.dialogs.DialogDatePicker;
+import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 
 /**
  * Created by Arnau on 13/05/2015.
  */
-public class AddOrUpdateTransactionPersonalFragment extends Fragment implements AddOrUpdateInterface {
+public class AddOrUpdateTransactionPersonalFragment extends Fragment implements DialogDatePicker.CommDatePicker,
+        AddOrUpdateInterface {
 
     private final static int AUTO_COMPLETE_FROM = 1;
     private final static int AUTO_COMPLETE_TO = 2;
@@ -41,6 +45,10 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
     AutoCompleteTextView ac_from, ac_to;
     long fromId, toId, myId;
     double amount;
+
+    int[] date;
+    Button b_date;
+    DialogDatePicker dialogDate;
 
     public AddOrUpdateTransactionPersonalFragment(){};
 
@@ -62,6 +70,8 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
         e_amount = (EditText) rv.findViewById(R.id.et_amount);
         e_comments = (EditText) rv.findViewById(R.id.et_comments);
 
+        bindButtonDate(rv);
+
         fromId = 0; toId = 0;
 
         setAutoCompletes();
@@ -70,6 +80,26 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
             setValues();
         }
         return rv;
+    }
+
+    private void bindButtonDate(View rv)
+    {
+        date = UtilitiesDates.getDate();
+
+        b_date = (Button) rv.findViewById(R.id.b_date);
+        b_date.setText(UtilitiesDates.getFancyDate(date));
+
+        dialogDate = new DialogDatePicker();
+        dialogDate.setCommunicator(this);
+
+        b_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                dialogDate.setPreviousDate(date);
+                dialogDate.show(getFragmentManager(), "datePicker");
+            }
+        });
     }
 
     public void setAutoCompletes(){
@@ -160,6 +190,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
             values.put(Tables.PEOPLE_ID, fromId);
         }
 
+        values.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
         values.put(Tables.COMMENTS, e_comments.getText().toString().trim());
         values.put(Tables.AMOUNT, amount);
         if (currentID > 0){
@@ -191,5 +222,14 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
     public void delete() {
         context.getContentResolver().delete(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI,
                 Tables.ID + " = '" + currentID + "'", null);
+    }
+
+    @Override
+    public void setDate(int year, int month, int day) {
+        date[0] = year;
+        date[1] = month;
+        date[2] = day;
+
+        b_date.setText(UtilitiesDates.getFancyDate(date));
     }
 }

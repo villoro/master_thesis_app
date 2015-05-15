@@ -2,7 +2,6 @@ package com.villoro.expensor_beta.data;
 
 import android.content.ContentUris;
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.Date;
 
@@ -78,24 +77,24 @@ public class ExpensorContract {
         }
     }
 
-    public static final class GraphEntry {
-        public static final String GRAPH = "graph";
+    public static final class GraphTransactionEntry {
+        public static final String GRAPH_TRANSACTION = "graph_transaction";
         public static final String ALL = "all";
 
         public static final String CONTENT_TYPE =
-                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH;
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH_TRANSACTION;
 
         public static final String CONTENT_ITEM_TYPE =
-                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH;
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH_TRANSACTION;
 
         public static final Uri INCOME_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_INCOME).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH_TRANSACTION).appendPath(Tables.TYPE_INCOME).build();
         public static final Uri EXPENSE_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(Tables.TYPE_EXPENSE).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH_TRANSACTION).appendPath(Tables.TYPE_EXPENSE).build();
         public static final Uri INCOME_ALL_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(ALL).appendPath(Tables.TYPE_INCOME).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH_TRANSACTION).appendPath(ALL).appendPath(Tables.TYPE_INCOME).build();
         public static final Uri EXPENSE_ALL_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH).appendPath(ALL).appendPath(Tables.TYPE_EXPENSE).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(GRAPH_TRANSACTION).appendPath(ALL).appendPath(Tables.TYPE_EXPENSE).build();
 
         public static Uri buildExpenseGraphUri(int year, int month){
             return EXPENSE_URI.buildUpon().appendPath(""+year).appendPath(""+month).build();
@@ -128,6 +127,32 @@ public class ExpensorContract {
         }
         public static int getMonthFromUriAll(Uri uri){
             return Integer.parseInt( uri.getPathSegments().get(4) );
+        }
+    }
+
+    public static final class GraphPersonalEntry{
+        public static final String GRAPH_PERSONAL = "graph_personal";
+
+        public static final String CONTENT_TYPE =
+                DIRECTORY + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH_PERSONAL;
+
+        public static final String CONTENT_ITEM_TYPE =
+                ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + GRAPH_PERSONAL;
+
+        public static Uri buildIncomeGraphAllUri(int caseBalance, int year, int month){
+            return BASE_CONTENT_URI.buildUpon().appendPath(GRAPH_PERSONAL).appendPath(""+caseBalance).
+                    appendPath(""+year).appendPath(""+month).build();
+        }
+
+        public static int getBalanceCase(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(1) );
+        }
+
+        public static int getYearFromUri(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(2) );
+        }
+        public static int getMonthFromUri(Uri uri){
+            return Integer.parseInt( uri.getPathSegments().get(3) );
         }
     }
 
