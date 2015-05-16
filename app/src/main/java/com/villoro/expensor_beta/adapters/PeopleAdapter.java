@@ -3,6 +3,7 @@ package com.villoro.expensor_beta.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,4 +36,6 @@ public class PeopleAdapter extends CursorAdapter{
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
     }
+
+
 }

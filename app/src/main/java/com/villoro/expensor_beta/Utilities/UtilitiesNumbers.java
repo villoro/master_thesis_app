@@ -1,7 +1,9 @@
 package com.villoro.expensor_beta.Utilities;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.widget.Adapter;
 
 import com.parse.ParseUser;
@@ -59,5 +61,9 @@ public class UtilitiesNumbers {
         } else {
             return -1;
         }
+    }
+
+    public static long getIdFromUri(Uri uri) {
+        return ContentUris.parseId(uri);
     }
 }

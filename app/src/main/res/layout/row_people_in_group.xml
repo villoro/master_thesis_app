@@ -14,11 +14,10 @@
         android:layout_marginTop="@dimen/row_icon_margin"
         android:layout_marginRight="@dimen/row_icon_margin"/>
 
-    <AutoCompleteTextView
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/row_thickness_with_margin_simple"
+    <TextView
+        style="@style/textView_input_title"
         android:gravity="center_vertical"
-        android:id="@+id/ac_name"
+        android:id="@+id/tv_name"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

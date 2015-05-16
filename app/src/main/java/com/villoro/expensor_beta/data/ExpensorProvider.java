@@ -177,13 +177,11 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case PEOPLE_WITH_PARTIAL_NAME: {
-                Log.d("ExpensorProvider", "querying case people with partial name");
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPeopleWithNameLike(
                         ExpensorContract.PeopleEntry.getPartOfNameFromUri(uri)), null);
                 break;
             }
             case PEOPLE_WITH_BALANCE: {
-                Log.d("ExpensorProvider", "querying case people with balance");
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPeopleFromBalanceCase(
                                 ExpensorContract.PeopleEntry.getBalanceCase(uri)) , null
                 );

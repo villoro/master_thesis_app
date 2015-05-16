@@ -73,6 +73,9 @@
         <activity
             android:name=".sections.details.ShowDetailsActivity"
             android:label="@string/title_activity_empty">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".sections.MainActivity" />
         </activity>
 
         <!-- SyncAdapter's dummy authentication service -->

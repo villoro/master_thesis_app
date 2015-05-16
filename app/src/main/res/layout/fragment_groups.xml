@@ -31,4 +31,14 @@
     android:layout_height="wrap_content"
     android:id="@+id/lv" />
 
+    <View
+        style="@style/divider" />
+
+    <AutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/row_thickness_with_margin_simple"
+        android:gravity="center_vertical"
+        android:hint="Write to add a member"
+        android:id="@+id/ac_name"/>
+
 </LinearLayout>

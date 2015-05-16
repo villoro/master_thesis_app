@@ -3,17 +3,27 @@ package com.villoro.expensor_beta.sections.add_or_update;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
+import com.villoro.expensor_beta.adapters.PeopleAdapter;
 import com.villoro.expensor_beta.adapters.PeopleInGroupAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
@@ -37,6 +47,10 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
     PeopleInGroupAdapter peopleInGroupAdapter;
     ListView listView;
 
+    Uri returnGroupUri;
+
+    AutoCompleteTextView autoComplete;
+
     public AddOrUpdateGroupFragment(){};
 
     @Override
@@ -49,7 +63,6 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
 
         names.add("me");
         ids.add(UtilitiesNumbers.getMyId(context));
-        names.add("");
     }
 
     @Override
@@ -58,12 +71,62 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
 
         e_name = (EditText) rv.findViewById(R.id.et_groups_name);
         listView = (ListView) rv.findViewById(R.id.lv);
+        autoComplete = (AutoCompleteTextView) rv.findViewById(R.id.ac_name);
         setList();
         if (currentID >0)
         {
             setValues();
         }
+
+        autoComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("AddOrUpdateGroup", "text= " + s.toString());
+                setFromCursor(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RelativeLayout relativeLayout = (RelativeLayout) view;
+                TextView tvName = (TextView) relativeLayout.findViewById(R.id.row_name);
+                String name = tvName.getText().toString().trim();
+                if (!ids.contains(id)) {
+                    Log.d("AddOrUpdateGroup", "selected name= " + name);
+
+                    names.add(name);
+                    ids.add(id);
+                    setList();
+                } else {
+                    Toast.makeText(context, "Already in the group", Toast.LENGTH_LONG);
+                }
+                autoComplete.setText("");
+            }
+        });
+
+
         return rv;
+    }
+
+    public void setFromCursor(String partName){
+        Cursor cursorPeople = context.getContentResolver().query(
+                ExpensorContract.PeopleEntry.buildFromPartOfNameUri(partName), null, null, null, null);
+        PeopleAdapter peopleAdapter = new PeopleAdapter(context, cursorPeople, 0);
+
+        Log.d("PeopleInGroupAdapter", "cursor count= " + cursorPeople.getCount());
+
+        autoComplete.setAdapter(peopleAdapter);
     }
 
     @Override
@@ -76,7 +139,14 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         if (currentID > 0){
             context.getContentResolver().update(ExpensorContract.GroupEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(ExpensorContract.GroupEntry.CONTENT_URI, values);
+            Uri uri = context.getContentResolver().insert(ExpensorContract.GroupEntry.CONTENT_URI, values);
+            currentID = UtilitiesNumbers.getIdFromUri(uri);
+        }
+        for (long thisId : ids){
+            ContentValues pigValues = new ContentValues();
+            pigValues.put(Tables.GROUP_ID, currentID);
+            pigValues.put(Tables.PEOPLE_ID, thisId);
+            context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.CONTENT_URI, pigValues);
         }
     }
 
