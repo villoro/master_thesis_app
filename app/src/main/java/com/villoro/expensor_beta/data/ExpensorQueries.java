@@ -270,13 +270,16 @@ public class ExpensorQueries {
         sb.append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
         sb.append(WHERE).append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(whereNoDeleted());
 
+        sb.append(CLOSE);
+
         return sb.toString();
     }
 
     private static final String innerBalancesGroup(long groupId, String type, String as){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(PARENTHESIS_OPEN).append(SELECT).append(SUM).append(PARENTHESIS_OPEN);
+        sb.append(PARENTHESIS_OPEN).append(SELECT).append(AUX).append(".").append(Tables.PEOPLE_ID);
+        sb.append(COMA).append(SUM).append(PARENTHESIS_OPEN);
         sb.append(AUX).append(".").append(Tables.PAID).append(PARENTHESIS_CLOSE).append(AS).append(Tables.SUM_AMOUNT);
         sb.append(COMA).append(SUM).append(PARENTHESIS_OPEN);
         sb.append(AUX).append(".").append(Tables.SPENT).append(PARENTHESIS_CLOSE).append(AS).append(Tables.SUM_AMOUNT2);
@@ -294,6 +297,8 @@ public class ExpensorQueries {
 
         sb.append(WHERE).append(AUX).append(".").append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(as);
+        sb.append(ON).append(as).append(".").append(Tables.PEOPLE_ID).append(EQUAL);
+        sb.append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
 
         return sb.toString();
     }
@@ -303,6 +308,23 @@ public class ExpensorQueries {
 
         sb.append(COMA).append(nameAuxTable).append(".").append(Tables.SUM_AMOUNT);
         sb.append(AS).append(as);
+
+        return sb.toString();
+    }
+
+    public static final String queryPeopleInGroup(long groupId){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT).append(Tables.NAME);
+        sb.append(COMA).append(AUX).append(".").append(Tables.ID).append(AS).append(Tables.ID);
+        sb.append(FROM).append(PARENTHESIS_OPEN).append(SELECT).append(Tables.NAME).append(COMA).append(Tables.ID);
+        sb.append(FROM).append(Tables.TABLENAME_PEOPLE);
+        sb.append(WHERE).append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
+        sb.append(AS).append(AUX).append(JOIN).append(Tables.TABLENAME_PEOPLE_IN_GROUP);
+        sb.append(ON).append(AUX).append(".").append(Tables.ID).append(EQUAL);
+        sb.append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
+        sb.append(WHERE).append(Tables.GROUP_ID).append(EQUAL).append(APOSTROPHE);
+        sb.append(groupId).append(APOSTROPHE).append(CLOSE);
 
         return sb.toString();
     }

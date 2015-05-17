@@ -81,7 +81,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rv = inflater.inflate(R.layout.fragment_transacion_simple, container, false);
+        View rv = inflater.inflate(R.layout.fragment_transaction_simple, container, false);
 
         bindButtonDate(rv);
         bindIVCategories(rv);

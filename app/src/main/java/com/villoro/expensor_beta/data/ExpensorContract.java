@@ -234,12 +234,16 @@ public class ExpensorContract {
             return ContentUris.withAppendedId(PEOPLE_IN_GROUP, id);
         }
 
-        public static Uri buildFromGroupIdUri(long id) {
+        public static Uri buildUriFromGroupId(long id) {
             return PEOPLE_IN_GROUP.buildUpon().appendPath(""+id).build();
         }
 
+        public static Uri buildFromGroupIdWithBalancesUri(long id) {
+            return PEOPLE_IN_GROUP.buildUpon().appendPath("" + id).appendPath("balances").build();
+        }
+
         public static long getGroupId(Uri uri){
-            return Long.parseLong( uri.getPathSegments().get(1) );
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 

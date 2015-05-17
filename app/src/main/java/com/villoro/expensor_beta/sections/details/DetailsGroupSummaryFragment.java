@@ -63,6 +63,7 @@ public class DetailsGroupSummaryFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
                 intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
                 intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_GROUP);
+                intent.putExtra(Tables.GROUP_ID, currentID);
                 startActivity(intent);
                 return true;
         }
@@ -81,9 +82,16 @@ public class DetailsGroupSummaryFragment extends Fragment {
 
     public void setList() {
         Cursor cursorBalances = context.getContentResolver().query(
-                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdUri(currentID), null, null, null, null);
+                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithBalancesUri(currentID), null, null, null, null);
         Log.d("DetailsGroup", "cursor count= " + cursorBalances.getCount());
-        Log.d("DetailsGroup", "query= " + ExpensorQueries.queryPersonalGroupSummary(1));
+        Log.d("DetailsGroup", "cursor columns count= " + cursorBalances.getColumnCount());
+        if(cursorBalances.moveToFirst()){
+            do{
+                for (int i = 0; i < cursorBalances.getColumnCount(); i++){
+                    Log.d("DetailsGroup", "column " + cursorBalances.getColumnName(i) + " = " + cursorBalances.getString(i));
+                }
+            } while (cursorBalances.moveToNext());
+        }
 
     }
 

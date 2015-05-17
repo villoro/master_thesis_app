@@ -38,6 +38,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     AddOrUpdatePeopleInGroupFragment peopleInGroupFragment;
     AddOrUpdateCategoriesFragment categoriesFragment;
     AddOrUpdateTransactionPersonalFragment transactionPersonalFragment;
+    AddOrUpdateTransactionGroupFragment transactionGroupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,15 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     transactionPersonalFragment = new AddOrUpdateTransactionPersonalFragment();
                     transactionPersonalFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionPersonalFragment).commit();
+                case CASE_TRANSACTION_GROUP:
+                    transactionGroupFragment = new AddOrUpdateTransactionGroupFragment();
+                    transactionGroupFragment.initialize(ID);
+
+                    output = new Bundle();
+                    output.putLong(Tables.GROUP_ID, extras.getLong(Tables.GROUP_ID));
+                    transactionGroupFragment.setArguments(output);
+
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, transactionGroupFragment).commit();
             }
 
         }
@@ -144,6 +154,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                 case CASE_TRANSACTION_PERSONAL:
                     transactionPersonalFragment.add();
                     break;
+                case CASE_TRANSACTION_GROUP:
+                    transactionGroupFragment.add();
+                    break;
             }
 
             finish();
@@ -186,6 +199,9 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     break;
                 case CASE_TRANSACTION_PERSONAL:
                     transactionPersonalFragment.delete();
+                    break;
+                case CASE_TRANSACTION_GROUP:
+                    transactionGroupFragment.delete();
                     break;
             }
 
