@@ -36,7 +36,8 @@ public class ExpensorProvider extends ContentProvider {
     private static final int PEOPLE_WITH_PARTIAL_NAME = 401;
     private static final int PEOPLE_WITH_BALANCE = 402;
 
-    private static final int PEOPLE_IN_GROUP = 450;
+    private static final int PEOPLE_IN_GROUP = 500;
+    private static final int PEOPLE_IN_GROUP_WITH_BALANCES = 501;
 
     private static final int GROUPS = 600;
 
@@ -77,6 +78,7 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE + "/*/#", PEOPLE_WITH_BALANCE);
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#", PEOPLE_IN_GROUP_WITH_BALANCES);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
 
@@ -196,6 +198,12 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
+                );
+                break;
+            }
+            case PEOPLE_IN_GROUP_WITH_BALANCES: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPersonalGroupSummary(
+                        ExpensorContract.PeopleInGroupEntry.getGroupId(uri)), null
                 );
                 break;
             }

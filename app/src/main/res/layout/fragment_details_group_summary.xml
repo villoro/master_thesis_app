@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/linearLayout_main_container_without_padding">
+
+    <LinearLayout
+        style="@style/linearLayout_expense_income" >
+
+        <Button
+            android:layout_height="@dimen/row_my_navigation_bars"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/orange"
+            android:text="Summary"
+            android:id="@+id/b_summary"/>
+
+        <Button
+            android:layout_height="@dimen/row_my_navigation_bars"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/purple"
+            android:text="History"
+            android:id="@+id/b_history" />
+    </LinearLayout>
+
+
+    
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            style="@style/linearLayout_main_container">
+
+
+            <TextView
+                android:text="Resolution"
+                style="@style/sectionHeader" />
+
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lv_resolution"/>
+
+            <TextView
+                android:text="Balances"
+                style="@style/sectionHeader" />
+
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lv_balances"/>
+
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+</LinearLayout>

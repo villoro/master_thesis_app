@@ -222,7 +222,7 @@ public class ExpensorContract {
     public static final class PeopleInGroupEntry {
         private static final String tableName = Tables.TABLENAME_PEOPLE_IN_GROUP;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri PEOPLE_IN_GROUP =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -231,7 +231,15 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildPeopleInGroupUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(PEOPLE_IN_GROUP, id);
+        }
+
+        public static Uri buildFromGroupIdUri(long id) {
+            return PEOPLE_IN_GROUP.buildUpon().appendPath(""+id).build();
+        }
+
+        public static long getGroupId(Uri uri){
+            return Long.parseLong( uri.getPathSegments().get(1) );
         }
     }
 

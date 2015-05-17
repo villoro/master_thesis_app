@@ -36,7 +36,8 @@ public class Tables {
     //query columns
     public static final String SUM_AMOUNT = "sum_amount";
     public static final String SUM_AMOUNT2 = "sum_of_sum_amount";
-    public static final String PERCENTAGE = "percentage";
+    public static final String RECEIVED = "received";
+    public static final String GIVEN = "given";
 
     //foreign keys columns
     public static final String CATEGORY_ID = "categoryID";
@@ -153,10 +154,10 @@ public class Tables {
                 break;
 
             case TABLENAME_TRANSACTIONS_GROUP:
-                columns = new String[]{DATE, GROUP_ID, AMOUNT, COMMENTS};
-                origin = new String[]{null, TABLENAME_GROUPS, null, null};
-                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT};
-                unique = new boolean[]{false, false, false, false};
+                columns = new String[]{DATE, GROUP_ID, AMOUNT, COMMENTS, TYPE};
+                origin = new String[]{null, TABLENAME_GROUPS, null, null, null};
+                types = new String[]{TYPE_DATE, TYPE_INT, TYPE_DOUBLE, TYPE_TEXT, TYPE_TEXT};
+                unique = new boolean[]{false, false, false, false, false};
                 lastPrivateColumn = -1;
                 acl = ACL_GROUP;
                 break;

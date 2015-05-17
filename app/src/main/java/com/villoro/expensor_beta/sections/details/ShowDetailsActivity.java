@@ -5,12 +5,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 
 /**
@@ -27,7 +25,7 @@ public class ShowDetailsActivity extends ActionBarActivity {
     int whichCase;
     long ID;
 
-    DetailsGroupFragment detailsGroupFragment;
+    DetailsGroupSummaryFragment detailsGroupFragment;
     DetailsPeopleFragment detailsPeopleFragment;
 
 
@@ -48,7 +46,7 @@ public class ShowDetailsActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             switch (whichCase) {
                 case CASE_GROUP:
-                    detailsGroupFragment = new DetailsGroupFragment();
+                    detailsGroupFragment = new DetailsGroupSummaryFragment();
                     detailsGroupFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, detailsGroupFragment).commit();
                     break;

@@ -146,7 +146,7 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
             ContentValues pigValues = new ContentValues();
             pigValues.put(Tables.GROUP_ID, currentID);
             pigValues.put(Tables.PEOPLE_ID, thisId);
-            context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.CONTENT_URI, pigValues);
+            context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.PEOPLE_IN_GROUP, pigValues);
         }
     }
 

@@ -87,9 +87,9 @@ public class AddOrUpdatePeopleInGroupFragment extends Fragment implements AddOrU
         values.put(Tables.PEOPLE_ID, peopleID);
         values.put(Tables.GROUP_ID, groupID);
         if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.PeopleInGroupEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            context.getContentResolver().update(ExpensorContract.PeopleInGroupEntry.PEOPLE_IN_GROUP, values, Tables.ID + " = '" + currentID + "'", null);
         } else {
-            context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.CONTENT_URI, values);
+            context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.PEOPLE_IN_GROUP, values);
         }
     }
 
@@ -119,6 +119,6 @@ public class AddOrUpdatePeopleInGroupFragment extends Fragment implements AddOrU
 
     @Override
     public void delete() {
-        context.getContentResolver().delete(ExpensorContract.PeopleInGroupEntry.CONTENT_URI, Tables.ID + " = '" + currentID + "'", null);
+        context.getContentResolver().delete(ExpensorContract.PeopleInGroupEntry.PEOPLE_IN_GROUP, Tables.ID + " = '" + currentID + "'", null);
     }
 }
