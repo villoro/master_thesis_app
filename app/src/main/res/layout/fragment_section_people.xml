@@ -23,7 +23,9 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lv_positive" />
+            android:id="@+id/lv_positive"
+            android:paddingLeft="@dimen/margin_double"
+            android:paddingRight="@dimen/margin_double"/>
 
         <RelativeLayout
             style="@style/relative_layout_month_bar">
@@ -42,7 +44,9 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lv_negative" />
+            android:id="@+id/lv_negative"
+            android:paddingLeft="@dimen/margin_double"
+            android:paddingRight="@dimen/margin_double" />
 
         <RelativeLayout
             style="@style/relative_layout_month_bar">
@@ -61,7 +65,9 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lv_settled" />
+            android:id="@+id/lv_settled"
+            android:paddingLeft="@dimen/margin_double"
+            android:paddingRight="@dimen/margin_double" />
 
     </LinearLayout>
 </ScrollView>

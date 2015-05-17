@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/linearLayout_row_150percent">
+
+    <LinearLayout
+        style="@style/linearLayout_row_details">
+
+        <TextView
+            style="@style/textView_row_accent2"
+            android:id="@+id/tv_name"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/textView_row_normal"
+                android:id="@+id/tv_paid"/>
+
+            <TextView
+                style="@style/textView_row_normal"
+                android:id="@+id/tv_received"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/textView_row_normal"
+                android:id="@+id/tv_spent"/>
+
+            <TextView
+                style="@style/textView_row_normal"
+                android:id="@+id/tv_given"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        style="@style/relativeLayout_amount">
+
+        <TextView
+            style="@style/textView_row_amount"
+            android:id="@+id/tv_balance"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

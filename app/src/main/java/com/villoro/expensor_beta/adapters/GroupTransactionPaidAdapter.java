@@ -22,12 +22,14 @@ public class GroupTransactionPaidAdapter extends CursorAdapter {
     private LayoutInflater mInflater;
     private final Context context;
     CommPaid commPaid;
+    public long[] ids;
 
     public GroupTransactionPaidAdapter(Context context, Cursor c, int flags){
         super(context, c, flags);
 
         this.context = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ids = new long[c.getCount()];
     }
 
 
@@ -42,6 +44,9 @@ public class GroupTransactionPaidAdapter extends CursorAdapter {
         textView.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
 
         final int internalPosition = cursor.getPosition();
+
+        ids[internalPosition] = cursor.getLong(cursor.getColumnIndex(Tables.ID));
+
         final EditText et_amount = (EditText) view.findViewById(R.id.et_amount);
         et_amount.addTextChangedListener(new TextWatcher() {
             @Override

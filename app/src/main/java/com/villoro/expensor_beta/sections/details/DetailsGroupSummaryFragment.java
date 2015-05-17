@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
+import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.adapters.BalancesInGroupAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.ExpensorQueries;
 import com.villoro.expensor_beta.data.Tables;
@@ -83,15 +85,10 @@ public class DetailsGroupSummaryFragment extends Fragment {
     public void setList() {
         Cursor cursorBalances = context.getContentResolver().query(
                 ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithBalancesUri(currentID), null, null, null, null);
-        Log.d("DetailsGroup", "cursor count= " + cursorBalances.getCount());
-        Log.d("DetailsGroup", "cursor columns count= " + cursorBalances.getColumnCount());
-        if(cursorBalances.moveToFirst()){
-            do{
-                for (int i = 0; i < cursorBalances.getColumnCount(); i++){
-                    Log.d("DetailsGroup", "column " + cursorBalances.getColumnName(i) + " = " + cursorBalances.getString(i));
-                }
-            } while (cursorBalances.moveToNext());
-        }
+        BalancesInGroupAdapter balancesInGroupAdapter = new BalancesInGroupAdapter(context, cursorBalances, 0);
+        lv_balances.setAdapter(balancesInGroupAdapter);
+
+        UtilitiesDates.setListViewHeightBasedOnChildren(lv_balances);
 
     }
 

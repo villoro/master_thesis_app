@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -99,8 +100,8 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RelativeLayout relativeLayout = (RelativeLayout) view;
-                TextView tvName = (TextView) relativeLayout.findViewById(R.id.row_name);
+                LinearLayout linearLayout = (LinearLayout) view;
+                TextView tvName = (TextView) linearLayout.findViewById(R.id.row_name);
                 String name = tvName.getText().toString().trim();
                 if (!ids.contains(id)) {
                     Log.d("AddOrUpdateGroup", "selected name= " + name);

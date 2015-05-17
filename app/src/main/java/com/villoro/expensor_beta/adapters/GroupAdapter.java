@@ -12,13 +12,13 @@ import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.Tables;
 
 /**
- * Created by Arnau on 09/05/2015.
+ * Created by Arnau on 17/05/2015.
  */
-public class CategoryAdapter extends CursorAdapter{
+public class GroupAdapter extends CursorAdapter {
 
     private LayoutInflater mInflater;
 
-    public CategoryAdapter(Context context, Cursor c, int flags) {
+    public GroupAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
 
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -26,16 +26,15 @@ public class CategoryAdapter extends CursorAdapter{
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        return mInflater.inflate(R.layout.row_categories, viewGroup, false);
+        return mInflater.inflate(R.layout.row_people_with_amount, viewGroup, false);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tv_color = (TextView) view.findViewById(R.id.tv_color);
-        TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
-
-        tv_color.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
+        TextView tv_name = (TextView) view.findViewById(R.id.row_name);
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
     }
+
+
 }

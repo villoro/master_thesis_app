@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -139,8 +140,8 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
         ac_from.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RelativeLayout relativeLayout = (RelativeLayout) view;
-                TextView tvName = (TextView) relativeLayout.findViewById(R.id.row_name);
+                LinearLayout linearLayout = (LinearLayout) view;
+                TextView tvName = (TextView) linearLayout.findViewById(R.id.row_name);
                 ac_from.setText(tvName.getText().toString());
                 ac_to.setText("Me");
 
@@ -151,8 +152,8 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
         ac_to.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RelativeLayout relativeLayout = (RelativeLayout) view;
-                TextView tvName = (TextView) relativeLayout.findViewById(R.id.row_name);
+                LinearLayout linearLayout = (LinearLayout) view;
+                TextView tvName = (TextView) linearLayout.findViewById(R.id.row_name);
                 ac_from.setText("Me");
                 ac_to.setText(tvName.getText().toString());
 

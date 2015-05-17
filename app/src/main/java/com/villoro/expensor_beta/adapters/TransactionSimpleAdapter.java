@@ -33,10 +33,10 @@ public class TransactionSimpleAdapter extends CursorAdapter{
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tv_category = (TextView) view.findViewById(R.id.row_expense_category);
-        TextView tv_date = (TextView) view.findViewById(R.id.row_expense_date);
-        TextView tv_comments = (TextView) view.findViewById(R.id.row_expense_comments);
-        TextView tv_amount = (TextView) view.findViewById(R.id.row_expense_amount);
+        TextView tv_category = (TextView) view.findViewById(R.id.tv_category);
+        TextView tv_date = (TextView) view.findViewById(R.id.tv_date);
+        TextView tv_comments = (TextView) view.findViewById(R.id.tv_comments);
+        TextView tv_amount = (TextView) view.findViewById(R.id.tv_amount);
 
         String aux_date = cursor.getString(cursor.getColumnIndex(Tables.DATE));
         tv_date.setText(UtilitiesDates.getFancyDate(aux_date));

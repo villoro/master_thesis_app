@@ -11,6 +11,45 @@
         <item name="background">@color/expensor_blue</item>
     </style>
 
+
+    <!--.....................................Containers..........................................-->
+
+    <style name="linearLayout_input">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="linearLayout_expense_income">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="relative_layout_month_bar">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:background">@color/lighter_gray</item>
+    </style>
+
+    <style name="linearLayout_main_container_without_padding">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="linearLayout_main_container">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">@dimen/fragment_margin</item>
+        <item name="android:paddingRight">@dimen/fragment_margin</item>
+    </style>
+
+
+
+    <!--.....................................Separators..........................................-->
+
     <style name="sectionHeader" parent="android:Widget.Holo.Light.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -29,6 +68,20 @@
         <item name="android:layout_height">@dimen/divider</item>
         <item name="android:background">@color/divider</item>
     </style>
+
+    <style name="textView_month_name" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
+
+    <!--.....................................Input stuff.........................................-->
 
     <style name="textView_input_title" parent="android:Widget.Holo.Light.TextView">
         <item name="android:layout_width">match_parent</item>
@@ -70,17 +123,8 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="linearLayout_input">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">@dimen/row_thickness</item>
-        <item name="android:orientation">horizontal</item>
-    </style>
 
-    <style name="linearLayout_expense_income">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
-        <item name="android:orientation">horizontal</item>
-    </style>
+    <!--......................................Buttons............................................-->
 
     <style name="button_expense">
         <item name="android:layout_width">wrap_content</item>
@@ -121,13 +165,18 @@
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
-    <style name="textView_month_name" parent="android:Widget.Holo.Light.TextView">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
-        <item name="android:layout_alignParentTop">true</item>
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:textSize">20sp</item>
+
+
+    <!--........................................Rows.............................................-->
+
+    <style name="icon">
+        <item name="android:layout_width">@dimen/row_icon_size</item>
+        <item name="android:layout_height">@dimen/row_icon_size</item>
+        <item name="android:layout_marginTop">@dimen/margin_double</item>
+        <item name="android:layout_marginRight">@dimen/margin_double</item>
+        <item name="android:layout_marginBottom">@dimen/margin_double</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
 
@@ -142,31 +191,80 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="relative_layout_month_bar">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
-        <item name="android:background">@color/lighter_gray</item>
+    <style name="textView_row_accent2" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="linearLayout_main_container_without_padding">
+    <style name="textView_row_accent" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="textView_row_normal" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="textView_row_only_text" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="textView_row_amount" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="linearLayout_row_simple">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/row_thickness</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="linearLayout_row_150percent">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness_150percent_wider</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="relativeLayout_amount" >
+        <item name="android:layout_width">@dimen/amount_width</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="linearLayout_row_details" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/margin_simple</item>
+        <item name="android:paddingBottom">@dimen/margin_simple</item>
     </style>
 
-    <style name="linearLayout_main_container">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:paddingLeft">@dimen/fragment_margin</item>
-        <item name="android:paddingRight">@dimen/fragment_margin</item>
-    </style>
 
-    <style name="icon">
-        <item name="android:layout_width">@dimen/row_icon_size</item>
-        <item name="android:layout_height">@dimen/row_icon_size</item>
-        <item name="android:padding">@dimen/margin_simple</item>
-    </style>
+
+    <!--....................................Graphic bars.........................................-->
 
     <style name="big_bar_title">
         <item name="android:layout_width">wrap_content</item>

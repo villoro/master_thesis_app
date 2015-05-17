@@ -1,7 +1,9 @@
 package com.villoro.expensor_beta.sections.add_or_update;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import com.villoro.expensor_beta.adapters.GroupTransactionPaidAdapter;
 import com.villoro.expensor_beta.adapters.GroupTransactionSpentAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
+import com.villoro.expensor_beta.dialogs.DialogDatePicker;
 
 import java.util.List;
 
@@ -28,7 +32,7 @@ import java.util.List;
  * Created by Arnau on 17/05/2015.
  */
 public class AddOrUpdateTransactionGroupFragment extends Fragment implements AddOrUpdateInterface,
-        GroupTransactionPaidAdapter.CommPaid, GroupTransactionSpentAdapter.CommSpent {
+        GroupTransactionPaidAdapter.CommPaid, GroupTransactionSpentAdapter.CommSpent, DialogDatePicker.CommDatePicker {
 
     public final static int NO_PERSON = -1;
 
@@ -39,6 +43,15 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     double[] paid, spentLocked, spent;
     boolean[] locked;
     double totalPaid, totalSpent;
+
+    EditText e_comments;
+
+    Button b_date;
+    int[] date;
+    DialogDatePicker dialogDate;
+
+    GroupTransactionPaidAdapter groupTransactionPaidAdapter;
+    GroupTransactionSpentAdapter groupTransactionSpentAdapter;
 
     public AddOrUpdateTransactionGroupFragment(){};
 
@@ -56,16 +69,20 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rv = inflater.inflate(R.layout.fragment_transaction_group, container, false);
 
+        bindButtonDate(rv);
+
+        e_comments = (EditText) rv.findViewById(R.id.et_comments);
+
         lv_paid = (ListView) rv.findViewById(R.id.lv_paid);
         lv_spent = (ListView) rv.findViewById(R.id.lv_spent);
 
-        Cursor cursor = context.getContentResolver().query(
-                ExpensorContract.PeopleInGroupEntry.buildPeopleInGroupUri(groupID), null, null, null, null);
+        Cursor cursorPeople = context.getContentResolver().query(
+                ExpensorContract.PeopleInGroupEntry.buildUriFromGroupId(groupID), null, null, null, null);
 
-        int length = cursor.getCount();
+        int length = cursorPeople.getCount();
 
-        GroupTransactionPaidAdapter groupTransactionPaidAdapter = new GroupTransactionPaidAdapter(context, cursor, 0);
-        GroupTransactionSpentAdapter groupTransactionSpentAdapter = new GroupTransactionSpentAdapter(context, cursor, 0);
+        groupTransactionPaidAdapter = new GroupTransactionPaidAdapter(context, cursorPeople, 0);
+        groupTransactionSpentAdapter = new GroupTransactionSpentAdapter(context, cursorPeople, 0);
 
         groupTransactionPaidAdapter.setCommPaid(this);
         groupTransactionSpentAdapter.setCommSpent(this);
@@ -93,7 +110,36 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
     @Override
     public void add() {
+        String comments = e_comments.getText().toString().trim();
 
+        ContentValues transactionValues = new ContentValues();
+
+        transactionValues.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
+        transactionValues.put(Tables.COMMENTS, comments);
+        transactionValues.put(Tables.AMOUNT, totalPaid);
+        transactionValues.put(Tables.GROUP_ID, groupID);
+        transactionValues.put(Tables.TYPE, Tables.TYPE_TRANSACTION); //TODO allow gives
+
+        if (currentID > 0){
+            context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.CONTENT_URI
+                    , transactionValues, Tables.ID + " = '" + currentID + "'", null);
+        } else {
+            Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.CONTENT_URI, transactionValues);
+            currentID = UtilitiesNumbers.getIdFromUri(uri);
+        }
+
+        long[] ids = groupTransactionPaidAdapter.ids;
+
+        for (int i = 0; i < paid.length ; i++){
+            ContentValues whoValues = new ContentValues();
+
+            whoValues.put(Tables.TRANSACTION_ID, currentID);
+            whoValues.put(Tables.PEOPLE_ID, ids[i]);
+            whoValues.put(Tables.PAID, paid[i]);
+            whoValues.put(Tables.SPENT, spent[i]);
+
+            context.getContentResolver().insert(ExpensorContract.WhoPaidSpentEntry.CONTENT_URI, whoValues);
+        }
     }
 
     @Override
@@ -116,6 +162,26 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     @Override
     public void delete() {
 
+    }
+
+    private void bindButtonDate(View rv)
+    {
+        date = UtilitiesDates.getDate();
+
+        b_date = (Button) rv.findViewById(R.id.b_date);
+        b_date.setText(UtilitiesDates.getFancyDate(date));
+
+        dialogDate = new DialogDatePicker();
+        dialogDate.setCommunicator(this);
+
+        b_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                dialogDate.setPreviousDate(date);
+                dialogDate.show(getFragmentManager(), "datePicker");
+            }
+        });
     }
 
     @Override
@@ -183,7 +249,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
                 et_amount.setText(Double.toString(UtilitiesNumbers.round(toPay, 2)));
                 spent[position] = toPay; //this is what it would be saved
             }
-        } else {
+        } else if (totalPaid > 0){
             Toast toast = Toast.makeText(context, "No es pot repartir, ja hi ha més diners gastats que pagats", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -191,6 +257,15 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
     @Override
     public boolean isLocked(int position) {
-        return false;
+        return locked[position];
+    }
+
+    @Override
+    public void setDate(int year, int month, int day) {
+        date[0] = year;
+        date[1] = month;
+        date[2] = day;
+
+        b_date.setText(UtilitiesDates.getFancyDate(date));
     }
 }

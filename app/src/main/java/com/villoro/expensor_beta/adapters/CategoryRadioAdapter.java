@@ -3,7 +3,6 @@ package com.villoro.expensor_beta.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +34,13 @@ public class CategoryRadioAdapter extends CursorAdapter{
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tv_color = (TextView) view.findViewById(R.id.row_category_color);
-        TextView tv_name = (TextView) view.findViewById(R.id.row_category_name);
+        TextView tv_color = (TextView) view.findViewById(R.id.tv_color);
+        TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
 
         tv_color.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
 
-        radioButtons[cursor.getPosition()] = (RadioButton) view.findViewById(R.id.row_category_radio_button);
+        radioButtons[cursor.getPosition()] = (RadioButton) view.findViewById(R.id.radio_button);
         if(cursor.getPosition() == positionSelected){
             idSelected = cursor.getLong(cursor.getColumnIndex(Tables.ID));
             radioButtons[positionSelected].setChecked(true);

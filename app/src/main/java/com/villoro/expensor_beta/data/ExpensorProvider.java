@@ -213,7 +213,7 @@ public class ExpensorProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPersonalGroupSummary(
                         ExpensorContract.PeopleInGroupEntry.getGroupId(uri)), null
                 );
-
+                break;
             }
             case GROUPS: {
                 retCursor = mOpenHelper.getReadableDatabase().query(

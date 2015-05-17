@@ -7,7 +7,6 @@
 
 
         <TextView
-            android:layout_marginTop="@dimen/margin_double"
             android:text="Who paid?"
             style="@style/sectionHeader" />
 
@@ -17,7 +16,6 @@
             android:id="@+id/lv_paid"/>
 
         <TextView
-            android:layout_marginTop="@dimen/margin_double"
             android:text="For whom?"
             style="@style/sectionHeader" />
 
@@ -25,6 +23,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/lv_spent"/>
+
+        <TextView
+            android:text="More info"
+            style="@style/sectionHeader" />
+
+        <LinearLayout
+            style="@style/linearLayout_input" >
+
+            <TextView
+                style="@style/textView_input_title"
+                android:text="Date" />
+
+            <Button
+                style="@style/button_input"
+                android:id="@+id/b_date"/>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/linearLayout_input" >
+
+            <TextView
+                style="@style/textView_input_title"
+                android:text="Comments"/>
+
+            <EditText
+                style="@style/editText_input"
+                android:id="@+id/et_comments"
+                android:hint="Comments"
+                android:inputType="text" >
+            </EditText>
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

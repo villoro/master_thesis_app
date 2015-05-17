@@ -93,10 +93,12 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     peopleInGroupFragment = new AddOrUpdatePeopleInGroupFragment();
                     peopleInGroupFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, peopleInGroupFragment).commit();
+                    break;
                 case CASE_TRANSACTION_PERSONAL:
                     transactionPersonalFragment = new AddOrUpdateTransactionPersonalFragment();
                     transactionPersonalFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionPersonalFragment).commit();
+                    break;
                 case CASE_TRANSACTION_GROUP:
                     transactionGroupFragment = new AddOrUpdateTransactionGroupFragment();
                     transactionGroupFragment.initialize(ID);
@@ -106,6 +108,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     transactionGroupFragment.setArguments(output);
 
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionGroupFragment).commit();
+                    break;
             }
 
         }

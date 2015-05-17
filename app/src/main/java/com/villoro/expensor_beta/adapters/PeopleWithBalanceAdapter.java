@@ -3,7 +3,6 @@ package com.villoro.expensor_beta.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,7 @@ public class PeopleWithBalanceAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView tv_name = (TextView) view.findViewById(R.id.row_name);
-        TextView tv_amount = (TextView) view.findViewById(R.id.row_amount);
+        TextView tv_amount = (TextView) view.findViewById(R.id.tv_amount);
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
         double amount = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
