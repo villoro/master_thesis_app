@@ -24,6 +24,8 @@ import java.math.RoundingMode;
  */
 public class UtilitiesNumbers {
 
+    public static final double EPSILON = 0.000001;
+
     //------------------------------------------- VALUES UTILITIES ---------------------------------
 
     public static String getFancyDouble(double amount){
@@ -35,8 +37,8 @@ public class UtilitiesNumbers {
             output += "0";
         }
 
-        output += " €";
-        return output.replace("-", "- ");
+        output += "€";
+        return output;
     }
 
     public static double round(double amount, int decimals)

@@ -127,12 +127,13 @@ public class GroupTransactionSpentAdapter extends CursorAdapter {
     }
 
     public void lockPerson(int internalPosition, String textAmount, EditText editText){
-        commSpent.lockPerson(internalPosition, Double.parseDouble(textAmount));
-        commSpent.divideSpent();
-        editText.setTextColor(Color.parseColor("#808080"));
+        if(commSpent.lockPerson(internalPosition, Double.parseDouble(textAmount))) {
+            commSpent.divideSpent();
+            editText.setTextColor(Color.parseColor("#808080"));
 
-        buttonsPlus[internalPosition].setText(LOCK_SYMBOL);
-        buttonsMinus[internalPosition].setText(LOCK_SYMBOL);
+            buttonsPlus[internalPosition].setText(LOCK_SYMBOL);
+            buttonsMinus[internalPosition].setText(LOCK_SYMBOL);
+        }
     }
 
     public void unlockPerson(int internalPosition, EditText editText){
@@ -148,7 +149,7 @@ public class GroupTransactionSpentAdapter extends CursorAdapter {
     }
 
     public interface CommSpent{
-        public void lockPerson(int position, double amount);
+        public boolean lockPerson(int position, double amount);
         public void unlockPerson(int position);
         public void divideSpent();
         public boolean isLocked(int position);

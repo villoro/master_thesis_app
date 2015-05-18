@@ -262,8 +262,8 @@ public class DashboardFragmentSection extends Fragment{
         setWidth(g_owe_me, oweMe/maxPeople);
         setWidth(g_I_owe, IOwe/maxPeople);
 
-        tv_owe_me.setText(UtilitiesNumbers.getFancyDouble(oweMe) + " €");
-        tv_I_owe.setText(UtilitiesNumbers.getFancyDouble(IOwe) + " €");
+        tv_owe_me.setText(UtilitiesNumbers.getFancyDouble(oweMe));
+        tv_I_owe.setText(UtilitiesNumbers.getFancyDouble(IOwe));
 
 
     }

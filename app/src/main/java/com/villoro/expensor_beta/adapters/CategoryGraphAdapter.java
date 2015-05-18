@@ -44,7 +44,7 @@ public class CategoryGraphAdapter extends CursorAdapter{
         double amount = cursor.getDouble(cursor.getColumnIndex(Tables.SUM_AMOUNT));
 
         tv_name.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)) +
-        " " + UtilitiesNumbers.getFancyDouble(amount) + " €");
+        " " + UtilitiesNumbers.getFancyDouble(amount));
         tv_name.setTextColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));
 
         line.setBackgroundColor(cursor.getInt(cursor.getColumnIndex(Tables.COLOR)));

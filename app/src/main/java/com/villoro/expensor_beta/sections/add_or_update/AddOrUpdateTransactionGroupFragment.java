@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.villoro.expensor_beta.PLEM.AsyncTaskPLEM;
 import com.villoro.expensor_beta.PLEM.PLEM_Utilities;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
@@ -35,6 +34,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
         GroupTransactionPaidAdapter.CommPaid, GroupTransactionSpentAdapter.CommSpent, DialogDatePicker.CommDatePicker {
 
     public final static int NO_PERSON = -1;
+
+    boolean isDividing;
 
     Context context;
     long currentID, groupID;
@@ -63,6 +64,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
         Bundle bundle = this.getArguments();
         groupID = bundle.getLong(Tables.GROUP_ID);
+        isDividing = false;
     }
 
     @Override
@@ -195,12 +197,17 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     }
 
     @Override
-    public void lockPerson(int position, double amount) {
-        totalSpent -= spentLocked[position];
-        spentLocked[position] = amount;
-        locked[position] = true;
-        totalSpent += amount;
-        Log.d("", "person " + position + " locked");
+    public boolean lockPerson(int position, double amount) {
+        if(!isDividing) {
+            totalSpent -= spentLocked[position];
+            spentLocked[position] = amount;
+            locked[position] = true;
+            totalSpent += amount;
+            Log.d("", "person " + position + " locked");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -222,7 +229,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
     //input position of the people focused, needs to be done the last, -1 if none
     public void divideSpent(int position) {
-        if(totalPaid - totalSpent > 0) {
+        isDividing = true;
+        if(totalPaid - totalSpent > UtilitiesNumbers.EPSILON) {
             int totalWeight = 0;
             int[] weights = new int[lv_spent.getChildCount()];
             for (int i = 0; i < lv_spent.getChildCount(); i++) {
@@ -232,6 +240,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
                     totalWeight += weights[i];
                 }
             }
+            if(totalWeight == 0)
+                totalWeight = 1;
             Log.d("", "total weight= " + totalWeight);
             for (int i = 0; i < lv_spent.getChildCount(); i++) {
                 if (!locked[i] && i != position) {
@@ -254,6 +264,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
             Toast toast = Toast.makeText(context, "No es pot repartir, ja hi ha més diners gastats que pagats", Toast.LENGTH_LONG);
             toast.show();
         }
+        isDividing = false;
     }
 
     @Override
