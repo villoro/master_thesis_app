@@ -225,19 +225,19 @@ public class DashboardFragmentSection extends Fragment{
         setWidth(g_income, income/maxTrans);
         setWidth(g_result,  Math.abs(result)/ maxTrans);
 
-        tv_expense.setText(UtilitiesNumbers.getFancyDouble(expense) + " €");
-        tv_income.setText(UtilitiesNumbers.getFancyDouble(income) + " €");
+        tv_expense.setText(UtilitiesNumbers.getFancyDouble(expense));
+        tv_income.setText(UtilitiesNumbers.getFancyDouble(income));
 
         if(result < -EPSILON) {
             int colorRed = getResources().getColor(R.color.red_expense);
             g_result.setBackgroundColor(colorRed);
-            tv_result.setText(UtilitiesNumbers.getFancyDouble(result).replace("-", "- ") + " €");
+            tv_result.setText(UtilitiesNumbers.getFancyDouble(result));
         } else if (Math.abs(result) <= EPSILON) {
-            tv_result.setText("0.00 €");
+            tv_result.setText(UtilitiesNumbers.getFancyDouble(0));
         } else if (result > EPSILON){
             int colorGreen = getResources().getColor(R.color.green_income);
             g_result.setBackgroundColor(colorGreen);
-            tv_result.setText("+ " + UtilitiesNumbers.getFancyDouble(result) + " €");
+            tv_result.setText("+ " + UtilitiesNumbers.getFancyDouble(result));
         }
 
 

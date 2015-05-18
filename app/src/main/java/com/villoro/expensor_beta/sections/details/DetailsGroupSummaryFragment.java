@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,10 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.villoro.expensor_beta.PLEM.AsyncTaskPLEM;
+import com.villoro.expensor_beta.PLEM.PLEM_Utilities;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.BalancesInGroupAdapter;
+import com.villoro.expensor_beta.adapters.HowToSettleAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
+import com.villoro.expensor_beta.data.ExpensorQueries;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 
@@ -28,7 +33,7 @@ public class DetailsGroupSummaryFragment extends Fragment {
 
     ListView lv_resolution, lv_balances;
     Context context;
-    long currentID;
+    long groupID;
 
     public DetailsGroupSummaryFragment(){};
 
@@ -44,6 +49,7 @@ public class DetailsGroupSummaryFragment extends Fragment {
     public void onResume() {
         super.onResume();
         setList();
+        solveIfNeeded();
     }
 
     @Override
@@ -63,7 +69,7 @@ public class DetailsGroupSummaryFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), AddOrUpdateActivity.class);
                 intent.putExtra(AddOrUpdateActivity.ID_OBJECT, -1);
                 intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_GROUP);
-                intent.putExtra(Tables.GROUP_ID, currentID);
+                intent.putExtra(Tables.GROUP_ID, groupID);
                 startActivity(intent);
                 return true;
         }
@@ -82,17 +88,39 @@ public class DetailsGroupSummaryFragment extends Fragment {
 
     public void setList() {
         Cursor cursorBalances = context.getContentResolver().query(
-                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithFourSubBalancesUri(currentID,
-                        ExpensorContract.PeopleInGroupEntry.SUB_BALANCES), null, null, null, null);
+                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithBalancesFromCaseUri(groupID),
+                null, null, null, null);
         BalancesInGroupAdapter balancesInGroupAdapter = new BalancesInGroupAdapter(context, cursorBalances, 0);
         lv_balances.setAdapter(balancesInGroupAdapter);
 
         UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_balances);
 
+        Cursor cursorSettle = context.getContentResolver().query(
+                ExpensorContract.HowToSettleEntry.buildFromGroupId(groupID), null, null, null, null);
+        HowToSettleAdapter howToSettleAdapter = new HowToSettleAdapter(context, cursorSettle, 0);
+        lv_resolution.setAdapter(howToSettleAdapter);
+
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_resolution);
     }
 
     public void initialize(long id){
-        currentID = id;
+        groupID = id;
+    }
+
+    public void solveIfNeeded(){
+        if(PLEM_Utilities.needsToBeSolved(context)){
+            AsyncTaskPLEM asyncTaskPLEM = new AsyncTaskPLEM(new FragmentCallback() {
+                @Override
+                public void onTaskDone() {
+                    setList();
+                }
+            });
+            asyncTaskPLEM.execute(context, groupID);
+        }
+    }
+
+    public interface FragmentCallback {
+        public void onTaskDone();
     }
 
 }

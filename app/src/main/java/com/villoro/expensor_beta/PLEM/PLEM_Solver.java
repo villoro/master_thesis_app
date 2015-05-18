@@ -65,6 +65,34 @@ public class PLEM_Solver {
         }
     }
 
+    public String solve(){
+        createSeparatedBalances();
+        String output = "";
+
+        Solution solution_greedily = solveGreedily();
+
+        try {
+            Solution solution_exact = solvePLEM();
+            output = "" +solution_exact.time_spent;
+            solution_exact.saveSolution();
+            Log.d("", "solution exact feasible?= " + solution_exact.feasible);
+            if (solution_exact.feasible) {
+                if(solution_exact.z < solution_greedily.z){
+                    Log.e("", "SAVE EXACT since exact= " + solution_exact.z + " < greedily= " + solution_greedily.z);
+                    solution_exact.saveSolution();
+                } else {
+                    Log.e("", "SAVE GREEDILY since exact= " + solution_exact.z + " > greedily= " + solution_greedily.z);
+                    solution_greedily.saveSolution();
+                }
+            }
+        } catch (LpSolveException e) {
+            e.printStackTrace();
+            Log.e("", "SAVE GREEDILY because there was an error in exact solution");
+            solution_greedily.saveSolution();
+        }
+        return output;
+    }
+
     //inner class to represent people with his id and balance
     private class BalancesWithId{
         long[] ids;
@@ -148,34 +176,6 @@ public class PLEM_Solver {
             aux_ids += ids[i] + "  ";
             aux_balances += balances[i] + "  ";
         }
-    }
-
-    public String solve(){
-        createSeparatedBalances();
-        String output = "";
-
-        Solution solution_greedily = solveGreedily();
-
-        try {
-            Solution solution_exact = solvePLEM();
-            output = "" +solution_exact.time_spent;
-            solution_exact.saveSolution();
-
-            if (solution_exact.feasible) {
-                if(solution_exact.z > solution_greedily.z){
-                    Log.e("", "save exacte");
-                    solution_exact.saveSolution();
-                } else {
-                    Log.e("", "save exacte");
-                    solution_greedily.saveSolution();
-                }
-            }
-        } catch (LpSolveException e) {
-            e.printStackTrace();
-            Log.e("", "save exacte");
-            solution_greedily.saveSolution();
-        }
-        return output;
     }
 
     private void printBalanceWithId(BalancesWithId balancesWithId){

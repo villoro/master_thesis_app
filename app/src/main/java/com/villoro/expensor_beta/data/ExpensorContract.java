@@ -221,8 +221,7 @@ public class ExpensorContract {
 
     public static final class PeopleInGroupEntry {
         private static final String tableName = Tables.TABLENAME_PEOPLE_IN_GROUP;
-        public static final String ONLY_BALANCE = "balance";
-        public static final String SUB_BALANCES = "sub_balances";
+        public static final String BALANCE = "balance";
 
         public static final Uri PEOPLE_IN_GROUP =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
@@ -240,8 +239,8 @@ public class ExpensorContract {
             return PEOPLE_IN_GROUP.buildUpon().appendPath(""+id).build();
         }
 
-        public static Uri buildFromGroupIdWithFourSubBalancesUri(long id, String whichCase) {
-            return PEOPLE_IN_GROUP.buildUpon().appendPath("" + id).appendPath(whichCase).build();
+        public static Uri buildFromGroupIdWithBalancesFromCaseUri(long id) {
+            return PEOPLE_IN_GROUP.buildUpon().appendPath("" + id).appendPath(BALANCE).build();
         }
 
         public static long getGroupId(Uri uri){
@@ -326,7 +325,7 @@ public class ExpensorContract {
     public static final class HowToSettleEntry {
         private static final String tableName = Tables.TABLENAME_HOW_TO_SETTLE;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri HOW_TO_SETTLE_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -335,7 +334,15 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildHowToSettleUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(HOW_TO_SETTLE_URI, id);
+        }
+
+        public static Uri buildFromGroupId(long groupId){
+            return HOW_TO_SETTLE_URI.buildUpon().appendPath(""+groupId).build();
+        }
+
+        public static long getGroupId(Uri uri){
+            return Long.parseLong( uri.getPathSegments().get(1) );
         }
     }
 }

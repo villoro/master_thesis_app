@@ -35,7 +35,8 @@ public class UtilitiesNumbers {
             output += "0";
         }
 
-        return output;
+        output += " €";
+        return output.replace("-", "- ");
     }
 
     public static double round(double amount, int decimals)

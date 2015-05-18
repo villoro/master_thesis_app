@@ -253,22 +253,23 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
-    public static final String queryPersonalGroupSummary(long groupId){
+    public static final String querySubBalancesInGroup(long groupId){
         StringBuilder sb = new StringBuilder();
 
         sb.append(SELECT).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID);
         sb.append(COMA).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.NAME);
         sb.append(innerBalanceSumAmountAs("t1", Tables.PAID, Tables.PAID));
         sb.append(innerBalanceSumAmountAs("t1", Tables.SPENT, Tables.SPENT));
-        sb.append(innerBalanceSumAmountAs("t2", Tables.PAID, Tables.RECEIVED));
-        sb.append(innerBalanceSumAmountAs("t2", Tables.SPENT, Tables.GIVEN));
+        sb.append(innerBalanceSumAmountAs("t2", Tables.PAID, Tables.GIVEN));
+        sb.append(innerBalanceSumAmountAs("t2", Tables.SPENT, Tables.RECEIVED));
         sb.append(FROM).append(Tables.TABLENAME_PEOPLE_IN_GROUP);
         sb.append(LEFT_JOIN).append(innerBalancesGroup(groupId, Tables.TYPE_TRANSACTION, "t1"));
         sb.append(LEFT_JOIN).append(innerBalancesGroup(groupId, Tables.TYPE_GIVE, "t2"));
         sb.append(LEFT_JOIN).append(Tables.TABLENAME_PEOPLE);
         sb.append(ON).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID).append(EQUAL);
         sb.append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
-        sb.append(WHERE).append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(whereNoDeleted());
+        sb.append(WHERE + Tables.TABLENAME_PEOPLE_IN_GROUP + "." + whereNoDeleted());
+        sb.append(AND + Tables.TABLENAME_PEOPLE_IN_GROUP + "." + Tables.GROUP_ID + EQUAL + APOSTROPHE + groupId + APOSTROPHE);
 
         sb.append(CLOSE);
 
@@ -330,24 +331,22 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
-    public static final String peopleWithOnlyBalances(long groupId){
+    public static final String queryHowToSettle(long groupId){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(SELECT).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(Tables.PEOPLE_ID);
-        sb.append(COMA).append(SUM).append(PARENTHESIS_OPEN).append(Tables.PAID).append(PARENTHESIS_CLOSE);
-        sb.append(" - ").append(SUM).append(PARENTHESIS_OPEN).append(Tables.SPENT).append(PARENTHESIS_CLOSE);
-        sb.append(AS).append(Tables.BALANCE);
-        sb.append(FROM).append(Tables.TABLENAME_WHO_PAID_SPENT);
-        sb.append(JOIN).append(Tables.TABLENAME_PEOPLE_IN_GROUP);
-        sb.append(ON).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(Tables.PEOPLE_ID);
-        sb.append(EQUAL).append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
-        sb.append(WHERE).append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.GROUP_ID);
-        sb.append(EQUAL).append(APOSTROPHE).append(groupId).append(APOSTROPHE);
-        sb.append(AND).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(whereNoDeleted());
-        sb.append(GROUP_BY).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(Tables.PEOPLE_ID);
+        sb.append(SELECT).append(Tables.TABLENAME_HOW_TO_SETTLE + "." + Tables.ID);
+        sb.append(COMA + AUX0 + "." + Tables.NAME + AS + Tables.FROM);
+        sb.append(COMA + AUX + "." + Tables.NAME + AS + Tables.TO);
+        sb.append(COMA + Tables.AMOUNT);
+        sb.append(FROM + Tables.TABLENAME_HOW_TO_SETTLE);
+        sb.append(JOIN + Tables.TABLENAME_PEOPLE + AS + AUX0);
+        sb.append(ON + Tables.TABLENAME_HOW_TO_SETTLE + "." + Tables.FROM + EQUAL + AUX0 + "." + Tables.ID);
+        sb.append(JOIN + Tables.TABLENAME_PEOPLE + AS + AUX);
+        sb.append(ON + Tables.TABLENAME_HOW_TO_SETTLE + "." + Tables.TO + EQUAL + AUX + "." + Tables.ID);
+        sb.append(WHERE + Tables.TABLENAME_HOW_TO_SETTLE + "." + whereNoDeleted());
+        sb.append(AND + Tables.TABLENAME_HOW_TO_SETTLE + "." + Tables.GROUP_ID + EQUAL + APOSTROPHE + groupId + APOSTROPHE);
 
         return sb.toString();
     }
-
 
 }

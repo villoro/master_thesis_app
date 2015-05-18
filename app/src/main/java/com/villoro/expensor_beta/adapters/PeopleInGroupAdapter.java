@@ -46,7 +46,6 @@ public class PeopleInGroupAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 if(position < ids.size()) {
-                    Log.d("PeopleInGroupAdapter", "pos= " + position + ", id.size= " + ids.size());
                     names.remove(position);
                     ids.remove(position);
 

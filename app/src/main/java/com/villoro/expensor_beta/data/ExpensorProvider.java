@@ -9,12 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.villoro.expensor_beta.PLEM.AsyncTaskPLEM;
-
 /**
  * Created by Arnau on 19/01/2015.
  */
 public class ExpensorProvider extends ContentProvider {
+
+    private boolean working;
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -40,8 +40,7 @@ public class ExpensorProvider extends ContentProvider {
 
     private static final int PEOPLE_IN_GROUP = 500;
     private static final int PEOPLE_IN_GROUP_WITH_GROUP_ID = 501;
-    private static final int PEOPLE_IN_GROUP_WITH_SUB_BALANCES = 503;
-    private static final int PEOPLE_IN_GROUP_WITH_BALANCES_ONLY = 504;
+    private static final int PEOPLE_IN_GROUP_WITH_BALANCES = 502;
 
     private static final int GROUPS = 600;
 
@@ -54,6 +53,7 @@ public class ExpensorProvider extends ContentProvider {
     private static final int WHO_PAID_SPENT = 850;
 
     private static final int HOW_TO_SETTLE = 900;
+    private static final int HOW_TO_SETTLE_WITH_GROUP_ID = 901;
 
 
     public static UriMatcher buildUriMatcher() {
@@ -83,10 +83,7 @@ public class ExpensorProvider extends ContentProvider {
 
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP, PEOPLE_IN_GROUP);
         matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#", PEOPLE_IN_GROUP_WITH_GROUP_ID);
-        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#/" + ExpensorContract.PeopleInGroupEntry.SUB_BALANCES,
-                PEOPLE_IN_GROUP_WITH_SUB_BALANCES);
-        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#/" + ExpensorContract.PeopleInGroupEntry.ONLY_BALANCE,
-                PEOPLE_IN_GROUP_WITH_BALANCES_ONLY);
+        matcher.addURI(authority, Tables.TABLENAME_PEOPLE_IN_GROUP + "/#/*", PEOPLE_IN_GROUP_WITH_BALANCES);
 
         matcher.addURI(authority, Tables.TABLENAME_GROUPS, GROUPS);
 
@@ -98,6 +95,7 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT, WHO_PAID_SPENT);
 
         matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE, HOW_TO_SETTLE);
+        matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE + "/#", HOW_TO_SETTLE_WITH_GROUP_ID);
 
         return matcher;
     }
@@ -215,15 +213,9 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
-            case PEOPLE_IN_GROUP_WITH_SUB_BALANCES: {
-                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryPersonalGroupSummary(
-                        ExpensorContract.PeopleInGroupEntry.getGroupId(uri)), null
-                );
-                break;
-            }
-            case PEOPLE_IN_GROUP_WITH_BALANCES_ONLY: {
-                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.peopleWithOnlyBalances(
-                        ExpensorContract.PeopleInGroupEntry.getGroupId(uri)), null
+            case PEOPLE_IN_GROUP_WITH_BALANCES: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.querySubBalancesInGroup(
+                                ExpensorContract.PeopleInGroupEntry.getGroupId(uri)), null
                 );
                 break;
             }
@@ -290,6 +282,12 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
+                );
+                break;
+            }
+            case HOW_TO_SETTLE_WITH_GROUP_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(ExpensorQueries.queryHowToSettle(
+                                ExpensorContract.HowToSettleEntry.getGroupId(uri)) , null
                 );
                 break;
             }
@@ -423,7 +421,6 @@ public class ExpensorProvider extends ContentProvider {
             }
             case TRANSACTIONS_GROUP: {
                 long _id = db.insert(Tables.TABLENAME_TRANSACTIONS_GROUP, null, values);
-                solveGroup(values.getAsLong(Tables.GROUP_ID));
                 if (_id > 0)
                     returnUri = ExpensorContract.TransactionGroupEntry.buildTransactionGroupUri(_id);
                 else
@@ -448,22 +445,11 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case HOW_TO_SETTLE: {
-                String[] args = {""+values.getAsLong(Tables.GROUP_ID),
-                        ""+values.getAsLong(Tables.FROM),
-                        ""+values.getAsLong(Tables.TO)};
-                String where = Tables.GROUP_ID + "=? AND " + Tables.FROM + "=? AND " + Tables.TO + "=?";
-                Cursor tempCursor = db.query(Tables.TABLENAME_HOW_TO_SETTLE, null, where, args, null, null, null);
-
-                if (tempCursor.getCount() == 0){
-                    long _id = db.insert(Tables.TABLENAME_HOW_TO_SETTLE, null, values);
-                    if (_id > 0)
-                        returnUri = ExpensorContract.GroupEntry.buildGroupUri(_id);
-                    else
-                        throw new SQLException("Failed to insert to row into " + uri);
-                } else {
-                    db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, where, args);
-                    returnUri = uri;
-                }
+                long _id = db.insert(Tables.TABLENAME_HOW_TO_SETTLE, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.GroupEntry.buildGroupUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
                 break;
             }
 
@@ -507,7 +493,6 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             case TRANSACTIONS_GROUP:
                 rowsDeleted = db.update(Tables.TABLENAME_TRANSACTIONS_GROUP, values, selection, selectionArgs);
-                solveGroup(values.getAsLong(Tables.GROUP_ID));
                 break;
             case WHO_PAID_SPENT:
                 rowsDeleted = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
@@ -515,7 +500,11 @@ public class ExpensorProvider extends ContentProvider {
             case HOW_TO_SETTLE:
                 rowsDeleted = db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, selection, selectionArgs);
                 break;
-
+            case HOW_TO_SETTLE_WITH_GROUP_ID: {
+                rowsDeleted = db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, Tables.GROUP_ID + " ='" +
+                        ExpensorContract.HowToSettleEntry.getGroupId(uri) + "'", selectionArgs);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -578,10 +567,5 @@ public class ExpensorProvider extends ContentProvider {
         }
 
         return rowsUpdated;
-    }
-
-    private void solveGroup(long groupId){
-        AsyncTaskPLEM asyncTaskPLEM = new AsyncTaskPLEM();
-        asyncTaskPLEM.execute(getContext(), groupId);
     }
 }

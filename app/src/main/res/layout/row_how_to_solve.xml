@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/linearLayout_row_simple">
+
+    <TextView
+        style="@style/textView_row_only_text"
+        android:id="@+id/tv_from"/>
+
+    <ImageView
+        style="@style/icon"
+        android:src="@drawable/ic_action_forward" />
+
+    <TextView
+        style="@style/textView_row_only_text"
+        android:id="@+id/tv_to"/>
+
+    <RelativeLayout
+        style="@style/relativeLayout_amount">
+
+        <TextView
+            style="@style/textView_row_amount"
+            android:id="@+id/tv_amount"/>
+
+    </RelativeLayout>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox" />
+
+
+</LinearLayout>

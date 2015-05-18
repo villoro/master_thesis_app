@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.villoro.expensor_beta.PLEM.AsyncTaskPLEM;
+import com.villoro.expensor_beta.PLEM.PLEM_Utilities;
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
 import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
@@ -138,6 +140,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
             context.getContentResolver().insert(ExpensorContract.WhoPaidSpentEntry.CONTENT_URI, whoValues);
         }
+
+        PLEM_Utilities.saveLastAdded(context);
     }
 
     @Override

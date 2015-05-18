@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
+import com.villoro.expensor_beta.sections.details.DetailsGroupSummaryFragment;
 
 import java.util.ArrayList;
 
@@ -15,10 +17,17 @@ import java.util.ArrayList;
  */
 public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements PLEM_Solver.CommPLEM_Solver{
 
+    private DetailsGroupSummaryFragment.FragmentCallback fragmentCallback;
+
     Context context;
     long groupID;
     long[] ids;
     double[] balances;
+
+    public AsyncTaskPLEM(DetailsGroupSummaryFragment.FragmentCallback callback){
+        this.fragmentCallback = callback;
+    }
+
 
     @Override
     protected Boolean doInBackground(Object... params) {
@@ -26,16 +35,22 @@ public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements P
         groupID = (long) params[1];
 
         Cursor cursor = context.getContentResolver().query(
-                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithFourSubBalancesUri(groupID,
-                        ExpensorContract.PeopleInGroupEntry.ONLY_BALANCE), null, null, null, null);
+                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithBalancesFromCaseUri(groupID),
+                null, null, null, null);
 
         if(cursor.moveToFirst()){
             ids = new long[cursor.getCount()];
             balances = new double[cursor.getCount()];
             do{
-                ids[cursor.getPosition()] = cursor.getLong(cursor.getColumnIndex(Tables.PEOPLE_ID));
-                balances[cursor.getPosition()] = cursor.getDouble(cursor.getColumnIndex(Tables.BALANCE));
+                ids[cursor.getPosition()] = cursor.getLong(cursor.getColumnIndex(Tables.ID));
+                balances[cursor.getPosition()] = cursor.getDouble(cursor.getColumnIndex(Tables.PAID))
+                        + cursor.getDouble(cursor.getColumnIndex(Tables.GIVEN))
+                        - cursor.getDouble(cursor.getColumnIndex(Tables.SPENT))
+                        - cursor.getDouble(cursor.getColumnIndex(Tables.RECEIVED));
             } while (cursor.moveToNext());
+
+            for (int i = 0; i < ids.length ; i++)
+                Log.e("AsyncTaskPLEM", "id= " + ids[i] + ", balance= " + balances[i]);
 
             PLEM_Solver plem_solver = new PLEM_Solver(ids, balances);
             plem_solver.setCommunicator(this);
@@ -46,6 +61,8 @@ public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements P
 
     @Override
     public void saveSolution(ArrayList<Long> from, ArrayList<Long> to, ArrayList<Double> money) {
+        context.getContentResolver().delete(ExpensorContract.HowToSettleEntry.buildFromGroupId(groupID), null, null);
+
         for(int i = 0; i < from.size(); i++){
             ContentValues values = new ContentValues();
 
@@ -54,7 +71,15 @@ public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements P
             values.put(Tables.TO, to.get(i));
             values.put(Tables.AMOUNT, money.get(i));
 
-            context.getContentResolver().insert(ExpensorContract.HowToSettleEntry.CONTENT_URI, values);
+            context.getContentResolver().insert(ExpensorContract.HowToSettleEntry.HOW_TO_SETTLE_URI, values);
         }
+        PLEM_Utilities.saveLastSolution(context);
+    }
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+
+        fragmentCallback.onTaskDone();
     }
 }

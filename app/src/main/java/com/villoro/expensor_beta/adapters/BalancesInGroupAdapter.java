@@ -51,7 +51,7 @@ public class BalancesInGroupAdapter extends CategoryAdapter {
         double received = cursor.getDouble(cursor.getColumnIndex(Tables.RECEIVED));
         double given = cursor.getDouble(cursor.getColumnIndex(Tables.GIVEN));
 
-        double balance = UtilitiesNumbers.round(paid + received - spent - given, 2);
+        double balance = UtilitiesNumbers.round(paid + given - spent - received, 2);
 
         tv_paid.setText("Paid: " + UtilitiesNumbers.getFancyDouble(paid));
         tv_spent.setText("Spent: " + UtilitiesNumbers.getFancyDouble(spent));

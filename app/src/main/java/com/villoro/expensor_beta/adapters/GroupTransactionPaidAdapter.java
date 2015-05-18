@@ -28,8 +28,6 @@ public class GroupTransactionPaidAdapter extends CursorAdapter {
     public GroupTransactionPaidAdapter(Context context, Cursor c, int flags){
         super(context, c, flags);
 
-        Log.d("GroupTransactionPaidAdapter", "created");
-
         this.context = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ids = new long[c.getCount()];
@@ -43,7 +41,6 @@ public class GroupTransactionPaidAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        Log.d("GroupTransactionPaidAdapter", "bindView");
         TextView textView = (TextView) view.findViewById(R.id.tv_name);
         textView.setText(cursor.getString(cursor.getColumnIndex(Tables.NAME)));
 

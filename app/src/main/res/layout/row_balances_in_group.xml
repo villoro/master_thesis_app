@@ -29,11 +29,11 @@
 
             <TextView
                 style="@style/textView_row_normal"
-                android:id="@+id/tv_spent"/>
+                android:id="@+id/tv_given"/>
 
             <TextView
                 style="@style/textView_row_normal"
-                android:id="@+id/tv_given"/>
+                android:id="@+id/tv_spent"/>
 
         </LinearLayout>
 
