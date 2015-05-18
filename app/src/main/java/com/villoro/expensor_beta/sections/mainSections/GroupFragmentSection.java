@@ -111,8 +111,7 @@ public class GroupFragmentSection extends Fragment implements DialogLongClickLis
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO when using cursorAdapter delete the "1"
-                showLongClickList(id + 1);
+                showLongClickList(id);
                 return true;
             }
         });
@@ -120,7 +119,7 @@ public class GroupFragmentSection extends Fragment implements DialogLongClickLis
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(context, ShowDetailsActivity.class);
-                intent.putExtra(ShowDetailsActivity.ID_OBJECT, id + 1);
+                intent.putExtra(ShowDetailsActivity.ID_OBJECT, id);
                 intent.putExtra(ShowDetailsActivity.WHICH_LIST, ShowDetailsActivity.CASE_GROUP);
                 startActivity(intent);
             }

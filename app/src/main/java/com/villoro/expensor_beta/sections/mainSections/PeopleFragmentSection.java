@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
@@ -24,7 +23,6 @@ import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.PeopleAdapter;
 import com.villoro.expensor_beta.adapters.PeopleWithBalanceAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
-import com.villoro.expensor_beta.data.ExpensorQueries;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
@@ -141,9 +139,9 @@ ListView.OnItemClickListener, ListView.OnItemLongClickListener{
         lv_negative.setOnItemLongClickListener(this);
         lv_settled.setOnItemLongClickListener(this);
 
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_positive);
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_negative);
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_settled);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_positive);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_negative);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_settled);
     }
 
     @Override

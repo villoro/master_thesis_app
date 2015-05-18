@@ -258,10 +258,10 @@ public class ExpensorQueries {
 
         sb.append(SELECT).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.ID);
         sb.append(COMA).append(Tables.TABLENAME_PEOPLE).append(".").append(Tables.NAME);
-        sb.append(innerBalanceSumAmountAs("t1", Tables.PAID));
-        sb.append(innerBalanceSumAmountAs("t1", Tables.SPENT));
-        sb.append(innerBalanceSumAmountAs("t2", Tables.RECEIVED));
-        sb.append(innerBalanceSumAmountAs("t2", Tables.GIVEN));
+        sb.append(innerBalanceSumAmountAs("t1", Tables.PAID, Tables.PAID));
+        sb.append(innerBalanceSumAmountAs("t1", Tables.SPENT, Tables.SPENT));
+        sb.append(innerBalanceSumAmountAs("t2", Tables.PAID, Tables.RECEIVED));
+        sb.append(innerBalanceSumAmountAs("t2", Tables.SPENT, Tables.GIVEN));
         sb.append(FROM).append(Tables.TABLENAME_PEOPLE_IN_GROUP);
         sb.append(LEFT_JOIN).append(innerBalancesGroup(groupId, Tables.TYPE_TRANSACTION, "t1"));
         sb.append(LEFT_JOIN).append(innerBalancesGroup(groupId, Tables.TYPE_GIVE, "t2"));
@@ -280,9 +280,9 @@ public class ExpensorQueries {
 
         sb.append(PARENTHESIS_OPEN).append(SELECT).append(AUX).append(".").append(Tables.PEOPLE_ID);
         sb.append(COMA).append(SUM).append(PARENTHESIS_OPEN);
-        sb.append(AUX).append(".").append(Tables.PAID).append(PARENTHESIS_CLOSE).append(AS).append(Tables.SUM_AMOUNT);
+        sb.append(AUX).append(".").append(Tables.PAID).append(PARENTHESIS_CLOSE).append(AS).append(Tables.PAID);
         sb.append(COMA).append(SUM).append(PARENTHESIS_OPEN);
-        sb.append(AUX).append(".").append(Tables.SPENT).append(PARENTHESIS_CLOSE).append(AS).append(Tables.SUM_AMOUNT2);
+        sb.append(AUX).append(".").append(Tables.SPENT).append(PARENTHESIS_CLOSE).append(AS).append(Tables.SPENT);
 
         sb.append(FROM).append(PARENTHESIS_OPEN).append(SELECT_ALL_FROM).append(Tables.TABLENAME_WHO_PAID_SPENT);
         sb.append(JOIN).append(Tables.TABLENAME_TRANSACTIONS_GROUP);
@@ -295,7 +295,8 @@ public class ExpensorQueries {
         sb.append(AS).append(AUX);
 
 
-        sb.append(WHERE).append(AUX).append(".").append(whereNoDeleted()).append(PARENTHESIS_CLOSE);
+        sb.append(WHERE).append(AUX).append(".").append(whereNoDeleted());
+        sb.append(GROUP_BY).append(AUX).append(".").append(Tables.PEOPLE_ID).append(PARENTHESIS_CLOSE);
         sb.append(AS).append(as);
         sb.append(ON).append(as).append(".").append(Tables.PEOPLE_ID).append(EQUAL);
         sb.append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
@@ -303,10 +304,10 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
-    private static final String innerBalanceSumAmountAs(String nameAuxTable, String as){
+    private static final String innerBalanceSumAmountAs(String nameAuxTable, String from, String as){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(COMA).append(nameAuxTable).append(".").append(Tables.SUM_AMOUNT);
+        sb.append(COMA).append(nameAuxTable).append(".").append(from);
         sb.append(AS).append(as);
 
         return sb.toString();

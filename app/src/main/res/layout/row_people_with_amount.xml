@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/linearLayout_row_simple">
 
+    <!-- TODO make a linear layout here instead of a relative layout-->
 
     <TextView
         style="@style/textView_row_only_text"
@@ -16,4 +17,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

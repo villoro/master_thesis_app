@@ -220,7 +220,7 @@
 
     <style name="textView_row_only_text" >
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">@dimen/row_thickness</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/black</item>
@@ -251,6 +251,7 @@
     <style name="relativeLayout_amount" >
         <item name="android:layout_width">@dimen/amount_width</item>
         <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignParentRight">true</item>
     </style>
 
     <style name="linearLayout_row_details" >

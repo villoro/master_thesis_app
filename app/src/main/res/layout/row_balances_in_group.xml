@@ -47,6 +47,7 @@
 
         <TextView
             style="@style/textView_row_amount"
+            android:layout_height="@dimen/row_thickness_150percent_wider"
             android:id="@+id/tv_balance"/>
 
     </RelativeLayout>

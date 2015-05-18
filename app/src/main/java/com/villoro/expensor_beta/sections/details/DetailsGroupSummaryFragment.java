@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,10 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
-import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.BalancesInGroupAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
-import com.villoro.expensor_beta.data.ExpensorQueries;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 
@@ -88,7 +86,7 @@ public class DetailsGroupSummaryFragment extends Fragment {
         BalancesInGroupAdapter balancesInGroupAdapter = new BalancesInGroupAdapter(context, cursorBalances, 0);
         lv_balances.setAdapter(balancesInGroupAdapter);
 
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_balances);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_balances);
 
     }
 

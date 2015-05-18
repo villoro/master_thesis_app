@@ -26,8 +26,6 @@ import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogDatePicker;
 
-import java.util.List;
-
 /**
  * Created by Arnau on 17/05/2015.
  */
@@ -90,8 +88,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
         lv_paid.setAdapter(groupTransactionPaidAdapter);
         lv_spent.setAdapter(groupTransactionSpentAdapter);
 
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_paid);
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_spent);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_paid);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_spent);
 
         paid = new double[length];
         spentLocked = new double[length];
@@ -177,7 +175,6 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
         b_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 dialogDate.setPreviousDate(date);
                 dialogDate.show(getFragmentManager(), "datePicker");
             }

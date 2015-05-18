@@ -20,6 +20,7 @@ import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.adapters.CategoryRadioAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
@@ -125,7 +126,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         categoryRadioAdapter = new CategoryRadioAdapter(context, cursorCategories, 0);
         lv_categories.setAdapter(categoryRadioAdapter);
 
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_categories);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_categories);
         lv_categories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

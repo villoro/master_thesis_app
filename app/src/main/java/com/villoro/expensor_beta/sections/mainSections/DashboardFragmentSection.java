@@ -283,7 +283,7 @@ public class DashboardFragmentSection extends Fragment{
         }
         CategoryGraphAdapter expenseAdapter = new CategoryGraphAdapter(context, cursorExpense, 0, maxWidth, maxExpense);
         lv_expense.setAdapter(expenseAdapter);
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_expense);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_expense);
 
         Cursor cursorIncome = getActivity().getContentResolver().query(
                 ExpensorContract.GraphTransactionEntry.buildIncomeGraphAllUri(date[0], date[1]),
@@ -297,7 +297,7 @@ public class DashboardFragmentSection extends Fragment{
         }
         CategoryGraphAdapter incomeAdapter = new CategoryGraphAdapter(context, cursorIncome, 0, maxWidth, maxIncome);
         lv_income.setAdapter(incomeAdapter);
-        UtilitiesDates.setListViewHeightBasedOnChildren(lv_income);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(lv_income);
     }
 
     public void setButtonPreviousNext(){
