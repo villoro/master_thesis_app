@@ -38,6 +38,7 @@ public class Tables {
     public static final String SUM_AMOUNT2 = "sum_of_sum_amount";
     public static final String RECEIVED = "received";
     public static final String GIVEN = "given";
+    public static final String BALANCE = "balance";
 
     //foreign keys columns
     public static final String CATEGORY_ID = "categoryID";

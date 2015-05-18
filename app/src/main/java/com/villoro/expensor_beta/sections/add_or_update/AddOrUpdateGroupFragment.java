@@ -100,7 +100,7 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                LinearLayout linearLayout = (LinearLayout) view;
+                RelativeLayout linearLayout = (RelativeLayout) view;
                 TextView tvName = (TextView) linearLayout.findViewById(R.id.row_name);
                 String name = tvName.getText().toString().trim();
                 if (!ids.contains(id)) {

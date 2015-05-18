@@ -330,6 +330,24 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
+    public static final String peopleWithOnlyBalances(long groupId){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(Tables.PEOPLE_ID);
+        sb.append(COMA).append(SUM).append(PARENTHESIS_OPEN).append(Tables.PAID).append(PARENTHESIS_CLOSE);
+        sb.append(" - ").append(SUM).append(PARENTHESIS_OPEN).append(Tables.SPENT).append(PARENTHESIS_CLOSE);
+        sb.append(AS).append(Tables.BALANCE);
+        sb.append(FROM).append(Tables.TABLENAME_WHO_PAID_SPENT);
+        sb.append(JOIN).append(Tables.TABLENAME_PEOPLE_IN_GROUP);
+        sb.append(ON).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(Tables.PEOPLE_ID);
+        sb.append(EQUAL).append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.PEOPLE_ID);
+        sb.append(WHERE).append(Tables.TABLENAME_PEOPLE_IN_GROUP).append(".").append(Tables.GROUP_ID);
+        sb.append(EQUAL).append(APOSTROPHE).append(groupId).append(APOSTROPHE);
+        sb.append(AND).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(whereNoDeleted());
+        sb.append(GROUP_BY).append(Tables.TABLENAME_WHO_PAID_SPENT).append(".").append(Tables.PEOPLE_ID);
+
+        return sb.toString();
+    }
 
 
 }

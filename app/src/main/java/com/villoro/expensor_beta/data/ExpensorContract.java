@@ -221,6 +221,8 @@ public class ExpensorContract {
 
     public static final class PeopleInGroupEntry {
         private static final String tableName = Tables.TABLENAME_PEOPLE_IN_GROUP;
+        public static final String ONLY_BALANCE = "balance";
+        public static final String SUB_BALANCES = "sub_balances";
 
         public static final Uri PEOPLE_IN_GROUP =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
@@ -238,8 +240,8 @@ public class ExpensorContract {
             return PEOPLE_IN_GROUP.buildUpon().appendPath(""+id).build();
         }
 
-        public static Uri buildFromGroupIdWithBalancesUri(long id) {
-            return PEOPLE_IN_GROUP.buildUpon().appendPath("" + id).appendPath("balances").build();
+        public static Uri buildFromGroupIdWithFourSubBalancesUri(long id, String whichCase) {
+            return PEOPLE_IN_GROUP.buildUpon().appendPath("" + id).appendPath(whichCase).build();
         }
 
         public static long getGroupId(Uri uri){

@@ -82,7 +82,8 @@ public class DetailsGroupSummaryFragment extends Fragment {
 
     public void setList() {
         Cursor cursorBalances = context.getContentResolver().query(
-                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithBalancesUri(currentID), null, null, null, null);
+                ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithFourSubBalancesUri(currentID,
+                        ExpensorContract.PeopleInGroupEntry.SUB_BALANCES), null, null, null, null);
         BalancesInGroupAdapter balancesInGroupAdapter = new BalancesInGroupAdapter(context, cursorBalances, 0);
         lv_balances.setAdapter(balancesInGroupAdapter);
 
