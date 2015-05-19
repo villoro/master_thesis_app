@@ -90,7 +90,6 @@ public class DashboardFragmentSection extends Fragment{
         maxWidth = getAvailableWidth();
         date = UtilitiesDates.getDate();
 
-        Log.d("DashboardFragment", "query= " + ExpensorQueries.queryPeopleFromBalanceCase(1));
     }
 
     @Override
@@ -171,8 +170,6 @@ public class DashboardFragmentSection extends Fragment{
                 comm.goToSection(MainActivity.SECTION_PEOPLE, null);
             }
         });
-
-        Log.e("DashboardFragment", "query= " + ExpensorQueries.queryGraphPeople(1, 2015, 5));
 
         setMainGraphs();
         setButtonPreviousNext();

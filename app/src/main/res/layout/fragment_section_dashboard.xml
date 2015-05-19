@@ -29,7 +29,7 @@
             <!-- PERSONAL PART -->
             <TextView
                 style="@style/sectionHeader"
-                android:text="Personal"/>
+                android:text="@string/header_personal"/>
 
             <LinearLayout
                 style="@style/linearLayout_input" >
@@ -39,7 +39,7 @@
 
                     <TextView
                         style="@style/big_bar_title"
-                        android:text="Income:"/>
+                        android:text="@string/dashboard_income"/>
 
                     <TextView
                         style="@style/big_bar_value"
@@ -62,7 +62,7 @@
 
                     <TextView
                         style="@style/big_bar_title"
-                        android:text="Expense:"/>
+                        android:text="@string/dashboard_expense"/>
 
                     <TextView
                         style="@style/big_bar_value"
@@ -87,7 +87,7 @@
 
                     <TextView
                         style="@style/big_bar_title"
-                        android:text="Result:"/>
+                        android:text="@string/dashboard_result"/>
 
                     <TextView
                         style="@style/big_bar_value"
@@ -104,7 +104,7 @@
             <!-- FRIENDS PART -->
             <TextView
                 style="@style/sectionHeader"
-                android:text="Friends"/>
+                android:text="@string/header_friends"/>
 
             <LinearLayout
                 style="@style/linearLayout_input" >
@@ -114,7 +114,7 @@
 
                     <TextView
                         style="@style/big_bar_title"
-                        android:text="Owe me:"/>
+                        android:text="@string/dashboard_owe_me"/>
 
                     <TextView
                         style="@style/big_bar_value"
@@ -137,7 +137,7 @@
 
                     <TextView
                         style="@style/big_bar_title"
-                        android:text="I owe:"/>
+                        android:text="@string/dashboard_i_owe"/>
 
                     <TextView
                         style="@style/big_bar_value"
@@ -155,7 +155,7 @@
             <!-- PERSONAL TRANSACTIONS PART -->
             <TextView
                 style="@style/sectionHeader"
-                android:text="Incomes"/>
+                android:text="@string/header_incomes"/>
 
             <ListView
                 android:layout_width="wrap_content"
@@ -164,7 +164,7 @@
 
             <TextView
                 style="@style/sectionHeader"
-                android:text="Expenses"/>
+                android:text="@string/header_expenses"/>
 
             <ListView
                 android:layout_width="wrap_content"

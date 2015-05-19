@@ -6,7 +6,7 @@
         style="@style/linearLayout_input" >
         <TextView
             style="@style/textView_input_title"
-            android:text="@string/name" />
+            android:text="@string/input_name" />
 
         <EditText
             style="@style/editText_input"
@@ -24,7 +24,7 @@
 
         <TextView
             style="@style/textView_input_title"
-            android:text="@string/email" />
+            android:text="@string/input_email" />
 
         <EditText
             style="@style/editText_input"

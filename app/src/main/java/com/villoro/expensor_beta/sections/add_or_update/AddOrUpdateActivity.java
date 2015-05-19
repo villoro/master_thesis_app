@@ -24,7 +24,6 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     public final static int CASE_CATEGORIES = 1;
     public final static int CASE_PEOPLE = 2;
     public final static int CASE_GROUP = 3;
-    public final static int CASE_PEOPLE_IN_GROUP = 4;
     public final static int CASE_TRANSACTION_PERSONAL = 5;
     public final static int CASE_TRANSACTION_GROUP = 6;
 
@@ -35,7 +34,6 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     AddOrUpdateTransactionSimpleFragment transactionSimpleFragment;
     AddOrUpdateGroupFragment groupFragment;
     AddOrUpdatePeopleFragment peopleFragment;
-    AddOrUpdatePeopleInGroupFragment peopleInGroupFragment;
     AddOrUpdateCategoriesFragment categoriesFragment;
     AddOrUpdateTransactionPersonalFragment transactionPersonalFragment;
     AddOrUpdateTransactionGroupFragment transactionGroupFragment;
@@ -88,11 +86,6 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     peopleFragment = new AddOrUpdatePeopleFragment();
                     peopleFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, peopleFragment).commit();
-                    break;
-                case CASE_PEOPLE_IN_GROUP:
-                    peopleInGroupFragment = new AddOrUpdatePeopleInGroupFragment();
-                    peopleInGroupFragment.initialize(ID);
-                    getSupportFragmentManager().beginTransaction().add(R.id.container, peopleInGroupFragment).commit();
                     break;
                 case CASE_TRANSACTION_PERSONAL:
                     transactionPersonalFragment = new AddOrUpdateTransactionPersonalFragment();
@@ -151,9 +144,6 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                 case CASE_PEOPLE:
                     peopleFragment.add();
                     break;
-                case CASE_PEOPLE_IN_GROUP:
-                    peopleInGroupFragment.add();
-                    break;
                 case CASE_TRANSACTION_PERSONAL:
                     transactionPersonalFragment.add();
                     break;
@@ -196,9 +186,6 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     break;
                 case CASE_PEOPLE:
                     peopleFragment.delete();
-                    break;
-                case CASE_PEOPLE_IN_GROUP:
-                    peopleInGroupFragment.delete();
                     break;
                 case CASE_TRANSACTION_PERSONAL:
                     transactionPersonalFragment.delete();

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.parse.ParseUser;
+import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.ExpensorDbHelper;
 import com.villoro.expensor_beta.data.Tables;
@@ -216,7 +217,7 @@ public class ParseAdapter {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Tables.NAME, "me");
+        values.put(Tables.NAME, context.getString(R.string.me));
         values.put(Tables.EMAIL, parseUser.getEmail());
         values.put(Tables.USER_ID, parseUser.getObjectId());
         values.put(Tables.LAST_UPDATE, ExpensorContract.getDateUTC().getTime());

@@ -6,7 +6,6 @@
 
     <TextView
         android:id="@+id/row_trans_people_date"
-        android:text="date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -16,7 +15,6 @@
 
     <TextView
         android:id="@+id/row_trans_people_comments"
-        android:text="comments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/row_trans_people_date"
@@ -26,7 +24,6 @@
     
     <TextView
         android:id="@+id/row_trans_people_amount"
-        android:text="amount"
     	android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"

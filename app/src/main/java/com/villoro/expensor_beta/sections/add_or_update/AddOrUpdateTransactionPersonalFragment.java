@@ -140,10 +140,10 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
         ac_from.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                LinearLayout linearLayout = (LinearLayout) view;
-                TextView tvName = (TextView) linearLayout.findViewById(R.id.row_name);
+                RelativeLayout relativeLayout = (RelativeLayout) view;
+                TextView tvName = (TextView) relativeLayout.findViewById(R.id.row_name);
                 ac_from.setText(tvName.getText().toString());
-                ac_to.setText("Me");
+                ac_to.setText(context.getString(R.string.me));
 
                 fromId = id;
                 toId = myId;
@@ -154,7 +154,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 LinearLayout linearLayout = (LinearLayout) view;
                 TextView tvName = (TextView) linearLayout.findViewById(R.id.row_name);
-                ac_from.setText("Me");
+                ac_from.setText(context.getString(R.string.me));
                 ac_to.setText(tvName.getText().toString());
 
                 fromId = myId;

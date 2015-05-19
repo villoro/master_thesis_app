@@ -24,7 +24,7 @@
 
 
             <TextView
-                android:text="Payment info"
+                android:text="@string/header_payment_info"
                 style="@style/sectionHeader" />
 
             <LinearLayout
@@ -32,12 +32,12 @@
 
                 <TextView
                     style="@style/textView_input_title"
-                    android:text="Amount"/>
+                    android:text="@string/input_amount"/>
 
                 <EditText
                     style="@style/editText_input"
                     android:id="@+id/et_amount"
-                    android:hint="Amount"
+                    android:hint="@string/hint_amount"
                     android:inputType="numberDecimal" >
                 </EditText>
             </LinearLayout>
@@ -72,7 +72,7 @@
 
             <TextView
                 android:layout_marginTop="@dimen/margin_double"
-                android:text="ADITIONAL INFO"
+                android:text="@string/header_aditional_info"
                 style="@style/sectionHeader" />
 
             <LinearLayout
@@ -80,7 +80,7 @@
 
                 <TextView
                     style="@style/textView_input_title"
-                    android:text="Date" />
+                    android:text="@string/input_date" />
 
                 <Button
                     style="@style/button_input"
@@ -92,12 +92,12 @@
 
                 <TextView
                     style="@style/textView_input_title"
-                    android:text="Comments" />
+                    android:text="@string/input_date" />
 
                 <EditText
                     style="@style/editText_input"
                     android:id="@+id/et_comments"
-                    android:hint="Comments (Optional)" />
+                    android:hint="@string/hint_comments" />
             </LinearLayout>
 
         </LinearLayout>

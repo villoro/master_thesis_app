@@ -129,7 +129,7 @@
     <style name="button_expense">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
-        <item name="android:text">Expense</item>
+        <item name="android:text">@string/expenses</item>
         <item name="android:background">@color/red_expense</item>
         <item name="android:layout_weight">1</item>
     </style>
@@ -137,7 +137,7 @@
     <style name="button_income">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
-        <item name="android:text">Income</item>
+        <item name="android:text">@string/incomes</item>
         <item name="android:background">@color/green_income</item>
         <item name="android:layout_weight">1</item>
     </style>

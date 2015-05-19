@@ -53,15 +53,15 @@ public class BalancesInGroupAdapter extends CategoryAdapter {
 
         double balance = UtilitiesNumbers.round(paid + given - spent - received, 2);
 
-        tv_paid.setText("Paid: " + UtilitiesNumbers.getFancyDouble(paid));
-        tv_spent.setText("Spent: " + UtilitiesNumbers.getFancyDouble(spent));
+        tv_paid.setText(context.getString(R.string.balance_paid) + UtilitiesNumbers.getFancyDouble(paid));
+        tv_spent.setText(context.getString(R.string.balance_spent) + UtilitiesNumbers.getFancyDouble(spent));
 
         String receivedMessage = "";
         String givenMessage = "";
         if(received > 0)
-            receivedMessage = "Received: " + UtilitiesNumbers.getFancyDouble(received);
+            receivedMessage = context.getString(R.string.balance_received) + UtilitiesNumbers.getFancyDouble(received);
         if (given > 0)
-            givenMessage = "Given: " + UtilitiesNumbers.getFancyDouble(given);
+            givenMessage = context.getString(R.string.balance_given) + UtilitiesNumbers.getFancyDouble(given);
 
         tv_received.setText(receivedMessage);
         tv_given.setText(givenMessage);

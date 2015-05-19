@@ -9,13 +9,13 @@
 
         <TextView
             style="@style/textView_input_title"
-            android:text="@string/name" />
+            android:text="@string/input_name" />
 
         <EditText
             style="@style/editText_input"
             android:id="@+id/et_groups_name"
             android:hint="@string/hint_name_group"
-            android:inputType="textPersonName" >
+            android:inputType="text" >
 
             <requestFocus />
         </EditText>
@@ -23,7 +23,7 @@
     </LinearLayout>
 
     <TextView
-        android:text="Members"
+        android:text="@string/header_members"
         style="@style/sectionHeader" />
 
     <ListView
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/row_thickness_with_margin_simple"
         android:gravity="center_vertical"
-        android:hint="Write to add a member"
+        android:hint="@string/hint_write_to_add_a_member"
         android:id="@+id/ac_name"/>
 
 </LinearLayout>

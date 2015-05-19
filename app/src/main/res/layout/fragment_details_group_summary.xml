@@ -10,7 +10,7 @@
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:background="@color/orange"
-            android:text="Summary"
+            android:text="@string/summary"
             android:id="@+id/b_summary"/>
 
         <Button
@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:background="@color/purple"
-            android:text="History"
+            android:text="@string/history"
             android:id="@+id/b_history" />
     </LinearLayout>
 
@@ -33,7 +33,7 @@
 
 
             <TextView
-                android:text="Resolution"
+                android:text="@string/header_resolution"
                 style="@style/sectionHeader" />
 
 
@@ -43,7 +43,7 @@
                 android:id="@+id/lv_resolution"/>
 
             <TextView
-                android:text="Balances"
+                android:text="@string/header_balances"
                 style="@style/sectionHeader" />
 
 

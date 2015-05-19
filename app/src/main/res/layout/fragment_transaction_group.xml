@@ -7,7 +7,7 @@
 
 
         <TextView
-            android:text="Who paid?"
+            android:text="@string/header_paid"
             style="@style/sectionHeader" />
 
         <ListView
@@ -16,7 +16,7 @@
             android:id="@+id/lv_paid"/>
 
         <TextView
-            android:text="For whom?"
+            android:text="@string/header_spent"
             style="@style/sectionHeader" />
 
         <ListView
@@ -25,7 +25,7 @@
             android:id="@+id/lv_spent"/>
 
         <TextView
-            android:text="More info"
+            android:text="@string/header_aditional_info"
             style="@style/sectionHeader" />
 
         <LinearLayout
@@ -33,7 +33,7 @@
 
             <TextView
                 style="@style/textView_input_title"
-                android:text="Date" />
+                android:text="@string/input_date" />
 
             <Button
                 style="@style/button_input"
@@ -45,12 +45,12 @@
 
             <TextView
                 style="@style/textView_input_title"
-                android:text="Comments"/>
+                android:text="@string/input_comments"/>
 
             <EditText
                 style="@style/editText_input"
                 android:id="@+id/et_comments"
-                android:hint="Comments"
+                android:hint="@string/hint_comments"
                 android:inputType="text" >
             </EditText>
 
