@@ -6,20 +6,13 @@
         style="@style/linearLayout_expense_income" >
 
         <Button
-            android:layout_height="@dimen/row_my_navigation_bars"
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/orange"
-            android:text="@string/summary"
+            style="@style/button_summary"
             android:id="@+id/b_summary"/>
 
         <Button
-            android:layout_height="@dimen/row_my_navigation_bars"
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/purple"
-            android:text="@string/history"
+            style="@style/button_history"
             android:id="@+id/b_history" />
+
     </LinearLayout>
 
 

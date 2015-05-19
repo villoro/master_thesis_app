@@ -65,6 +65,17 @@
     <string name="balance_received">Rebut: </string>
     <string name="balance_given">Donat: </string>
 
+    <!-- Action bar -->
+    <string name="ab_add_expense">Afegir despesa</string>
+    <string name="ab_add_income">Afegir ingrés</string>
+    <string name="ab_add_group">Afegir grup</string>
+    <string name="ab_add_person">Afegir amic</string>
+    <string name="ab_add_debt">Afegir deute</string>
+    <string name="ab_add_group_transaction">Afegir transacció</string>
+    <string name="ab_add_category">Afegir categoria</string>
+    <string name="ab_expense_categories">Categories despeses</string>
+    <string name="ab_income_categories">Categories ingressos</string>
+
     <!-- Input info -->
     <string name="input_name">Nom</string>
     <string name="input_email">Email</string>

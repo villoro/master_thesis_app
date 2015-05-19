@@ -22,17 +22,23 @@ import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
+import com.villoro.expensor_beta.sections.add_or_update.ColorChangerInterface;
 
 /**
  * Created by Arnau on 09/05/2015.
  */
-public class ShowListActivity extends ActionBarActivity implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel {
+public class ShowListActivity extends ActionBarActivity implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel,
+        ColorChangerInterface {
 
     ListView listView;
 
     String typeCategory;
     Button b_expense, b_income;
     Uri uri;
+
+    ActionBar actionBar;
+    int colorGreen, colorRed;
+    String titleExpense, titleIncome;
 
     long listID;
 
@@ -41,16 +47,19 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_show_categories);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
+        colorGreen = getResources().getColor(R.color.green_income);
+        colorRed = getResources().getColor(R.color.red_expense);
+        titleIncome = getResources().getString(R.string.ab_income_categories);
+        titleExpense = getResources().getString(R.string.ab_expense_categories);
 
         Bundle bundle = getIntent().getExtras();
         typeCategory = bundle.getString(Tables.TYPE);
         if(typeCategory.equals(Tables.TYPE_EXPENSE)){
             uri = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+            restoreActionBar(titleExpense, colorRed);
         } else {
             uri = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
+            restoreActionBar(titleIncome, colorGreen);
         }
         Log.e("", "type= " + typeCategory);
 
@@ -109,6 +118,7 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
                     Log.e("", "typeTransaction= " + typeCategory);
                     Log.e("", uri.toString());
                     setList();
+                    restoreActionBar(titleExpense, colorRed);
                 }
             }
         });
@@ -124,6 +134,7 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
                     Log.e("", "typeTransaction= " + typeCategory);
                     Log.e("", uri.toString());
                     setList();
+                    restoreActionBar(titleIncome, colorGreen);
                 }
             }
         });
@@ -171,5 +182,13 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
         intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_CATEGORIES);
         intent.putExtra(Tables.TYPE, typeCategory);
         startActivity(intent);
+    }
+
+    public void restoreActionBar(String title, int color) {
+        actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(title);
+        actionBar.setBackgroundDrawable(new ColorDrawable(color));
     }
 }

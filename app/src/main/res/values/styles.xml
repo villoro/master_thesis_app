@@ -130,7 +130,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
         <item name="android:text">@string/expenses</item>
-        <item name="android:background">@drawable/button_red_background_selector</item>
+        <item name="android:background">@drawable/button_red_expense_selector</item>
         <item name="android:layout_weight">1</item>
     </style>
 
@@ -138,7 +138,23 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
         <item name="android:text">@string/incomes</item>
-        <item name="android:background">@drawable/button_green_background_selector</item>
+        <item name="android:background">@drawable/button_green_income_selector</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="button_summary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:text">@string/summary</item>
+        <item name="android:background">@drawable/button_orange_summary_selector</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="button_history">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/row_my_navigation_bars</item>
+        <item name="android:text">@string/history</item>
+        <item name="android:background">@drawable/button_purple_history_selector</item>
         <item name="android:layout_weight">1</item>
     </style>
 

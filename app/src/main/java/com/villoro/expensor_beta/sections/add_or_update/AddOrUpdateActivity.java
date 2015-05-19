@@ -15,7 +15,8 @@ import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 /**
  * Created by Arnau on 28/02/2015.
  */
-public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCancel.CommOkCancel {
+public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCancel.CommOkCancel,
+            ColorChangerInterface {
 
     public final static String WHICH_LIST = "whichList";
     public final static String ID_OBJECT = "idObject";
@@ -31,6 +32,10 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
     int whichCase;
     long ID;
 
+    ActionBar actionBar;
+    String actionBarTitle;
+    int colorDefault;
+
     AddOrUpdateTransactionSimpleFragment transactionSimpleFragment;
     AddOrUpdateGroupFragment groupFragment;
     AddOrUpdatePeopleFragment peopleFragment;
@@ -43,9 +48,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_update);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
+        colorDefault = getResources().getColor(R.color.expensor_blue);
 
         Bundle extras = getIntent().getExtras();
         whichCase = extras.getInt(WHICH_LIST);
@@ -58,16 +61,19 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         if (savedInstanceState == null){
             switch (whichCase){
                 case CASE_TRANSACTION_SIMPLE:
+                    actionBarTitle = getResources().getString(R.string.ab_add_expense);
                     transactionSimpleFragment = new AddOrUpdateTransactionSimpleFragment();
 
                     output = new Bundle();
                     output.putString(Tables.TYPE, extras.getString(Tables.TYPE));
                     transactionSimpleFragment.setArguments(output);
+                    transactionSimpleFragment.setCommunicator(this);
 
                     transactionSimpleFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionSimpleFragment).commit();
                     break;
                 case CASE_CATEGORIES:
+                    actionBarTitle = getResources().getString(R.string.ab_add_category);
                     categoriesFragment = new AddOrUpdateCategoriesFragment();
 
                     output = new Bundle();
@@ -78,21 +84,25 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
                     getSupportFragmentManager().beginTransaction().add(R.id.container, categoriesFragment).commit();
                     break;
                 case CASE_GROUP:
+                    actionBarTitle = getResources().getString(R.string.ab_add_group);
                     groupFragment = new AddOrUpdateGroupFragment();
                     groupFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, groupFragment).commit();
                     break;
                 case CASE_PEOPLE:
+                    actionBarTitle = getResources().getString(R.string.ab_add_person);
                     peopleFragment = new AddOrUpdatePeopleFragment();
                     peopleFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, peopleFragment).commit();
                     break;
                 case CASE_TRANSACTION_PERSONAL:
+                    actionBarTitle = getResources().getString(R.string.ab_add_debt);
                     transactionPersonalFragment = new AddOrUpdateTransactionPersonalFragment();
                     transactionPersonalFragment.initialize(ID);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, transactionPersonalFragment).commit();
                     break;
                 case CASE_TRANSACTION_GROUP:
+                    actionBarTitle = getResources().getString(R.string.ab_add_group_transaction);
                     transactionGroupFragment = new AddOrUpdateTransactionGroupFragment();
                     transactionGroupFragment.initialize(ID);
 
@@ -105,6 +115,7 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
             }
 
         }
+        restoreActionBar(actionBarTitle, colorDefault);
     }
 
     @Override
@@ -197,5 +208,14 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
 
             finish();
         }
+    }
+
+    @Override
+    public void restoreActionBar(String title, int color) {
+        actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(title);
+        actionBar.setBackgroundDrawable(new ColorDrawable(color));
     }
 }

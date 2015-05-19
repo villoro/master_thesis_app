@@ -49,6 +49,7 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
     TextView tv_month;
     RelativeLayout month_container;
 
+    CommColorChanger comm;
     int colorGreen, colorRed;
     Uri uri;
 
@@ -153,9 +154,11 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
         if(typeTransaction.equals(Tables.TYPE_INCOME)){
             uri = ExpensorContract.IncomeEntry.buildIncomeUri(date[0], date[1]);
             month_container.setBackgroundColor(colorGreen);
+            comm.setColor(colorGreen);
         } else {
             uri = ExpensorContract.ExpenseEntry.buildExpenseUri(date[0], date[1]);
             month_container.setBackgroundColor(colorRed);
+            comm.setColor(colorRed);
         }
 
         Cursor cursor = getActivity().getContentResolver().query(
@@ -265,5 +268,15 @@ public class HistoryFragmentSection extends Fragment implements DialogLongClickL
                 setList();
             }
         });
+    }
+
+    public void setCommunicator(CommColorChanger comm)
+    {
+        this.comm = comm;
+
+    }
+
+    public interface CommColorChanger {
+        public void setColor(int color);
     }
 }

@@ -3,8 +3,10 @@
     android:color="@color/red_expense_accent">
     <item>
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
-            <corners android:radius="1dp" />
             <solid android:color="@color/red_expense" />
+            <stroke
+                android:color="@color/red_expense_accent"
+                android:width="@dimen/button_radius" />
         </shape>
     </item>
 </ripple>

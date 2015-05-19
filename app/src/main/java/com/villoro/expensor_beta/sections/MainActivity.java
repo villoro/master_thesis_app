@@ -29,7 +29,8 @@ import java.lang.String;
 
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, DashboardFragmentSection.CommDashboard {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, DashboardFragmentSection.CommDashboard,
+                HistoryFragmentSection.CommColorChanger{
 
     /**
      * The fragment argument representing the section number for this
@@ -42,6 +43,8 @@ public class MainActivity extends ActionBarActivity
     public static final int SECTION_GROUPS = 3;
     public static final int SECTION_SETTINGS = 4;
 
+    ActionBar actionBar;
+    int colorActionBar, colorDefault;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -60,6 +63,8 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+        colorDefault = getResources().getColor(R.color.expensor_blue);
+        colorActionBar = colorDefault;
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -93,11 +98,11 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.expensor_blue)));
+        actionBar.setBackgroundDrawable(new ColorDrawable(colorActionBar));
     }
 
 
@@ -152,20 +157,24 @@ public class MainActivity extends ActionBarActivity
         //decide which fragment is needed
         switch (position){
             case SECTION_DASHBOARD:
+                setColor(colorDefault);
                 DashboardFragmentSection dashboardFragmentSection = DashboardFragmentSection.newDashboardFragment(position);
                 dashboardFragmentSection.setCommunicator(this);
                 fragmentManager.beginTransaction().
                         replace(R.id.container, dashboardFragmentSection).commit();
                 break;
             case SECTION_HISTORY:
-                fragmentManager.beginTransaction().
-                        replace(R.id.container, HistoryFragmentSection.newHistoryFragment(position, typeTransaction)).commit();
+                HistoryFragmentSection historyFragmentSection = HistoryFragmentSection.newHistoryFragment(position, typeTransaction);
+                historyFragmentSection.setCommunicator(this);
+                fragmentManager.beginTransaction().replace(R.id.container, historyFragmentSection).commit();
                 break;
             case SECTION_PEOPLE:
+                setColor(colorDefault);
                 fragmentManager.beginTransaction().
                         replace(R.id.container, PeopleFragmentSection.newPeopleFragment(position)).commit();
                 break;
             case SECTION_GROUPS:
+                setColor(colorDefault);
                 fragmentManager.beginTransaction().
                         replace(R.id.container, GroupFragmentSection.newGroupFragment(position)).commit();
                 break;
@@ -174,5 +183,12 @@ public class MainActivity extends ActionBarActivity
                         replace(R.id.container, DashboardFragment.newDashboardFragment(position)).commit();*/
                 break;
         }
+    }
+
+    @Override
+    public void setColor(int color) {
+        actionBar = getSupportActionBar();
+        colorActionBar = color;
+        actionBar.setBackgroundDrawable(new ColorDrawable(color));
     }
 }

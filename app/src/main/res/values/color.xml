@@ -21,6 +21,10 @@
     <item name="green_income_accent" type="color">#669900</item>
     <item name="red_expense" type="color">#FFFF4444</item>
     <item name="red_expense_accent" type="color">#CC0000</item>
+    <item name="orange_summary" type="color">#FFBB33</item>
+    <item name="orange_summary_accent" type="color">#FF8800</item>
+    <item name="purple_history" type="color">#AA66CC</item>
+    <item name="purple_history_accent" type="color">#9933CC</item>
 
 
 

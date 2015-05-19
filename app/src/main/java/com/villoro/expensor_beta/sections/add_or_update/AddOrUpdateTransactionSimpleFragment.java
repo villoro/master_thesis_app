@@ -53,6 +53,10 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     Button b_expense, b_income;
     Uri uriCategories, uriTransaction;
 
+    ColorChangerInterface comm;
+    int colorGreen, colorRed, actualColor;
+    String titleExpense, titleIncome, actualTitle;
+
     public AddOrUpdateTransactionSimpleFragment(){};
 
     @Override
@@ -61,15 +65,14 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         context = getActivity();
 
+        colorGreen = context.getResources().getColor(R.color.green_income);
+        colorRed = context.getResources().getColor(R.color.red_expense);
+        titleIncome = context.getResources().getString(R.string.ab_add_income);
+        titleExpense = context.getResources().getString(R.string.ab_add_expense);
+
         Bundle bundle = this.getArguments();
         typeTransaction = bundle.getString(Tables.TYPE);
-        if(typeTransaction.equals(Tables.TYPE_EXPENSE)){
-            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
-            uriTransaction = ExpensorContract.ExpenseEntry.EXPENSE_URI;
-        } else {
-            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
-            uriTransaction = ExpensorContract.IncomeEntry.INCOME_URI;
-        }
+
         Log.e("", "type= " + typeTransaction);
     }
 
@@ -121,6 +124,18 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
 
     private void setCategories(){
+        if(typeTransaction.equals(Tables.TYPE_EXPENSE)){
+            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
+            uriTransaction = ExpensorContract.ExpenseEntry.EXPENSE_URI;
+            actualColor = colorRed;
+            actualTitle = titleExpense;
+        } else {
+            uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
+            uriTransaction = ExpensorContract.IncomeEntry.INCOME_URI;
+            actualColor = colorGreen;
+            actualTitle = titleIncome;
+        }
+
         cursorCategories = context.getContentResolver().query(
                 uriCategories, null, null, null, null);
         categoryRadioAdapter = new CategoryRadioAdapter(context, cursorCategories, 0);
@@ -138,6 +153,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         {
             setValues();
         }
+
+        comm.restoreActionBar(actualTitle, actualColor);
     }
 
     private void bindIVCategories(View rv)
@@ -239,8 +256,6 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             public void onClick(View v) {
                 if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
                     typeTransaction = Tables.TYPE_EXPENSE;
-                    uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI;
-                    uriTransaction = ExpensorContract.ExpenseEntry.EXPENSE_URI;
                     setCategories();
                 }
             }
@@ -253,8 +268,6 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             public void onClick(View v) {
                 if(!typeTransaction.equals(Tables.TYPE_INCOME)){
                     typeTransaction = Tables.TYPE_INCOME;
-                    uriCategories = ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI;
-                    uriTransaction = ExpensorContract.IncomeEntry.INCOME_URI;
                     setCategories();
                 }
             }
@@ -265,5 +278,11 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         Intent intent = new Intent(getActivity(), ShowListActivity.class);
         intent.putExtra(Tables.TYPE, typeTransaction);
         startActivity(intent);
+    }
+
+    public void setCommunicator(ColorChangerInterface comm)
+    {
+        this.comm = comm;
+
     }
 }
