@@ -29,4 +29,6 @@
     <dimen name="bar_slim">8dp</dimen>
     <dimen name="bar_big">24dp</dimen>
     <dimen name="bar_big_margin">12dp</dimen>
+
+    <dimen name="button_radius">1dp</dimen>
 </resources>
