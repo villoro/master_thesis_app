@@ -62,7 +62,7 @@
         </activity>
 
         <activity
-            android:name=".sections.showList.ShowListActivity"
+            android:name=".sections.showList.ShowCategoriesActivity"
             android:label="@string/title_activity_empty">
 
             <meta-data

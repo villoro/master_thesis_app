@@ -48,6 +48,7 @@
 
                 <TextView
                     android:layout_marginTop="@dimen/margin_double"
+                    android:id="@+id/header_categories"
                     android:layout_toLeftOf="@+id/iv_edit_categories"
                     android:layout_marginRight="@dimen/margin_simple"
                     android:text="CATEGORY"
@@ -92,7 +93,7 @@
 
                 <TextView
                     style="@style/textView_input_title"
-                    android:text="@string/input_date" />
+                    android:text="@string/input_comments" />
 
                 <EditText
                     style="@style/editText_input"

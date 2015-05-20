@@ -27,7 +27,7 @@ import com.villoro.expensor_beta.sections.add_or_update.ColorChangerInterface;
 /**
  * Created by Arnau on 09/05/2015.
  */
-public class ShowListActivity extends ActionBarActivity implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel,
+public class ShowCategoriesActivity extends ActionBarActivity implements DialogLongClickList.CommGetChoice, DialogOkCancel.CommOkCancel,
         ColorChangerInterface {
 
     ListView listView;
@@ -106,6 +106,17 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         CategoryAdapter categoryAdapter = new CategoryAdapter(this, cursor, 0);
         listView.setAdapter(categoryAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), AddOrUpdateActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, id);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_CATEGORIES);
+                intent.putExtra(Tables.TYPE, typeCategory);
+                Log.d("ShowCategories", "id= " + id);
+                startActivity(intent);
+            }
+        });
     }
 
     public void setButtonExpense(){
@@ -153,7 +164,7 @@ public class ShowListActivity extends ActionBarActivity implements DialogLongCli
         {
             Intent intent = new Intent(this, AddOrUpdateActivity.class);
             intent.putExtra(AddOrUpdateActivity.ID_OBJECT, listID);
-            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_SIMPLE);
+            intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_CATEGORIES);
             intent.putExtra(Tables.TYPE, typeCategory);
 
             startActivity(intent);

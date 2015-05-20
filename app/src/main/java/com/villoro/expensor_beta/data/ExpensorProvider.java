@@ -223,7 +223,7 @@ public class ExpensorProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_GROUPS,
                         projection,
-                        selection,
+                        ExpensorQueries.addNoDeletedIfNeeded(selection),
                         selectionArgs,
                         null,
                         null,

@@ -152,11 +152,4 @@ public class UtilitiesDates {
         return sb.toString();
     }
 
-
-
-    //TODO improve that
-    public static String formatDoubleToSQLite(String amount)
-    {
-        return amount.replace(",", ".");
-    }
 }

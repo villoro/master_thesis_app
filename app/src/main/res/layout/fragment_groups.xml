@@ -24,7 +24,8 @@
 
     <TextView
         android:text="@string/header_members"
-        style="@style/sectionHeader" />
+        android:id="@+id/header_people_in_group"
+        style="@style/sectionHeader.ability_to_show_error" />
 
     <ListView
     android:layout_width="wrap_content"

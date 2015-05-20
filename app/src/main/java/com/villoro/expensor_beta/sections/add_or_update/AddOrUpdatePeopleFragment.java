@@ -51,18 +51,24 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
     }
 
     @Override
-    public void add() {
+    public boolean add() {
         name = e_name.getText().toString().trim();
         email = e_email.getText().toString().trim();
 
-        //TODO check if values are possible
-        ContentValues values = new ContentValues();
-        values.put(Tables.NAME, name);
-        values.put(Tables.EMAIL, email);
-        if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.PeopleEntry.PEOPLE_URI, values, Tables.ID + " = '" + currentID + "'", null);
+        if(valuesAreCorrect()) {
+            ContentValues values = new ContentValues();
+            values.put(Tables.NAME, name);
+            if(email != null && email.length() > 0) {
+                values.put(Tables.EMAIL, email);
+            }
+            if (currentID > 0) {
+                context.getContentResolver().update(ExpensorContract.PeopleEntry.PEOPLE_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            } else {
+                context.getContentResolver().insert(ExpensorContract.PeopleEntry.PEOPLE_URI, values);
+            }
+            return true;
         } else {
-            context.getContentResolver().insert(ExpensorContract.PeopleEntry.PEOPLE_URI, values);
+            return false;
         }
     }
 
@@ -92,5 +98,18 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
     public void delete() {
         context.getContentResolver().delete(ExpensorContract.PeopleEntry.PEOPLE_URI,
                 Tables.ID + " = '" + currentID + "'", null);
+    }
+
+    @Override
+    public boolean valuesAreCorrect() {
+        boolean output = true;
+        if(name.length() == 0){
+            e_name.setError(getString(R.string.error_name));
+            output = false;
+        }
+        if(email.length() == 0){
+            e_email.setError(getString(R.string.error_email));
+        }
+        return output;
     }
 }

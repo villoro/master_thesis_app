@@ -94,15 +94,27 @@
     <string name="hint_email">ex: dany_targaryen@gmail.com</string>
     <string name="hint_comments">Comentaris</string>
     <string name="hint_amount">Quantitat</string>
-    <string name="hint_who_spent">Quantitat</string>
-    <string name="hint_who_paid">Quantitat</string>
-    <string name="hint_who_gives">Quantitat</string>
-    <string name="hint_who_receives">Quantitat</string>
+    <string name="hint_who_paid">Qui ha pagat?</string>
+    <string name="hint_who_spent">Per a qui ho ha pagat?</string>
+    <string name="hint_who_gives">Qui dona diners?</string>
+    <string name="hint_who_receives">A qui li dona?</string>
     <string name="hint_write_to_add_a_member">Escriu fer afegir un nou membre</string>
 
     <!-- Navigation Drawer -->
     <string name="navigation_drawer_open">Obrir panell de navegació lateral</string>
     <string name="navigation_drawer_close">Tancar panell de navegació lateral</string>
+
+    <!-- Hints -->
+    <string name="error_name">"Has d'escriure un nom"</string>
+    <string name="error_email">"Has de posar un email"</string>
+    <string name="error_amount">Has de posar una quantitat, no pot ser 0</string>
+    <string name="error_category">Has de seleccionar una categoria</string>
+    <string name="error_people">Has de posar un amic</string>
+    <string name="error_not_me">En un deute has de sortir tu</string>
+    <string name="error_people_in_group">Un grup ha de tenir com a mínim 2 membres</string>
+    <string name="error_paid">"Algú ha d'haver pagat"</string>
+    <string name="error_spent">"No pot ser que s'hagin pagat menys diners dels que s'han gastat"</string>
+    <string name="error_not_spent">"No es pot repartir si ningú ha gastat"</string>
 
     <string-array name="options_long_clik_list">
         <item>Editar</item>

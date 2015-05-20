@@ -5,7 +5,8 @@ package com.villoro.expensor_beta.sections.add_or_update;
  */
 public interface AddOrUpdateInterface {
 
-    public void add();
+    public boolean add();
+    public boolean valuesAreCorrect();
     public void initialize(long whichID);
     public void setValues();
     public void delete();

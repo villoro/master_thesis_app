@@ -46,6 +46,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     double totalPaid, totalSpent;
 
     EditText e_comments;
+    TextView header_paid, header_spent;
 
     Button b_date;
     int[] date;
@@ -77,6 +78,9 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
         lv_paid = (ListView) rv.findViewById(R.id.lv_paid);
         lv_spent = (ListView) rv.findViewById(R.id.lv_spent);
+
+        header_paid = (TextView) rv.findViewById(R.id.header_paid);
+        header_spent = (TextView) rv.findViewById(R.id.header_spent);
 
         Cursor cursorPeople = context.getContentResolver().query(
                 ExpensorContract.PeopleInGroupEntry.buildUriFromGroupId(groupID), null, null, null, null);
@@ -111,39 +115,45 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     }
 
     @Override
-    public void add() {
-        String comments = e_comments.getText().toString().trim();
+    public boolean add() {
+        if(valuesAreCorrect()) {
+            String comments = e_comments.getText().toString().trim();
 
-        ContentValues transactionValues = new ContentValues();
+            ContentValues transactionValues = new ContentValues();
 
-        transactionValues.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
-        transactionValues.put(Tables.COMMENTS, comments);
-        transactionValues.put(Tables.AMOUNT, totalPaid);
-        transactionValues.put(Tables.GROUP_ID, groupID);
-        transactionValues.put(Tables.TYPE, Tables.TYPE_TRANSACTION); //TODO allow gives
+            transactionValues.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
+            transactionValues.put(Tables.COMMENTS, comments);
+            transactionValues.put(Tables.AMOUNT, totalPaid);
+            transactionValues.put(Tables.GROUP_ID, groupID);
+            transactionValues.put(Tables.TYPE, Tables.TYPE_TRANSACTION); //TODO allow gives
 
-        if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.CONTENT_URI
-                    , transactionValues, Tables.ID + " = '" + currentID + "'", null);
+            if (currentID > 0) {
+                context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.CONTENT_URI
+                        , transactionValues, Tables.ID + " = '" + currentID + "'", null);
+            } else {
+                Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.CONTENT_URI, transactionValues);
+                currentID = UtilitiesNumbers.getIdFromUri(uri);
+            }
+
+            long[] ids = groupTransactionPaidAdapter.ids;
+
+            for (int i = 0; i < paid.length; i++) {
+                ContentValues whoValues = new ContentValues();
+
+                whoValues.put(Tables.TRANSACTION_ID, currentID);
+                whoValues.put(Tables.PEOPLE_ID, ids[i]);
+                whoValues.put(Tables.PAID, paid[i]);
+                whoValues.put(Tables.SPENT, spent[i]);
+
+                context.getContentResolver().insert(ExpensorContract.WhoPaidSpentEntry.CONTENT_URI, whoValues);
+            }
+
+            PLEM_Utilities.saveLastAdded(context);
+
+            return true;
         } else {
-            Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.CONTENT_URI, transactionValues);
-            currentID = UtilitiesNumbers.getIdFromUri(uri);
+            return false;
         }
-
-        long[] ids = groupTransactionPaidAdapter.ids;
-
-        for (int i = 0; i < paid.length ; i++){
-            ContentValues whoValues = new ContentValues();
-
-            whoValues.put(Tables.TRANSACTION_ID, currentID);
-            whoValues.put(Tables.PEOPLE_ID, ids[i]);
-            whoValues.put(Tables.PAID, paid[i]);
-            whoValues.put(Tables.SPENT, spent[i]);
-
-            context.getContentResolver().insert(ExpensorContract.WhoPaidSpentEntry.CONTENT_URI, whoValues);
-        }
-
-        PLEM_Utilities.saveLastAdded(context);
     }
 
     @Override
@@ -231,6 +241,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     public void divideSpent(int position) {
         isDividing = true;
         if(totalPaid - totalSpent > UtilitiesNumbers.EPSILON) {
+            header_paid.setError(null);
+            header_spent.setError(null);
             int totalWeight = 0;
             int[] weights = new int[lv_spent.getChildCount()];
             for (int i = 0; i < lv_spent.getChildCount(); i++) {
@@ -260,9 +272,10 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
                 et_amount.setText(Double.toString(UtilitiesNumbers.round(toPay, 2)));
                 spent[position] = toPay; //this is what it would be saved
             }
-        } else if (totalPaid > 0){
-            Toast toast = Toast.makeText(context, "No es pot repartir, ja hi ha més diners gastats que pagats", Toast.LENGTH_LONG);
-            toast.show();
+        } else {
+            if (totalPaid > UtilitiesNumbers.EPSILON) {
+                header_spent.setError(getString(R.string.error_spent));
+            }
         }
         isDividing = false;
     }
@@ -279,5 +292,24 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
         date[2] = day;
 
         b_date.setText(UtilitiesDates.getFancyDate(date));
+    }
+
+    @Override
+    public boolean valuesAreCorrect() {
+        boolean output = true;
+        if(totalPaid < UtilitiesNumbers.EPSILON){
+            header_paid.setError(getString(R.string.error_paid));
+            output = false;
+        }
+        if(totalPaid - totalSpent < - UtilitiesNumbers.EPSILON){
+            header_spent.setError(getString(R.string.error_spent));
+            output = false;
+        } else {
+            if (totalSpent < UtilitiesNumbers.EPSILON) {
+                header_spent.setError(getString(R.string.error_not_spent));
+                output = false;
+            }
+        }
+        return output;
     }
 }

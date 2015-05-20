@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.Utilities.UtilitiesDates;
@@ -25,7 +26,7 @@ import com.villoro.expensor_beta.adapters.CategoryRadioAdapter;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogDatePicker;
-import com.villoro.expensor_beta.sections.showList.ShowListActivity;
+import com.villoro.expensor_beta.sections.showList.ShowCategoriesActivity;
 
 /**
  * Created by Arnau on 01/03/2015.
@@ -35,6 +36,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     Context context;
     long currentID;
     Button b_date;
+
+    TextView header_categories;
 
     EditText e_amount, e_comments;
     ListView lv_categories;
@@ -46,8 +49,9 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     Cursor cursorCategories;
     int[] date;
 
-    String comments;
+    String comments, stringAmount;
     double amount;
+    long categoryID;
 
     String typeTransaction;
     Button b_expense, b_income;
@@ -94,6 +98,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         e_amount = (EditText) rv.findViewById(R.id.et_amount);
         lv_categories = (ListView) rv.findViewById(R.id.lv_categories);
 
+        header_categories = (TextView) rv.findViewById(R.id.header_categories);
+
         b_expense = (Button) rv.findViewById(R.id.b_expense);
         b_income = (Button) rv.findViewById(R.id.b_income);
         setButtonExpense();
@@ -115,7 +121,6 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         b_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 dialogDate.setPreviousDate(date);
                 dialogDate.show(getFragmentManager(), "datePicker");
             }
@@ -193,26 +198,35 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     }
 
     @Override
-    public void add() {
-        comments = e_comments.getText().toString().trim();
-        amount = Double.parseDouble(UtilitiesDates.formatDoubleToSQLite(e_amount.getText().toString().trim()));
+    public boolean add() {
 
-        String from = "";
+        comments = e_comments.getText().toString().trim();
+        stringAmount = e_amount.getText().toString().trim();
+        if(stringAmount != null && stringAmount.length() > 0) {
+            amount = Double.parseDouble(stringAmount);
+        }
+
+        //TODO String from = "";
 
         long categoryID = categoryRadioAdapter.getIdSelected();
 
-        //TODO check if values are possible
-        ContentValues values = new ContentValues();
-        values.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
-        values.put(Tables.COMMENTS, comments);
-        values.put(Tables.AMOUNT, amount);
-        values.put(Tables.CATEGORY_ID, categoryID);
+        if(valuesAreCorrect()) {
+            ContentValues values = new ContentValues();
+            values.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
+            values.put(Tables.COMMENTS, comments);
+            values.put(Tables.AMOUNT, amount);
+            values.put(Tables.CATEGORY_ID, categoryID);
 
-        Log.d("", "current id= " + currentID);
-        if (currentID > 0){
-            context.getContentResolver().update(uriTransaction, values, Tables.ID + " = '" + currentID + "'", null);
+            Log.d("", "current id= " + currentID);
+            if (currentID > 0) {
+                context.getContentResolver().update(uriTransaction, values, Tables.ID + " = '" + currentID + "'", null);
+            } else {
+                context.getContentResolver().insert(uriTransaction, values);
+            }
+
+            return true;
         } else {
-            context.getContentResolver().insert(uriTransaction, values);
+            return false;
         }
     }
 
@@ -224,7 +238,8 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
 
         date = UtilitiesDates.dateFromString(tempCursor.getString(tempCursor.getColumnIndex(Tables.DATE)));
         b_date.setText( UtilitiesDates.getFancyDate(date) );
-        long categoryID = tempCursor.getLong(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
+        categoryID = tempCursor.getLong(tempCursor.getColumnIndex(Tables.CATEGORY_ID));
+
         if(cursorCategories.moveToFirst()){
             do{
                 long tempId = cursorCategories.getLong(cursorCategories.getColumnIndex(Tables.ID));
@@ -275,7 +290,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     }
 
     public void showCategories(){
-        Intent intent = new Intent(getActivity(), ShowListActivity.class);
+        Intent intent = new Intent(getActivity(), ShowCategoriesActivity.class);
         intent.putExtra(Tables.TYPE, typeTransaction);
         startActivity(intent);
     }
@@ -283,6 +298,20 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     public void setCommunicator(ColorChangerInterface comm)
     {
         this.comm = comm;
+    }
 
+    @Override
+    public boolean valuesAreCorrect() {
+        boolean output = true;
+        if(stringAmount == null || stringAmount.length() == 0) {
+            e_amount.setError(getString(R.string.error_amount));
+            output = false;
+        } else {
+            if (amount < UtilitiesNumbers.EPSILON) {
+                e_amount.setError(getString(R.string.error_amount));
+                output = false;
+            }
+        }
+        return output;
     }
 }

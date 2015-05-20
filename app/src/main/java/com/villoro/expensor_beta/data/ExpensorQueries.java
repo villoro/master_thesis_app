@@ -188,7 +188,22 @@ public class ExpensorQueries {
             sb.append(where).append(AND);
         }
         sb.append(Tables.TYPE).append(EQUAL).append(APOSTROPHE).append(type).append(APOSTROPHE);
+        sb.append(AND + whereNoDeleted());
 
+        return sb.toString();
+    }
+
+    public static final String addNoDeletedIfNeeded(String selection){
+        StringBuilder sb = new StringBuilder();
+
+        if(selection != null){
+            sb.append(selection).append(AND);
+            if(!selection.contains(whereNoDeleted())) {
+                sb.append(whereNoDeleted());
+            }
+        } else {
+            sb.append(whereNoDeleted());
+        }
         return sb.toString();
     }
 

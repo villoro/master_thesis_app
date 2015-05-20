@@ -8,7 +8,8 @@
 
         <TextView
             android:text="@string/header_paid"
-            style="@style/sectionHeader" />
+            android:id="@+id/header_paid"
+            style="@style/sectionHeader.ability_to_show_error" />
 
         <ListView
             android:layout_width="match_parent"
@@ -17,7 +18,8 @@
 
         <TextView
             android:text="@string/header_spent"
-            style="@style/sectionHeader" />
+            android:id="@+id/header_spent"
+            style="@style/sectionHeader.ability_to_show_error" />
 
         <ListView
             android:layout_width="match_parent"

@@ -63,6 +63,12 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="sectionHeader.ability_to_show_error">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
     <style name="divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/divider</item>

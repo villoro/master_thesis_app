@@ -46,6 +46,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
     AutoCompleteTextView ac_from, ac_to;
     long fromId, toId, myId;
     double amount;
+    String stringAmount;
 
     int[] date;
     Button b_date;
@@ -176,29 +177,39 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
     }
 
     @Override
-    public void add() {
-        Log.d("AddTransactionPeople", "amount= " +e_amount.getText().toString().trim());
-        amount = Double.parseDouble(UtilitiesDates.formatDoubleToSQLite(e_amount.getText().toString().trim()));
+    public boolean add() {
+
+        Log.d("AddTransactionPeople", "amount= " + e_amount.getText().toString().trim());
+        stringAmount = e_amount.getText().toString().trim();
+        if(stringAmount != null && stringAmount.length() > 0) {
+            Log.e("addTransPers", "stingAmount= " + stringAmount + ", strAmount length = " + stringAmount.length());
+            amount = Double.parseDouble(stringAmount);
+        }
 
         Log.d("AddTransactionPeople", "from= " + fromId + ", to= " + toId + ", amount= " + amount);
 
-        //TODO check if values are possible
-        ContentValues values = new ContentValues();
-        if(fromId == myId){
-            values.put(Tables.PEOPLE_ID, toId);
-        } else {
-            amount = -amount;
-            values.put(Tables.PEOPLE_ID, fromId);
-        }
+        if(valuesAreCorrect()) {
+            ContentValues values = new ContentValues();
+            if (fromId == myId) {
+                values.put(Tables.PEOPLE_ID, toId);
+            } else {
+                amount = -amount;
+                values.put(Tables.PEOPLE_ID, fromId);
+            }
 
-        values.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
-        values.put(Tables.COMMENTS, e_comments.getText().toString().trim());
-        values.put(Tables.AMOUNT, amount);
-        if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI,
-                    values, Tables.ID + " = '" + currentID + "'", null);
+            values.put(Tables.DATE, UtilitiesDates.completeDateToString(date));
+            values.put(Tables.COMMENTS, e_comments.getText().toString().trim());
+            values.put(Tables.AMOUNT, amount);
+            if (currentID > 0) {
+                context.getContentResolver().update(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI,
+                        values, Tables.ID + " = '" + currentID + "'", null);
+            } else {
+                context.getContentResolver().insert(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI, values);
+            }
+
+            return true;
         } else {
-            context.getContentResolver().insert(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI, values);
+            return false;
         }
     }
 
@@ -232,5 +243,32 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
         date[2] = day;
 
         b_date.setText(UtilitiesDates.getFancyDate(date));
+    }
+
+    @Override
+    public boolean valuesAreCorrect() {
+        boolean output = true;
+        if(stringAmount == null || stringAmount.length() == 0) {
+            e_amount.setError(getString(R.string.error_amount));
+            output = false;
+        } else {
+            if (amount < UtilitiesNumbers.EPSILON) {
+                e_amount.setError(getString(R.string.error_amount));
+                output = false;
+            }
+        }
+        if(fromId == 0){
+            ac_from.setError(getString(R.string.error_people));
+            output = false;
+        }
+        if(toId == 0){
+            ac_to.setError(getString(R.string.error_people));
+            output = false;
+        }
+        if(fromId != myId && toId != myId && toId + fromId > 0){
+            ac_from.setError(getString(R.string.error_not_me));
+            ac_to.setError(getString(R.string.error_not_me));
+        }
+        return output;
     }
 }

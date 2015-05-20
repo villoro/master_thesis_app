@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.villoro.expensor_beta.R;
@@ -27,7 +26,6 @@ import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.dialogs.DialogLongClickList;
 import com.villoro.expensor_beta.dialogs.DialogOkCancel;
 import com.villoro.expensor_beta.sections.details.ShowDetailsActivity;
-import com.villoro.expensor_beta.sections.showList.ShowListActivity;
 
 /**
  * Created by Arnau on 28/02/2015.

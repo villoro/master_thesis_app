@@ -141,29 +141,31 @@ public class AddOrUpdateActivity extends ActionBarActivity implements DialogOkCa
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        boolean added = false;
         if (id == R.id.action_ok) {
             switch (whichCase){
                 case CASE_TRANSACTION_SIMPLE:
-                    transactionSimpleFragment.add();
+                    added = transactionSimpleFragment.add();
                     break;
                 case CASE_CATEGORIES:
-                    categoriesFragment.add();
+                    added = categoriesFragment.add();
                     break;
                 case CASE_GROUP:
-                    groupFragment.add();
+                    added = groupFragment.add();
                     break;
                 case CASE_PEOPLE:
-                    peopleFragment.add();
+                    added = peopleFragment.add();
                     break;
                 case CASE_TRANSACTION_PERSONAL:
-                    transactionPersonalFragment.add();
+                    added = transactionPersonalFragment.add();
                     break;
                 case CASE_TRANSACTION_GROUP:
-                    transactionGroupFragment.add();
+                    added = transactionGroupFragment.add();
                     break;
             }
-
-            finish();
+            if (added) {
+                finish();
+            }
             return true;
         }
         if (id == R.id.action_cancel) {

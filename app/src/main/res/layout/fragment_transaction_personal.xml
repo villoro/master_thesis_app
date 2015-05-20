@@ -27,9 +27,7 @@
             android:text="@string/input_from"/>
 
         <AutoCompleteTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            style="@style/editText_input"
             android:id="@+id/et_from"
             android:hint="@string/hint_who_gives"
             android:inputType="textPersonName" />

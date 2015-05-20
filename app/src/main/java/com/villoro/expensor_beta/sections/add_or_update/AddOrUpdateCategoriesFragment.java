@@ -20,9 +20,7 @@ import com.villoro.expensor_beta.R;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -93,22 +91,29 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
     }
 
     @Override
-    public void add() {
+    public boolean add() {
+
         name = et_name.getText().toString().trim();
-        if(name.length() > 1) {
+        if (name.length() > 1) {
             name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
         }
-        color = colors.get( sp_color.getSelectedItemPosition() );
-        ContentValues values = new ContentValues();
-        values.put(Tables.NAME, name);
-        values.put(Tables.COLOR, color);
+        color = colors.get(sp_color.getSelectedItemPosition());
 
-        Log.d("addCategory", "type= " + typeCategory);
+        if(valuesAreCorrect()) {
+            ContentValues values = new ContentValues();
+            values.put(Tables.NAME, name);
+            values.put(Tables.COLOR, color);
 
-        if (currentID > 0){
-            context.getContentResolver().update(uriCategories, values, Tables.ID + " = '" + currentID + "'", null);
+            Log.d("addCategory", "type= " + typeCategory);
+
+            if (currentID > 0) {
+                context.getContentResolver().update(uriCategories, values, Tables.ID + " = '" + currentID + "'", null);
+            } else {
+                context.getContentResolver().insert(uriCategories, values);
+            }
+            return true;
         } else {
-            context.getContentResolver().insert(uriCategories, values);
+            return false;
         }
     }
 
@@ -122,13 +127,16 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         {
             this.currentID = 0;
         }
+        Log.d("AddCategories", "id= " + whichID);
     }
 
     @Override
     public void setValues() {
         Cursor tempCursor = context.getContentResolver().query(
-                ExpensorContract.GroupEntry.CONTENT_URI, null, Tables.ID + " = '" + currentID + "'", null, null);
+                uriCategories, null, Tables.ID + " = '" + currentID + "'", null, null);
         tempCursor.moveToFirst();
+
+        Log.d("AddCategories", "cursor count= " + tempCursor.getCount());
 
         et_name.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
         int actualColor = tempCursor.getInt(tempCursor.getColumnIndex(Tables.COLOR));
@@ -207,4 +215,14 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
         }
     }
 
+    @Override
+    public boolean valuesAreCorrect() {
+        Log.d("AddCategories", "name length= " + name.length());
+        if(name.length() == 0){
+            et_name.setError(getString(R.string.error_name));
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

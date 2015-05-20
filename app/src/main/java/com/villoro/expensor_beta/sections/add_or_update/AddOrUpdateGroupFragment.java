@@ -47,6 +47,7 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
 
     PeopleInGroupAdapter peopleInGroupAdapter;
     ListView listView;
+    TextView header_pig;
 
     Uri returnGroupUri;
 
@@ -62,7 +63,7 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         names = new ArrayList<>();
         ids = new ArrayList<>();
 
-        names.add("me");
+        names.add(getString(R.string.me));
         ids.add(UtilitiesNumbers.getMyId(context));
     }
 
@@ -73,6 +74,9 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         e_name = (EditText) rv.findViewById(R.id.et_groups_name);
         listView = (ListView) rv.findViewById(R.id.lv);
         autoComplete = (AutoCompleteTextView) rv.findViewById(R.id.ac_name);
+
+        header_pig = (TextView) rv.findViewById(R.id.header_people_in_group);
+
         setList();
         if (currentID >0)
         {
@@ -131,23 +135,30 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
     }
 
     @Override
-    public void add() {
+    public boolean add() {
         name = e_name.getText().toString().trim();
-
-        //TODO check if values are possible
-        ContentValues values = new ContentValues();
-        values.put(Tables.NAME, name);
-        if (currentID > 0){
-            context.getContentResolver().update(ExpensorContract.GroupEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
-        } else {
-            Uri uri = context.getContentResolver().insert(ExpensorContract.GroupEntry.CONTENT_URI, values);
-            currentID = UtilitiesNumbers.getIdFromUri(uri);
+        if (name.length() > 1) {
+            name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
         }
-        for (long thisId : ids){
-            ContentValues pigValues = new ContentValues();
-            pigValues.put(Tables.GROUP_ID, currentID);
-            pigValues.put(Tables.PEOPLE_ID, thisId);
-            context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.PEOPLE_IN_GROUP, pigValues);
+
+        if(valuesAreCorrect()) {
+            ContentValues values = new ContentValues();
+            values.put(Tables.NAME, name);
+            if (currentID > 0) {
+                context.getContentResolver().update(ExpensorContract.GroupEntry.CONTENT_URI, values, Tables.ID + " = '" + currentID + "'", null);
+            } else {
+                Uri uri = context.getContentResolver().insert(ExpensorContract.GroupEntry.CONTENT_URI, values);
+                currentID = UtilitiesNumbers.getIdFromUri(uri);
+            }
+            for (long thisId : ids) {
+                ContentValues pigValues = new ContentValues();
+                pigValues.put(Tables.GROUP_ID, currentID);
+                pigValues.put(Tables.PEOPLE_ID, thisId);
+                context.getContentResolver().insert(ExpensorContract.PeopleInGroupEntry.PEOPLE_IN_GROUP, pigValues);
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -189,5 +200,19 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         this.names = names;
         this.ids = ids;
         setList();
+    }
+
+    @Override
+    public boolean valuesAreCorrect() {
+        boolean output = true;
+        if(name.length() == 0){
+            e_name.setError(getString(R.string.error_name));
+            output = false;
+        }
+        if(ids.size() < 2){
+            header_pig.setError(getString(R.string.error_people_in_group));
+            output = false;
+        }
+        return output;
     }
 }
