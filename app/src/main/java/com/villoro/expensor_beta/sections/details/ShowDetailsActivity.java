@@ -14,10 +14,14 @@ import com.villoro.expensor_beta.sections.add_or_update.AddOrUpdateActivity;
 /**
  * Created by Arnau on 01/03/2015.
  */
-public class ShowDetailsActivity extends ActionBarActivity {
+public class ShowDetailsActivity extends ActionBarActivity implements DetailsInterfaces.CommDetailsGroup,
+            DetailsInterfaces.CommSetName{
 
     public final static String WHICH_LIST = "whichList";
     public final static String ID_OBJECT = "idObject";
+
+    public final static int SECTION_HISTORY = 1;
+    public final static int SECTION_SUMMARY = 2;
 
     public final static int CASE_PEOPLE = 2;
     public final static int CASE_GROUP = 3;
@@ -25,7 +29,8 @@ public class ShowDetailsActivity extends ActionBarActivity {
     int whichCase;
     long ID;
 
-    DetailsGroupSummaryFragment detailsGroupFragment;
+    DetailsGroupSummaryFragment detailsGroupSummaryFragment;
+    DetailsGroupHistoryFragment detailsGroupHistoryFragment;
     DetailsPeopleFragment detailsPeopleFragment;
 
 
@@ -46,13 +51,17 @@ public class ShowDetailsActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             switch (whichCase) {
                 case CASE_GROUP:
-                    detailsGroupFragment = new DetailsGroupSummaryFragment();
-                    detailsGroupFragment.initialize(ID);
-                    getSupportFragmentManager().beginTransaction().add(R.id.container, detailsGroupFragment).commit();
+                    detailsGroupSummaryFragment = new DetailsGroupSummaryFragment();
+                    detailsGroupSummaryFragment.initialize(ID, this, this);
+
+                    detailsGroupHistoryFragment = new DetailsGroupHistoryFragment();
+                    detailsGroupHistoryFragment.initialize(ID, this, this);
+
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, detailsGroupSummaryFragment).commit();
                     break;
                 case CASE_PEOPLE:
                     detailsPeopleFragment = new DetailsPeopleFragment();
-                    detailsPeopleFragment.initialize(ID);
+                    detailsPeopleFragment.initialize(ID, this);
                     getSupportFragmentManager().beginTransaction().add(R.id.container, detailsPeopleFragment).commit();
                     break;
             }
@@ -84,5 +93,20 @@ public class ShowDetailsActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void changeToSection(int section) {
+        if(SECTION_SUMMARY == section) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, detailsGroupSummaryFragment).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, detailsGroupHistoryFragment).commit();
+        }
+    }
+
+    @Override
+    public void changeTitle(String name) {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(name);
     }
 }

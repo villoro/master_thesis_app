@@ -9,32 +9,28 @@ import android.support.v4.app.DialogFragment;
 import com.villoro.expensor_beta.R;
 
 /**
- * Created by Arnau on 28/02/2015.
+ * Created by Arnau on 20/05/2015.
  */
-public class DialogOkCancel extends DialogFragment{
+public class DialogAcceptSolution extends DialogFragment {
 
-    public static int CASE_FROM_LONG_CLICK = 1;
-    public static int CASE_DIRECT = 2;
-
-    CommOkCancel communicator;
-    int whichCase;
+    CommAcceptSolution communicator;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setTitle(getString(R.string.dialog_delete));
-        builder.setMessage(getString(R.string.dialog_are_you_sure_delete));
+        builder.setTitle(getString(R.string.dialog_settle));
+        builder.setMessage(getString(R.string.dialog_are_you_sure_return));
         builder.setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                communicator.ifOkDo(false, whichCase);
+                communicator.ifOkDo(false);
             }
         });
         builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                communicator.ifOkDo(true, whichCase);
+                communicator.ifOkDo(true);
             }
         });
 
@@ -42,14 +38,13 @@ public class DialogOkCancel extends DialogFragment{
         return dialog;
     }
 
-    public void setCommunicator(CommOkCancel communicator, int whichCase){
+    public void setCommunicator(CommAcceptSolution communicator){
         this.communicator = communicator;
-        this.whichCase = whichCase;
     }
 
-    public interface CommOkCancel
+    public interface CommAcceptSolution
     {
-        public void ifOkDo(boolean ok, int whichCase);
+        public void ifOkDo(boolean ok);
     }
 
 }

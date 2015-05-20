@@ -346,6 +346,24 @@ public class ExpensorQueries {
         return sb.toString();
     }
 
+    public static final String queryPeopleWhoParticipatesInGroupTransaction(long transactionId, String whichCase){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(SELECT + Tables.NAME + FROM);
+        sb.append(PARENTHESIS_OPEN + SELECT + Tables.PEOPLE_ID + FROM + Tables.TABLENAME_WHO_PAID_SPENT);
+        sb.append(JOIN + Tables.TABLENAME_TRANSACTIONS_GROUP);
+        sb.append(ON + Tables.TABLENAME_WHO_PAID_SPENT + "." + Tables.TRANSACTION_ID);
+        sb.append(EQUAL + Tables.TABLENAME_TRANSACTIONS_GROUP + "." + Tables.ID);
+        sb.append(WHERE + Tables.TABLENAME_TRANSACTIONS_GROUP + "." + Tables.ID + EQUAL + transactionId);
+        sb.append(AND + Tables.TABLENAME_WHO_PAID_SPENT + "." + whichCase + GREATER_THAN + 0);
+        sb.append(AND + Tables.TABLENAME_WHO_PAID_SPENT + "." + whereNoDeleted());
+        sb.append(PARENTHESIS_CLOSE + AS + AUX);
+        sb.append(JOIN + Tables.TABLENAME_PEOPLE);
+        sb.append(ON + AUX + "." + Tables.PEOPLE_ID + EQUAL + Tables.TABLENAME_PEOPLE + "." + Tables.ID);
+
+        return sb.toString();
+    }
+
     public static final String queryHowToSettle(long groupId){
         StringBuilder sb = new StringBuilder();
 

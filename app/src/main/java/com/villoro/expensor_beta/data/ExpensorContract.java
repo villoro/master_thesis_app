@@ -293,7 +293,7 @@ public class ExpensorContract {
     public static final class TransactionGroupEntry {
         private static final String tableName = Tables.TABLENAME_TRANSACTIONS_GROUP;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri GROUP_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -302,14 +302,22 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildTransactionGroupUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(GROUP_URI, id);
+        }
+
+        public static Uri buildUriFromGroupId(long id) {
+            return GROUP_URI.buildUpon().appendPath(""+id).build();
+        }
+
+        public static long getGroupId(Uri uri){
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 
     public static final class WhoPaidSpentEntry {
         private static final String tableName = Tables.TABLENAME_WHO_PAID_SPENT;
 
-        public static final Uri CONTENT_URI =
+        public static final Uri WHO_PAID_SPENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -318,7 +326,19 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildWhoPaidSpentUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+            return ContentUris.withAppendedId(WHO_PAID_SPENT_URI, id);
+        }
+
+        public static Uri buildUriFromTransactionId(long id, String whichCase) {
+            return WHO_PAID_SPENT_URI.buildUpon().appendPath(""+id).appendPath(whichCase).build();
+        }
+
+        public static long getTransactionId(Uri uri){
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
+
+        public static String getWhichCase(Uri uri){
+            return uri.getPathSegments().get(2);
         }
     }
 

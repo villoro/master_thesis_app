@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.villoro.expensor_beta.PLEM.PLEM_Utilities;
 import com.villoro.expensor_beta.R;
@@ -43,7 +42,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
     double[] paid, spentLocked, spent;
     boolean[] locked;
-    double totalPaid, totalSpent;
+    double totalPaid, totalFixedSpent;
 
     EditText e_comments;
     TextView header_paid, header_spent;
@@ -104,7 +103,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
         spent = new double[length];
         locked = new boolean[length];
         totalPaid = 0;
-        totalSpent = 0;
+        totalFixedSpent = 0;
 
         if (currentID >0)
         {
@@ -128,10 +127,10 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
             transactionValues.put(Tables.TYPE, Tables.TYPE_TRANSACTION); //TODO allow gives
 
             if (currentID > 0) {
-                context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.CONTENT_URI
+                context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.GROUP_URI
                         , transactionValues, Tables.ID + " = '" + currentID + "'", null);
             } else {
-                Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.CONTENT_URI, transactionValues);
+                Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.GROUP_URI, transactionValues);
                 currentID = UtilitiesNumbers.getIdFromUri(uri);
             }
 
@@ -145,7 +144,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
                 whoValues.put(Tables.PAID, paid[i]);
                 whoValues.put(Tables.SPENT, spent[i]);
 
-                context.getContentResolver().insert(ExpensorContract.WhoPaidSpentEntry.CONTENT_URI, whoValues);
+                context.getContentResolver().insert(ExpensorContract.WhoPaidSpentEntry.WHO_PAID_SPENT_URI, whoValues);
             }
 
             PLEM_Utilities.saveLastAdded(context);
@@ -209,11 +208,10 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     @Override
     public boolean lockPerson(int position, double amount) {
         if(!isDividing) {
-            totalSpent -= spentLocked[position];
+            totalFixedSpent -= spentLocked[position];
             spentLocked[position] = amount;
             locked[position] = true;
-            totalSpent += amount;
-            Log.d("", "person " + position + " locked");
+            totalFixedSpent += amount;
             return true;
         } else {
             return false;
@@ -226,10 +224,9 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     }
 
     public void clearPerson(int position){
-        totalSpent -= spentLocked[position];
+        totalFixedSpent -= spentLocked[position];
         spentLocked[position] = 0;
         locked[position] = false;
-        Log.d("", "unlocked " + position);
     }
 
     @Override
@@ -240,7 +237,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
     //input position of the people focused, needs to be done the last, -1 if none
     public void divideSpent(int position) {
         isDividing = true;
-        if(totalPaid - totalSpent > UtilitiesNumbers.EPSILON) {
+        if(totalPaid - totalFixedSpent > UtilitiesNumbers.EPSILON) {
             header_paid.setError(null);
             header_spent.setError(null);
             int totalWeight = 0;
@@ -254,12 +251,10 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
             }
             if(totalWeight == 0)
                 totalWeight = 1;
-            Log.d("", "total weight= " + totalWeight);
             for (int i = 0; i < lv_spent.getChildCount(); i++) {
                 if (!locked[i] && i != position) {
                     EditText et_amount = (EditText) lv_spent.getChildAt(i).findViewById(R.id.et_amount);
-                    double toPay = (totalPaid - totalSpent) * weights[i] / totalWeight;
-                    Log.d("", "toPay= " + toPay + " ,pos= " + i);
+                    double toPay = (totalPaid - totalFixedSpent) * weights[i] / totalWeight;
                     et_amount.setText(Double.toString(UtilitiesNumbers.round(toPay, 2)));
                     spent[i] = toPay; //this is what it would be saved
                 }
@@ -267,8 +262,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
             if(position >= 0){
                 EditText et_amount = (EditText) lv_spent.getChildAt(position).findViewById(R.id.et_amount);
-                double toPay = (totalPaid - totalSpent) * weights[position] / totalWeight;
-                Log.d("", "toPay= " + toPay + " ,pos= " + position);
+                double toPay = (totalPaid - totalFixedSpent) * weights[position] / totalWeight;
                 et_amount.setText(Double.toString(UtilitiesNumbers.round(toPay, 2)));
                 spent[position] = toPay; //this is what it would be saved
             }
@@ -296,6 +290,16 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
     @Override
     public boolean valuesAreCorrect() {
+        double totalSpent = totalFixedSpent;
+
+        for(int i = 0; i < spent.length ; i++){
+            if(!locked[i])
+                totalSpent += spent[i];
+        }
+
+        if(Math.abs(totalSpent - totalPaid) > UtilitiesNumbers.EPSILON)
+            divideSpent();
+
         boolean output = true;
         if(totalPaid < UtilitiesNumbers.EPSILON){
             header_paid.setError(getString(R.string.error_paid));
@@ -305,7 +309,7 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
             header_spent.setError(getString(R.string.error_spent));
             output = false;
         } else {
-            if (totalSpent < UtilitiesNumbers.EPSILON) {
+            if (Math.abs(totalSpent) <= UtilitiesNumbers.EPSILON) {
                 header_spent.setError(getString(R.string.error_not_spent));
                 output = false;
             }

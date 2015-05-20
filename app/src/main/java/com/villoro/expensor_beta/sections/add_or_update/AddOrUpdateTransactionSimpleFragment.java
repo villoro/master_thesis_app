@@ -83,7 +83,6 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("AddOrUpadateTransactionSimpleFragment", "setCategories onResume");
         setCategories();
     }
 
@@ -140,6 +139,15 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             actualColor = colorGreen;
             actualTitle = titleIncome;
         }
+        Cursor tempCategoriesExpense = context.getContentResolver().query(
+                ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, null, null, null, null);
+        Cursor tempCategoriesIncome = context.getContentResolver().query(
+                ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI, null, null, null, null);
+        if(tempCategoriesExpense.getCount() + tempCategoriesIncome.getCount() == 0){
+            insertDefaultCategories();
+        }
+        tempCategoriesExpense.close();
+        tempCategoriesIncome.close();
 
         cursorCategories = context.getContentResolver().query(
                 uriCategories, null, null, null, null);
@@ -269,7 +277,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
         b_expense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!typeTransaction.equals(Tables.TYPE_EXPENSE)){
+                if (!typeTransaction.equals(Tables.TYPE_EXPENSE)) {
                     typeTransaction = Tables.TYPE_EXPENSE;
                     setCategories();
                 }
@@ -313,5 +321,27 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             }
         }
         return output;
+    }
+
+    private void insertDefaultCategories(){
+        ContentValues values1 = new ContentValues();
+        values1.put(Tables.NAME, "Menjar");
+        values1.put(Tables.COLOR, getResources().getColor(R.color.predefine_expense_category1));
+        context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, values1);
+
+        ContentValues values2 = new ContentValues();
+        values2.put(Tables.NAME, "Transport");
+        values2.put(Tables.COLOR, getResources().getColor(R.color.predefine_expense_category2));
+        context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, values2);
+
+        ContentValues values3 = new ContentValues();
+        values3.put(Tables.NAME, "Altres");
+        values3.put(Tables.COLOR, getResources().getColor(R.color.predefine_expense_category3));
+        context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CATEGORIES_EXPENSE_URI, values3);
+
+        ContentValues values4 = new ContentValues();
+        values4.put(Tables.NAME, "Nomina");
+        values4.put(Tables.COLOR, getResources().getColor(R.color.predefine_expense_income1));
+        context.getContentResolver().insert(ExpensorContract.CategoriesEntry.CATEGORIES_INCOME_URI, values4);
     }
 }

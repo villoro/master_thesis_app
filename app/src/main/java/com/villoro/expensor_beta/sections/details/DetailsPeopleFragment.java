@@ -31,6 +31,7 @@ public class DetailsPeopleFragment extends Fragment implements DialogLongClickLi
     ListView listView;
     Context context;
     long listID, currentID;
+    DetailsInterfaces.CommSetName commSetName;
 
     public DetailsPeopleFragment(){};
 
@@ -79,7 +80,7 @@ public class DetailsPeopleFragment extends Fragment implements DialogLongClickLi
         Cursor tempCursor = context.getContentResolver().query(ExpensorContract.PeopleEntry.PEOPLE_URI, null,
                 Tables.ID + " = '" + currentID + "'", null, null);
         if(tempCursor.moveToFirst()){
-            t_name.setText(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
+            commSetName.changeTitle(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
         }
         setListView();
 
@@ -96,7 +97,7 @@ public class DetailsPeopleFragment extends Fragment implements DialogLongClickLi
 
     }
 
-    public void initialize(long whichID){
+    public void initialize(long whichID, DetailsInterfaces.CommSetName commSetName){
         if (whichID > 0)
         {
             this.currentID = whichID;
@@ -105,6 +106,7 @@ public class DetailsPeopleFragment extends Fragment implements DialogLongClickLi
         {
             this.currentID = 0;
         }
+        this.commSetName = commSetName;
     }
 
     @Override

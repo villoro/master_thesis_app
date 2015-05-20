@@ -193,6 +193,7 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
         peopleInGroupAdapter = new PeopleInGroupAdapter(context, names, ids);
         peopleInGroupAdapter.setCommunicator(this);
         listView.setAdapter(peopleInGroupAdapter);
+        UtilitiesNumbers.setListViewHeightBasedOnChildren(listView);
     }
 
     @Override

@@ -49,8 +49,10 @@ public class ExpensorProvider extends ContentProvider {
 
 
     private static final int TRANSACTIONS_GROUP = 800;
+    private static final int TRANSACTIONS_GROUP_WITH_GROUP_ID = 801;
 
     private static final int WHO_PAID_SPENT = 850;
+    private static final int WHO_PAID_SPENT_WITH_TRANSACTION_ID = 851;
 
     private static final int HOW_TO_SETTLE = 900;
     private static final int HOW_TO_SETTLE_WITH_GROUP_ID = 901;
@@ -91,8 +93,10 @@ public class ExpensorProvider extends ContentProvider {
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_PEOPLE + "/#", TRANSACTIONS_PEOPLE_WITH_PEOPLE_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP, TRANSACTIONS_GROUP);
+        matcher.addURI(authority, Tables.TABLENAME_TRANSACTIONS_GROUP + "/#", TRANSACTIONS_GROUP_WITH_GROUP_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT, WHO_PAID_SPENT);
+        matcher.addURI(authority, Tables.TABLENAME_WHO_PAID_SPENT + "/#/*", WHO_PAID_SPENT_WITH_TRANSACTION_ID);
 
         matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE, HOW_TO_SETTLE);
         matcher.addURI(authority, Tables.TABLENAME_HOW_TO_SETTLE + "/#", HOW_TO_SETTLE_WITH_GROUP_ID);
@@ -243,6 +247,20 @@ public class ExpensorProvider extends ContentProvider {
                 );
                 break;
             }
+            case TRANSACTIONS_GROUP_WITH_GROUP_ID: {
+                String mSelection = ExpensorQueries.addNoDeletedIfNeeded(Tables.GROUP_ID + " ='" +
+                        ExpensorContract.TransactionGroupEntry.getGroupId(uri)+"'");
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        Tables.TABLENAME_TRANSACTIONS_GROUP,
+                        projection,
+                        mSelection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
             case TRANSACTIONS_PEOPLE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Tables.TABLENAME_TRANSACTIONS_PEOPLE,
@@ -270,6 +288,15 @@ public class ExpensorProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
+                );
+                break;
+            }
+            case WHO_PAID_SPENT_WITH_TRANSACTION_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().rawQuery(
+                        ExpensorQueries.queryPeopleWhoParticipatesInGroupTransaction(
+                                ExpensorContract.WhoPaidSpentEntry.getTransactionId(uri),
+                                ExpensorContract.WhoPaidSpentEntry.getWhichCase(uri)
+                        ) , null
                 );
                 break;
             }
@@ -394,19 +421,11 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             }
             case GROUPS: {
-                if (db.query(
-                        Tables.TABLENAME_GROUPS, new String[]{Tables.NAME},
-                        Tables.NAME + " = '" + values.get(Tables.NAME).toString() + "'",
-                        null, null, null, null).getCount() == 0) {
-                    long _id = db.insert(Tables.TABLENAME_GROUPS, null, values);
-                    if (_id > 0)
-                        returnUri = ExpensorContract.GroupEntry.buildGroupUri(_id);
-                    else
-                        throw new SQLException("Failed to insert to row into " + uri);
-                } else {
-                    Log.e("", "ja hi ha un amb aquest nom");
-                    returnUri = uri;
-                }
+                long _id = db.insert(Tables.TABLENAME_GROUPS, null, values);
+                if (_id > 0)
+                    returnUri = ExpensorContract.GroupEntry.buildGroupUri(_id);
+                else
+                    throw new SQLException("Failed to insert to row into " + uri);
 
                 break;
             }

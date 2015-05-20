@@ -16,6 +16,21 @@
     <string name="history">Historial</string>
     <string name="me">Jo</string>
 
+    <!-- Group Transaction -->
+    <string name="title_pay">"Paga: "</string>
+    <string name="title_spend">"Gasta: "</string>
+    <string name="everybody">Tothom</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_options">Opcions</string>
+    <string name="dialog_edit">Editar</string>
+    <string name="dialog_delete">Eliminar</string>
+    <string name="dialog_are_you_sure_delete">Estàs segur que vols eliminar-ho?</string>
+    <string name="dialog_are_you_sure_return">Estàs segur que vols marcar-ho com a retornat?</string>
+    <string name="dialog_ok">Si</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_settle">Saldar</string>
+
     <!-- actions in menu -->
     <string name="action_sync">Sincronitzar</string>
     <string name="action_settings">Configuració</string>

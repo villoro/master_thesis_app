@@ -26,6 +26,10 @@
     <item name="purple_history" type="color">#AA66CC</item>
     <item name="purple_history_accent" type="color">#9933CC</item>
 
+    <item name="predefine_expense_category1" type="color">#4CAF50</item>
+    <item name="predefine_expense_category2" type="color">#F44336</item>
+    <item name="predefine_expense_category3" type="color">#5D4037</item>
+    <item name="predefine_expense_income1" type="color">#FFA000</item>
 
 
     <item name="text_color" type="color">#424242</item>

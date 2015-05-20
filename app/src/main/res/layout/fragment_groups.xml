@@ -1,45 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/linearLayout_main_container">
-
-
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/linearLayout_main_container_without_padding">
     <LinearLayout
-        style="@style/linearLayout_input" >
+        style="@style/linearLayout_main_container">
+
+
+
+        <LinearLayout
+            style="@style/linearLayout_input" >
+
+            <TextView
+                style="@style/textView_input_title"
+                android:text="@string/input_name" />
+
+            <EditText
+                style="@style/editText_input"
+                android:id="@+id/et_groups_name"
+                android:hint="@string/hint_name_group"
+                android:inputType="text" >
+
+                <requestFocus />
+            </EditText>
+
+        </LinearLayout>
 
         <TextView
-            style="@style/textView_input_title"
-            android:text="@string/input_name" />
+            android:text="@string/header_members"
+            android:id="@+id/header_people_in_group"
+            style="@style/sectionHeader.ability_to_show_error" />
 
-        <EditText
-            style="@style/editText_input"
-            android:id="@+id/et_groups_name"
-            android:hint="@string/hint_name_group"
-            android:inputType="text" >
+        <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lv" />
 
-            <requestFocus />
-        </EditText>
+        <View
+            style="@style/divider" />
+
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/row_thickness_with_margin_simple"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_write_to_add_a_member"
+            android:id="@+id/ac_name"/>
 
     </LinearLayout>
-
-    <TextView
-        android:text="@string/header_members"
-        android:id="@+id/header_people_in_group"
-        style="@style/sectionHeader.ability_to_show_error" />
-
-    <ListView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/lv" />
-
-    <View
-        style="@style/divider" />
-
-    <AutoCompleteTextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/row_thickness_with_margin_simple"
-        android:gravity="center_vertical"
-        android:hint="@string/hint_write_to_add_a_member"
-        android:id="@+id/ac_name"/>
-
-</LinearLayout>
+</ScrollView>
