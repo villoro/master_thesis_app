@@ -186,7 +186,8 @@ public class AddOrUpdateGroupFragment extends Fragment implements PeopleInGroupA
 
     @Override
     public void delete() {
-
+        context.getContentResolver().delete(ExpensorContract.GroupEntry.CONTENT_URI,
+                Tables.ID + " =?", new String[]{""+currentID});
     }
 
     public void setList(){

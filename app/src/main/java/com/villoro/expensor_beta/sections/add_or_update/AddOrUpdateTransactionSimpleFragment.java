@@ -270,7 +270,7 @@ public class AddOrUpdateTransactionSimpleFragment extends Fragment implements Di
             deleteUri = ExpensorContract.IncomeEntry.INCOME_URI;
         }
 
-        context.getContentResolver().delete(deleteUri, Tables.ID + " = '" + currentID + "'", null);
+        context.getContentResolver().delete(deleteUri, Tables.ID + " =?", new String[]{""+currentID});
     }
 
     public void setButtonExpense(){

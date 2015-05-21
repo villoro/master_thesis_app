@@ -293,7 +293,7 @@ public class ExpensorContract {
     public static final class TransactionGroupEntry {
         private static final String tableName = Tables.TABLENAME_TRANSACTIONS_GROUP;
 
-        public static final Uri GROUP_URI =
+        public static final Uri TRANSACTION_GROUP_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(tableName).build();
 
         public static final String CONTENT_TYPE =
@@ -302,11 +302,11 @@ public class ExpensorContract {
                 ITEM + CONTENT_AUTHORITY_EXPENSOR + "/" + tableName;
 
         public static Uri buildTransactionGroupUri(long id) {
-            return ContentUris.withAppendedId(GROUP_URI, id);
+            return ContentUris.withAppendedId(TRANSACTION_GROUP_URI, id);
         }
 
         public static Uri buildUriFromGroupId(long id) {
-            return GROUP_URI.buildUpon().appendPath(""+id).build();
+            return TRANSACTION_GROUP_URI.buildUpon().appendPath(""+id).build();
         }
 
         public static long getGroupId(Uri uri){

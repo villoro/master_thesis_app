@@ -555,18 +555,25 @@ public class ExpensorProvider extends ContentProvider {
                 break;
             case CATEGORIES:
                 rowsUpdated = db.update(Tables.TABLENAME_CATEGORIES, values, selection, selectionArgs);
+                rowsUpdated += db.update(Tables.TABLENAME_TRANSACTION_SIMPLE, values, Tables.CATEGORY_ID + " =?", selectionArgs);
                 break;
             case PEOPLE:
                 rowsUpdated = db.update(Tables.TABLENAME_PEOPLE, values, selection, selectionArgs);
+                rowsUpdated += db.update(Tables.TABLENAME_TRANSACTIONS_PEOPLE, values, Tables.PEOPLE_ID + " =?", selectionArgs);
                 break;
             case PEOPLE_IN_GROUP:
                 rowsUpdated = db.update(Tables.TABLENAME_PEOPLE_IN_GROUP, values, selection, selectionArgs);
                 break;
             case GROUPS:
                 rowsUpdated = db.update(Tables.TABLENAME_GROUPS, values, selection, selectionArgs);
+                rowsUpdated += db.update(Tables.TABLENAME_PEOPLE_IN_GROUP, values, Tables.GROUP_ID + " =?", selectionArgs);
+                rowsUpdated += db.update(Tables.TABLENAME_GROUPS, values, Tables.GROUP_ID + " =?", selectionArgs);
+                rowsUpdated += db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, Tables.GROUP_ID + " =?", selectionArgs);
+                //TODO WHO PAID SPENT
                 break;
             case TRANSACTIONS_GROUP:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTIONS_GROUP, values, selection, selectionArgs);
+                rowsUpdated += db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, Tables.TRANSACTION_ID + " =?", selectionArgs);
                 break;
             case TRANSACTIONS_PEOPLE:
                 rowsUpdated = db.update(Tables.TABLENAME_TRANSACTIONS_PEOPLE, values, selection, selectionArgs);
@@ -575,7 +582,7 @@ public class ExpensorProvider extends ContentProvider {
                 rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
                 break;
             case HOW_TO_SETTLE:
-                rowsUpdated = db.update(Tables.TABLENAME_WHO_PAID_SPENT, values, selection, selectionArgs);
+                rowsUpdated = db.update(Tables.TABLENAME_HOW_TO_SETTLE, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

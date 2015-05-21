@@ -171,7 +171,7 @@ public class DetailsGroupSummaryFragment extends Fragment implements DialogAccep
             valTransGroup.put(Tables.DATE, UtilitiesDates.completeDateToString(UtilitiesDates.getDate()));
             valTransGroup.put(Tables.TYPE, Tables.TYPE_GIVE);
 
-            Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.GROUP_URI, valTransGroup);
+            Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.TRANSACTION_GROUP_URI, valTransGroup);
             long transID = UtilitiesNumbers.getIdFromUri(uri);
 
             ContentValues valPaid = new ContentValues();

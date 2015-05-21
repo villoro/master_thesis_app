@@ -145,7 +145,7 @@ public class AddOrUpdateCategoriesFragment extends Fragment implements AddOrUpda
 
     @Override
     public void delete() {
-        context.getContentResolver().delete(uriCategories, Tables.ID + " = '" + currentID + "'", null);
+        context.getContentResolver().delete(uriCategories, Tables.ID + " =?", new String[]{""+currentID});
     }
 
     public void setSpinner(){

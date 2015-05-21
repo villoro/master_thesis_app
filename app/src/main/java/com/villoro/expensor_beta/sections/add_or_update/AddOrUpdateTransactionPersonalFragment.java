@@ -233,7 +233,7 @@ public class AddOrUpdateTransactionPersonalFragment extends Fragment implements 
     @Override
     public void delete() {
         context.getContentResolver().delete(ExpensorContract.TransactionPeopleEntry.TRANSACTION_PEOPLE_URI,
-                Tables.ID + " = '" + currentID + "'", null);
+                Tables.ID + " =?", new String[]{""+currentID});
     }
 
     @Override

@@ -127,10 +127,10 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
             transactionValues.put(Tables.TYPE, Tables.TYPE_TRANSACTION); //TODO allow gives
 
             if (currentID > 0) {
-                context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.GROUP_URI
+                context.getContentResolver().update(ExpensorContract.TransactionGroupEntry.TRANSACTION_GROUP_URI
                         , transactionValues, Tables.ID + " = '" + currentID + "'", null);
             } else {
-                Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.GROUP_URI, transactionValues);
+                Uri uri = context.getContentResolver().insert(ExpensorContract.TransactionGroupEntry.TRANSACTION_GROUP_URI, transactionValues);
                 currentID = UtilitiesNumbers.getIdFromUri(uri);
             }
 
@@ -174,7 +174,8 @@ public class AddOrUpdateTransactionGroupFragment extends Fragment implements Add
 
     @Override
     public void delete() {
-
+        context.getContentResolver().delete(ExpensorContract.TransactionGroupEntry.TRANSACTION_GROUP_URI,
+                Tables.ID + " =?", new String[]{""+currentID});
     }
 
     private void bindButtonDate(View rv)

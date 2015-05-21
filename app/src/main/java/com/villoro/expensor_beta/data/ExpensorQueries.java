@@ -349,8 +349,10 @@ public class ExpensorQueries {
     public static final String queryPeopleWhoParticipatesInGroupTransaction(long transactionId, String whichCase){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(SELECT + Tables.NAME + FROM);
-        sb.append(PARENTHESIS_OPEN + SELECT + Tables.PEOPLE_ID + FROM + Tables.TABLENAME_WHO_PAID_SPENT);
+        sb.append(SELECT + Tables.NAME + COMA + AUX + "." + Tables.PAID + AS + Tables.PAID);
+        sb.append(COMA + AUX + "." + Tables.SPENT + AS + Tables.SPENT + FROM);
+        sb.append(PARENTHESIS_OPEN + SELECT + Tables.PEOPLE_ID + COMA + Tables.PAID + COMA + Tables.SPENT);
+        sb.append(FROM + Tables.TABLENAME_WHO_PAID_SPENT);
         sb.append(JOIN + Tables.TABLENAME_TRANSACTIONS_GROUP);
         sb.append(ON + Tables.TABLENAME_WHO_PAID_SPENT + "." + Tables.TRANSACTION_ID);
         sb.append(EQUAL + Tables.TABLENAME_TRANSACTIONS_GROUP + "." + Tables.ID);

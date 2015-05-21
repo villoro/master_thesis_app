@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -78,6 +79,17 @@ public class DetailsGroupHistoryFragment extends Fragment{
 
         View rootView = inflater.inflate(R.layout.fragment_details_group_history, container, false);
         listView = (ListView) rootView.findViewById(R.id.lv_transactions);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(context, AddOrUpdateActivity.class);
+                intent.putExtra(AddOrUpdateActivity.ID_OBJECT, id);
+                intent.putExtra(AddOrUpdateActivity.WHICH_LIST, AddOrUpdateActivity.CASE_TRANSACTION_GROUP);
+                intent.putExtra(Tables.GROUP_ID, groupID);
+                startActivity(intent);
+            }
+        });
 
         Button b_summary = (Button) rootView.findViewById(R.id.b_summary);
         b_summary.setOnClickListener(new View.OnClickListener() {

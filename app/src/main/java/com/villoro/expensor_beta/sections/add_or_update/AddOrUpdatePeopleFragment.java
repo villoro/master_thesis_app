@@ -97,7 +97,7 @@ public class AddOrUpdatePeopleFragment extends Fragment implements AddOrUpdateIn
     @Override
     public void delete() {
         context.getContentResolver().delete(ExpensorContract.PeopleEntry.PEOPLE_URI,
-                Tables.ID + " = '" + currentID + "'", null);
+                Tables.ID + " =?", new String[]{""+currentID});
     }
 
     @Override
