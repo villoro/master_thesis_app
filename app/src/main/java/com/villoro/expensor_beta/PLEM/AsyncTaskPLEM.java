@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.villoro.expensor_beta.Utilities.UtilitiesNumbers;
 import com.villoro.expensor_beta.data.ExpensorContract;
 import com.villoro.expensor_beta.data.Tables;
 import com.villoro.expensor_beta.sections.details.DetailsGroupSummaryFragment;
@@ -23,6 +24,7 @@ public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements P
     long groupID;
     long[] ids;
     double[] balances;
+    double totalAbsBalance;
 
     public AsyncTaskPLEM(DetailsGroupSummaryFragment.FragmentCallback callback){
         this.fragmentCallback = callback;
@@ -33,6 +35,8 @@ public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements P
     protected Boolean doInBackground(Object... params) {
         context = (Context) params[0];
         groupID = (long) params[1];
+
+        totalAbsBalance = 0;
 
         Cursor cursor = context.getContentResolver().query(
                 ExpensorContract.PeopleInGroupEntry.buildFromGroupIdWithBalancesFromCaseUri(groupID),
@@ -47,21 +51,28 @@ public class AsyncTaskPLEM extends AsyncTask<Object, Void, Boolean> implements P
                         + cursor.getDouble(cursor.getColumnIndex(Tables.GIVEN))
                         - cursor.getDouble(cursor.getColumnIndex(Tables.SPENT))
                         - cursor.getDouble(cursor.getColumnIndex(Tables.RECEIVED));
+                totalAbsBalance += Math.abs(balances[cursor.getPosition()]);
             } while (cursor.moveToNext());
 
-            for (int i = 0; i < ids.length ; i++)
-                Log.e("AsyncTaskPLEM", "id= " + ids[i] + ", balance= " + balances[i]);
-
-            PLEM_Solver plem_solver = new PLEM_Solver(ids, balances);
-            plem_solver.setCommunicator(this);
-            plem_solver.solve();
+            if(totalAbsBalance > UtilitiesNumbers.EPSILON) {
+                PLEM_Solver plem_solver = new PLEM_Solver(ids, balances);
+                plem_solver.setCommunicator(this);
+                plem_solver.solve();
+            } else {
+                deletePreviousSolution();
+            }
         }
         return false;
     }
 
+    public void deletePreviousSolution(){
+        context.getContentResolver().delete(ExpensorContract.HowToSettleEntry.buildFromGroupId(groupID), null, null);
+    }
+
     @Override
     public void saveSolution(ArrayList<Long> from, ArrayList<Long> to, ArrayList<Double> money) {
-        context.getContentResolver().delete(ExpensorContract.HowToSettleEntry.buildFromGroupId(groupID), null, null);
+
+        deletePreviousSolution();
 
         for(int i = 0; i < from.size(); i++){
             ContentValues values = new ContentValues();

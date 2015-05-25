@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class DashboardFragmentSection extends Fragment{
 
     View g_income, g_expense, g_result, g_I_owe, g_owe_me;
     TextView tv_income, tv_expense, tv_result, tv_I_owe, tv_owe_me;
+    LinearLayout ll_income, ll_expense, ll_I_owe, ll_owe_me;
 
     ListView lv_expense, lv_income;
 
@@ -143,28 +145,31 @@ public class DashboardFragmentSection extends Fragment{
 
         tv_month = (TextView) rootView.findViewById(R.id.tv_month);
 
-        g_income.setOnClickListener(new View.OnClickListener() {
+        ll_income = (LinearLayout) rootView.findViewById(R.id.container_income);
+        ll_expense = (LinearLayout) rootView.findViewById(R.id.container_expense);
+        ll_I_owe = (LinearLayout) rootView.findViewById(R.id.container_i_owe);
+        ll_owe_me = (LinearLayout) rootView.findViewById(R.id.container_owe_me);
+
+
+        ll_income.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 comm.goToSection(MainActivity.SECTION_HISTORY, Tables.TYPE_INCOME);
-
             }
         });
-        g_expense.setOnClickListener(new View.OnClickListener() {
+        ll_expense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 comm.goToSection(MainActivity.SECTION_HISTORY, Tables.TYPE_EXPENSE);
-
             }
         });
-
-        g_I_owe.setOnClickListener(new View.OnClickListener() {
+        ll_I_owe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 comm.goToSection(MainActivity.SECTION_PEOPLE, null);
             }
         });
-        g_owe_me.setOnClickListener(new View.OnClickListener() {
+        ll_owe_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 comm.goToSection(MainActivity.SECTION_PEOPLE, null);

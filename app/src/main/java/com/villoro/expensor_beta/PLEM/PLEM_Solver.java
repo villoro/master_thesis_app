@@ -154,9 +154,6 @@ public class PLEM_Solver {
         }
 
         public void saveSolution(){
-            for (int i = 0; i < money.size(); i++) {
-                Log.d("", money.get(i) + ", from= " + from.get(i) + ", to= " + to.get(i));
-            }
             comm.saveSolution(from, to, money);
         }
     }
@@ -182,7 +179,7 @@ public class PLEM_Solver {
         String aux = "balances= ";
         for(double val : balancesWithId.balances){
             aux += val + " ";
-        } Log.d("", aux);
+        }
         aux = "id= ";
         for(long val : balancesWithId.ids){
             aux += val + " ";
@@ -194,8 +191,8 @@ public class PLEM_Solver {
         balances_positives.orderByBalance();
         balances_negatives.orderByBalance();
 
-        printBalanceWithId(balances_positives);
-        printBalanceWithId(balances_negatives);
+        //printBalanceWithId(balances_positives);
+        //printBalanceWithId(balances_negatives);
 
         boolean finish = false;
         int[] t_count = new int[n_positive];
@@ -244,15 +241,15 @@ public class PLEM_Solver {
         }
 
         solution.z = p + LAMBDA[0]*(t+q) + LAMBDA[1]*a + LAMBDA[2]*b;
-        Log.d("", "p= " + p + ", t= " + t + ", q= " + q + ", a= " + a + ", b= " + b);
-        Log.d("", "z= " + solution.z);
+        //Log.d("", "p= " + p + ", t= " + t + ", q= " + q + ", a= " + a + ", b= " + b);
+        //Log.d("", "z= " + solution.z);
         createSeparatedBalances();
         return solution;
     }
 
     private Solution solvePLEM() throws LpSolveException {
 
-        Log.e("", "starting to solve, mode= ALWAYS");
+        //Log.e("", "starting to solve, mode= ALWAYS");
         N = 2 * n_negative * n_positive + n_negative + n_positive + 2;
 
         //make that stupid array
@@ -263,7 +260,7 @@ public class PLEM_Solver {
 
         //Log.d("", "ids= " + aux_ids);
         //Log.d("", "balances= " + aux_balances);
-        Log.d("", "N= " + N + " ,n_pos= " + n_positive + " ,n_neg= " + n_negative);
+        //Log.d("", "N= " + N + " ,n_pos= " + n_positive + " ,n_neg= " + n_negative);
 
         //set names of variables
         lp = LpSolve.makeLp(0, N);
@@ -302,8 +299,8 @@ public class PLEM_Solver {
                 values1[getTIndex(i) - 1] = 1;
             }
             values2[N-2] = -1;
-            printConstraint(values1, balances_negatives.balances[i]);
-            printConstraint(values2, 0);
+            //printConstraint(values1, balances_negatives.balances[i]);
+            //printConstraint(values2, 0);
             lp.addConstraintex(N, values1, rows, lp.EQ, balances_negatives.balances[i]);
             lp.addConstraintex(N, values2, rows, lp.LE, 0);
         }
@@ -317,8 +314,8 @@ public class PLEM_Solver {
                 values1[getQIndex(j) - 1] = 1;
             }
             values2[N-1] = -1;
-            printConstraint(values1, balances_positives.balances[j]);
-            printConstraint(values2, 0);
+            //printConstraint(values1, balances_positives.balances[j]);
+            //printConstraint(values2, 0);
             lp.addConstraintex(N, values1, rows, lp.EQ, balances_positives.balances[j]);
             lp.addConstraintex(N, values2, rows, lp.LE, 0);
         }
@@ -327,7 +324,7 @@ public class PLEM_Solver {
             values1 = new double[N];
             values1[i] = 1;
             values1[getPIndex(i) - 1] = -M;
-            printConstraint(values1, 0);
+            //printConstraint(values1, 0);
             lp.addConstraintex(N, values1, rows, lp.LE, 0);
         }
 
@@ -360,7 +357,7 @@ public class PLEM_Solver {
         lp.getVariables(aux);
         for(int i = 0; i < n_positive * n_negative ; i++){
             if(Math.abs(aux[i]) > EPSILON) {
-                Log.d("", "i= " + getIFromPosition(i) + ", j= " + getJFromPosition(i) + ", val= " + aux[i]);
+                //Log.d("", "i= " + getIFromPosition(i) + ", j= " + getJFromPosition(i) + ", val= " + aux[i]);
                 solution.addTransfer(balances_negatives.ids[getIFromPosition(i)],
                         balances_positives.ids[getJFromPosition(i)], aux[i]);
             }
@@ -371,9 +368,9 @@ public class PLEM_Solver {
         solution.z = lp.getObjective();
 
         solution.feasible = aux[N-1] + aux[N-2] > EPSILON;
-        Log.d("", "Objective value: " + lp.getObjective());
-        Log.d("", "time= " + lp.timeElapsed());
-        Log.d("", "isFeasible= " + solution.feasible + "   a= " + aux[N-1] + ", b= " + aux[N-2]);
+        //Log.d("", "Objective value: " + lp.getObjective());
+        //Log.d("", "time= " + lp.timeElapsed());
+        //Log.d("", "isFeasible= " + solution.feasible + "   a= " + aux[N-1] + ", b= " + aux[N-2]);
 
         lp.deleteLp();
         return solution;

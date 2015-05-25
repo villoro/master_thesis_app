@@ -32,7 +32,8 @@
                 android:text="@string/header_personal"/>
 
             <LinearLayout
-                style="@style/linearLayout_input" >
+                style="@style/linearLayout_input"
+                android:id="@+id/container_income">
 
                 <RelativeLayout
                     style="@style/big_bar_relative_layout">
@@ -55,7 +56,8 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/linearLayout_input" >
+                style="@style/linearLayout_input"
+                android:id="@+id/container_expense">
 
                 <RelativeLayout
                     style="@style/big_bar_relative_layout">
@@ -80,7 +82,7 @@
                 style="@style/divider" />
 
             <LinearLayout
-                style="@style/linearLayout_input" >
+                style="@style/linearLayout_input">
 
                 <RelativeLayout
                     style="@style/big_bar_relative_layout">
@@ -107,7 +109,8 @@
                 android:text="@string/header_friends"/>
 
             <LinearLayout
-                style="@style/linearLayout_input" >
+                style="@style/linearLayout_input"
+                android:id="@+id/container_owe_me">
 
                 <RelativeLayout
                     style="@style/big_bar_relative_layout">
@@ -130,7 +133,8 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/linearLayout_input" >
+                style="@style/linearLayout_input"
+                android:id="@+id/container_i_owe">
 
                 <RelativeLayout
                     style="@style/big_bar_relative_layout">

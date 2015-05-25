@@ -15,12 +15,10 @@ public class PLEM_Utilities {
     private final static String LAST_SOLUTION = "last_solution_found_date";
 
     public static void saveLastAdded(Context context){
-        Log.e("PLEM_Utilities", "saving last added");
         saveDate(context, LAST_ADDED);
     }
 
     public static void saveLastSolution(Context context){
-        Log.e("PLEM_Utilities", "saving last solution");
         saveDate(context, LAST_SOLUTION);
     }
 
@@ -36,7 +34,6 @@ public class PLEM_Utilities {
     public static boolean needsToBeSolved(Context context){
         Date lastAdded = readDate(context, LAST_ADDED);
         Date lastSolution = readDate(context, LAST_SOLUTION);
-        Log.e("PLEM_Utilities", "added= " + lastAdded.getTime() + ", solution= " + lastSolution.getTime());
 
         return lastAdded.after(lastSolution);
     }

@@ -98,7 +98,11 @@ public class DetailsGroupSummaryFragment extends Fragment implements DialogAccep
             }
         });
 
-        //TODO setTitle with group name
+        Cursor tempCursor = context.getContentResolver().query(ExpensorContract.GroupEntry.CONTENT_URI, null,
+                Tables.ID + " = '" + groupID + "'", null, null);
+        if(tempCursor.moveToFirst()){
+            commSetName.changeTitle(tempCursor.getString(tempCursor.getColumnIndex(Tables.NAME)));
+        }
 
         return rootView;
     }
